@@ -36,7 +36,7 @@ cargo add rust_ti
 ```
 Or, manually in your `Cargo.toml`:
 ```toml
-rust_ti = "2.1.1"
+rust_ti = "2.1.2"
 ```
 
 **2. Calculate your first indicator:**
@@ -308,8 +308,7 @@ Contributions, bug reports, and feature requests are welcome!
 
 ## 📰 Release Notes
 
-**Latest (v2.1.1):**
-- Fixed bug in Chaikin Oscillator that picked up the first accumulation distribution rather than the last
+**Latest (v2.1.2):**
 - Minor document updates
 
 [Human friendly changlelog →](https://github.com/ChironMind/RustTI/blob/main/CONTRIBUTING.md)
