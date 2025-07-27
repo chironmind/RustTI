@@ -1,13 +1,13 @@
-![RustTI Banner](./assets/banner.webp)
+![RustTI Banner](./assets/rustTI_banner.png)
 
 [![Crates.io Version](https://img.shields.io/crates/v/rust_ti.svg)](https://crates.io/crates/rust_ti)
 [![Docs.rs](https://docs.rs/rust_ti/badge.svg)](https://docs.rs/rust_ti/)
-[![CI](https://github.com/0100101001010000/RustTI/actions/workflows/rust.yml/badge.svg)](https://github.com/0100101001010000/RustTI/actions)
-[![License](https://img.shields.io/github/license/0100101001010000/RustTI)](LICENSE)
+[![CI](https://github.com/ChironMind/RustTI/actions/workflows/rust.yml/badge.svg)](https://github.com/ChironMind/RustTI/actions)
+[![License](https://img.shields.io/github/license/ChironMind/RustTI)](LICENSE-MIT)
 
 [![Crates.io Downloads](https://img.shields.io/crates/d/rust_ti.svg)](https://crates.io/crates/rust_ti)
-[![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/0100101001010000/RustTI-tutorials)
-[![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/0100101001010000/RustTI-benchmarks)
+[![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/RustTI-tutorials)
+[![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/RustTI-benchmarks)
 
 # 🦀 Meet RusTI
 
@@ -59,11 +59,11 @@ Simple Moving Average: 100.352
 
 **3. Explore more tutorials**
 
-- [Getting started tutorial](https://github.com/0100101001010000/RustTI-tutorials/blob/main/getting_started.md)
-- [Choosing the right model](https://github.com/0100101001010000/RustTI-tutorials/blob/main/choose_right_model.md)
-- [Building your first strategy](https://github.com/0100101001010000/RustTI-tutorials/blob/main/first_strategy.md)
-- [Backtesting tutorial](https://github.com/0100101001010000/RustTI-tutorials/blob/main/backtest.md)
-- [Visualization tutorial](https://github.com/0100101001010000/RustTI-tutorials/blob/main/visualization.md)
+- [Getting started tutorial](https://github.com/ChironMind/RustTI-tutorials/blob/main/getting_started.md)
+- [Choosing the right model](https://github.com/ChironMind/RustTI-tutorials/blob/main/choose_right_model.md)
+- [Building your first strategy](https://github.com/ChironMind/RustTI-tutorials/blob/main/first_strategy.md)
+- [Backtesting tutorial](https://github.com/ChironMind/RustTI-tutorials/blob/main/backtest.md)
+- [Visualization tutorial](https://github.com/ChironMind/RustTI-tutorials/blob/main/visualization.md)
 
 ---
 
@@ -71,13 +71,13 @@ Simple Moving Average: 100.352
 
 > Task-oriented guides for common problems and advanced scenarios.
 
-- [Load CSV Price Data:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/load_csv.md) Parse OHLC prices from a file and calculate RSI 
-- [When to use a bulk vs single module:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/bulk_vs_single.md) Understand when to use bulk functions or single functions
-- [Choosing the right constant model type:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/choose_constant_model_type.md) Programatically determine the best `ConstantModelType` 
-- [Choosing the right deviation model:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
-- [Choosing the right period:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
-- [How to use the Personalised Moving Average:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
-- [How to use the McGinley dynamic variation of functions:](https://github.com/0100101001010000/RustTI-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
+- [Load CSV Price Data:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/load_csv.md) Parse OHLC prices from a file and calculate RSI 
+- [When to use a bulk vs single module:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/bulk_vs_single.md) Understand when to use bulk functions or single functions
+- [Choosing the right constant model type:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_constant_model_type.md) Programatically determine the best `ConstantModelType` 
+- [Choosing the right deviation model:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
+- [Choosing the right period:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
+- [How to use the Personalised Moving Average:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
+- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
 
 
 *(Contributions welcome! Submit your favorite how-to guide as a PR.)*
@@ -93,7 +93,7 @@ Simple Moving Average: 100.352
 
 A reference of how to call each function can be found 
 
-- [Reference Example](https://github.com/0100101001010000/RustTI/blob/main/examples/reference.rs)
+- [Reference Example](https://github.com/ChironMind/RustTI/blob/main/examples/reference.rs)
 
 Clone and run:
 ```shell
@@ -285,24 +285,24 @@ We provide detailed, reproducible benchmarks using realistic OHLCV data and a va
 
 *These results are from a Raspberry Pi 5 8GB, your machine will likely be faster!*
 
-👉 [See all benchmarks and how to run your own](https://github.com/0100101001010000/RustTI-benchmarks)
+👉 [See all benchmarks and how to run your own](https://github.com/ChironMind/RustTI-benchmarks)
 
 ---
 
 ## 🤝 Contributing
 
 Contributions, bug reports, and feature requests are welcome!
-- [Open an issue](https://github.com/0100101001010000/RustTI/issues)
-- [Submit a pull request](https://github.com/0100101001010000/RustTI/pulls)
+- [Open an issue](https://github.com/ChironMind/RustTI/issues)
+- [Submit a pull request](https://github.com/ChironMind/RustTI/pulls)
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ---
 
 ## 💬 Community & Support
 
-- Start a [discussion](https://github.com/0100101001010000/RustTI/discussions)
-- File [issues](https://github.com/0100101001010000/RustTI/issues)
-- Add your project to the [Showcase](https://github.com/0100101001010000/RustTI/discussions/categories/show-and-tell)
+- Start a [discussion](https://github.com/ChironMind/RustTI/discussions)
+- File [issues](https://github.com/ChironMind/RustTI/issues)
+- Add your project to the [Showcase](https://github.com/ChironMind/RustTI/discussions/categories/show-and-tell)
 
 ---
 
@@ -312,13 +312,13 @@ Contributions, bug reports, and feature requests are welcome!
 - Fixed bug in Chaikin Oscillator that picked up the first accumulation distribution rather than the last
 - Minor document updates
 
-[Human friendly changlelog →](https://github.com/0100101001010000/RustTI/blob/main/CONTRIBUTING.md)
+[Human friendly changlelog →](https://github.com/ChironMind/RustTI/blob/main/CONTRIBUTING.md)
 
-[Full changelog →](https://github.com/0100101001010000/RustTI/releases)
+[Full changelog →](https://github.com/ChironMind/RustTI/releases)
 
 ---
 
 ## 📄 License
 
-MIT License. See [LICENSE](LICENSE).
+MIT License. See [LICENSE](LICENSE-MIT).
 

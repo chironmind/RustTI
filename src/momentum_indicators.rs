@@ -1096,7 +1096,7 @@ pub mod single {
             _ => panic!("Unsupported ConstantModelType"),
         };
 
-        (short_period_average - long_period_average, ad[ad.len()-1])
+        (short_period_average - long_period_average, ad[ad.len() - 1])
     }
 
     /// Calculates the Percentage Price Oscillator (PPO)

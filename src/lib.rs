@@ -55,14 +55,13 @@
 //!
 //! This repository is part of a structured documentation suite:
 //!
-//! - **Tutorials:** [See here](https://github.com/0100101001010000/RustTI-tutorials)
-//! - **How-To Guides:** [See here](https://github.com/0100101001010000/RustTI-how-to-guides)
-//! - **Benchmarks:** [See here](github.com/0100101001010000/RustTI-benchmarks)
+//! - **Tutorials:** [See here](https://github.com/ChironMind/RustTI-tutorials)
+//! - **How-To Guides:** [See here](https://github.com/ChironMind/RustTI-how-to-guides)
+//! - **Benchmarks:** [See here](github.com/ChironMind/RustTI-benchmarks)
 //! - **Explanations:** Coming soon
 //! - **Reference:** You're here!
 //!
 //! ---
-
 
 #![allow(unreachable_patterns)]
 

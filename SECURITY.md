@@ -11,7 +11,7 @@ If you discover a security vulnerability in RustTI, **please do not disclose it 
 Instead, report it privately and responsibly by:
 
 - Opening a private GitHub security advisory:  
-  [Report a vulnerability](https://github.com/0100101001010000/RustTI/security/advisories/new)
+  [Report a vulnerability](https://github.com/ChironMind/RustTI/security/advisories/new)
 
 Please include as much detail as possible to help us quickly resolve the issue.
 
