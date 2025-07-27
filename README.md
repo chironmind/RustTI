@@ -9,7 +9,7 @@
 [![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/RustTI-tutorials)
 [![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/RustTI-benchmarks)
 
-# 🦀 Meet RusTI
+# 🦀 Meet RustTI
 
 Say hello to RusTI, the clawed crusader of candlesticks and the battle-hardened cousin of Ferris! 🦀📈
 
