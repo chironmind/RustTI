@@ -32,10 +32,7 @@
 pub mod single {
     use crate::basic_indicators::single::max;
 
-    /// The `ulcer_index` calculates how quickly the price at t is able to get back to its former high
-    ///
-    /// It can be used to instead of the standard deviation so is an option in the `DeviationModel`
-    /// enum.
+    /// Calculates the Ulcer Index
     ///
     /// # Arguments
     ///

@@ -479,8 +479,8 @@ pub mod single {
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     /// * `close` - Slice of previous closing prices
-    /// * `constant_type_model` - Variant of [`ConstantModelType`] for the function
-    /// * `atr_constant_type_model` - Variant of [`ConstantModelType`] for the ATR
+    /// * `constant_model_type` - Variant of [`ConstantModelType`] for the function
+    /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     ///
     /// # Panics
@@ -766,7 +766,7 @@ pub mod bulk {
         envelopes
     }
 
-    /// Calculates upper and lower envelopes over a moving constant for windows of `period` length
+    /// Calculates moving constant bands
     ///
     /// # Arguments
     ///
@@ -1015,7 +1015,6 @@ pub mod bulk {
 
     /// Calculates the Donchian Channels over a given period.
     ///
-    ///
     /// # Arguments
     ///
     /// * `high` - Slice of highs
@@ -1077,15 +1076,15 @@ pub mod bulk {
             .collect()
     }
 
-    /// Calculates the `Keltner Channel over a given period
+    /// Calculates the Keltner Channel over a given period
     ///
     /// # Arguments
     ///
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     /// * `close` - Slice of previous closing prices
-    /// * `constant_type_model` - Variant of [`ConstantModelType`] for the function
-    /// * `atr_constant_type_model` - Variant of [`ConstantModelType`] for the ATR
+    /// * `constant_model_type` - Variant of [`ConstantModelType`] for the function
+    /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     /// * `period` - Period over which to calculate the Keltner Channel
     ///

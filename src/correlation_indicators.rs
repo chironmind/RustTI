@@ -195,6 +195,7 @@ pub mod bulk {
     /// * `prices_asset_b` - Slice of prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `deviation_model` - Variant of [`DeviationModel`]
+    /// * `period`: Period over which to calculate the correlation
     ///
     /// # Panics
     ///

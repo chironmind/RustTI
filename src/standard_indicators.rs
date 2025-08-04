@@ -394,7 +394,7 @@ pub mod bulk {
         mas
     }
 
-    /// Calculates  Bollinger bands
+    /// Calculates Bollinger bands
     ///
     /// # Arguments
     ///

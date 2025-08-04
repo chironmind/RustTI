@@ -308,10 +308,10 @@ Contributions, bug reports, and feature requests are welcome!
 
 ## 📰 Release Notes
 
-**Latest (v2.1.2):**
-- Minor document updates
+**Latest (v2.1.3):**
+- Minor document updates, and error message update
 
-[Human friendly changlelog →](https://github.com/ChironMind/RustTI/blob/main/CONTRIBUTING.md)
+[Human friendly changelog →](https://github.com/ChironMind/RustTI/blob/main/CONTRIBUTING.md)
 
 [Full changelog →](https://github.com/ChironMind/RustTI/releases)
 

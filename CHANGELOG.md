@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2.1.3] - 2025-08-04
+### Changes
+- Minor document updates
+- Made directional movement system error message clearer
+
+---
+
 ## [2.1.2] - 2025-07-27
 ### Changed
 - Minor document updates
