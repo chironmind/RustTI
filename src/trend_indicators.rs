@@ -558,7 +558,7 @@ pub mod bulk {
         aroon_downs
     }
 
-    /// Calculates the aroon oscillators
+    /// Calculates the aroon oscillator
     ///
     /// # Arguments
     ///
@@ -976,8 +976,8 @@ pub mod bulk {
         let length_min = 3 * period;
         if length_min > length {
             panic!(
-                "Length of prices ({}) must be greater than ({})",
-                length, length_min
+                "Length of prices ({}) must be greater than 3 times the period (3 * {} = {})",
+                length, period, length_min
             )
         };
 

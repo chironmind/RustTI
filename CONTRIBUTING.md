@@ -19,6 +19,7 @@ See [open issues](https://github.com/ChironMind/RustTI/issues) if you want to st
 ## 🛠️ What to Work On?
 
 - Remove `test_` prefix from all test functions
+- Some functions use `high`, others use `highs`, need to settle on one
 - Refactor parabolic T/P system: remove single functions; let bulk function determine trend (like `volatility` system)
 - Allow indicators to use non-normal distributions (for variance, standard deviation, etc.)
 
