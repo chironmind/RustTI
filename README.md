@@ -23,6 +23,8 @@ A highly configurable and high-performance technical indicators library written 
 
 Designed for flexibility, speed, and advanced use cases in quantitative and algorithmic trading.
 
+Looking for the Python version? [PyTechnicalIndicators](https://github.com/chironmind/PyTechnicalIndicators) is what you're looking for.
+
 ---
 
 ## 🚀 Getting Started (Tutorial)
