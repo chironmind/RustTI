@@ -299,7 +299,7 @@ pub fn overall_trend(prices: &[f64]) -> (f64, f64) {
 /// * `hard_r_squared_minimum` - Hard minimum value for r squared
 /// * `hard_r_squared_maximum` - Hard maximum value for r squared
 /// * `soft_standard_error_multiplier` - Soft standard error multiplier
-/// * `hard_standard_error_multiplier` - Hard multiplier for the standard error
+/// * `hard_standard_error_multiplier` - Hard standard error multiplier
 /// * `soft_reduced_chi_squared_multiplier` - Soft chi squared multiplier
 /// * `hard_reduced_chi_squared_multiplier` - Hard chi squared multiplier
 ///

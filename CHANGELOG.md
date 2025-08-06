@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2.1.4] - TBD
+### Changes
+- Minor document updates
+
+---
+
 ## [2.1.3] - 2025-08-04
 ### Changes
 - Minor document updates

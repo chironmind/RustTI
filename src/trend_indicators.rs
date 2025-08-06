@@ -1196,7 +1196,7 @@ pub mod bulk {
         let period_sum = first_period + second_period;
         if length < period_sum {
             panic!(
-                "Length of prices ({}) needs to be equal or greater than the sum ({}) of first_period ({}) and second_period({})",
+                "Length of prices ({}) needs to be equal or greater than the sum ({}) of first_period ({}) + second_period ({})",
                 length, first_period + second_period, first_period, second_period
             )
         };

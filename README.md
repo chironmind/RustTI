@@ -38,7 +38,7 @@ cargo add rust_ti
 ```
 Or, manually in your `Cargo.toml`:
 ```toml
-rust_ti = "2.1.2"
+rust_ti = "2.1.4"
 ```
 
 **2. Calculate your first indicator:**
@@ -310,10 +310,10 @@ Contributions, bug reports, and feature requests are welcome!
 
 ## 📰 Release Notes
 
-**Latest (v2.1.3):**
-- Minor document updates, and error message update
+**Latest (v2.1.4):**
+- Minor document updates
 
-[Human friendly changelog →](https://github.com/ChironMind/RustTI/blob/main/CONTRIBUTING.md)
+[Human friendly changelog →](https://github.com/ChironMind/RustTI/blob/main/CHANGELOG.md)
 
 [Full changelog →](https://github.com/ChironMind/RustTI/releases)
 
