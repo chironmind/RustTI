@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changes
 - Minor document updates
 
+### Fixes
+- Fixed Welles' Volatility System, in some edge cases it would try to an immediate pivot after the establishing a SaR, which caused a crash. It has been updated to try for an extra period to confirm trend direction
+
 ---
 
 ## [2.1.3] - 2025-08-04
