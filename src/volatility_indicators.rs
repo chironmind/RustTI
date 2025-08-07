@@ -229,13 +229,15 @@ pub mod bulk {
             significant_close = min(&close[..previous_period]);
             position = Position::Short;
             sars.push(significant_close + arc[0]);
+            sars.push(significant_close + arc[1]);
         } else {
             significant_close = max(&close[..previous_period]);
             position = Position::Long;
             sars.push(significant_close - arc[0]);
+            sars.push(significant_close - arc[1]);
         };
 
-        for i in 1..arc.len() {
+        for i in 2..arc.len() {
             let max_period = i + period - 1;
             if position == Position::Short {
                 if close[max_period] > sars[i - 1] {
