@@ -8,7 +8,7 @@
 - **Type**: Library crate (not an application)
 - **Language**: Pure Rust (edition 2021, version 2.1.4)
 - **Dependencies**: None - completely self-contained
-- **Size**: ~15,550 lines of code across 12 modules
+- **Size**: ~15,550 lines of code across 11 modules
 - **Testing**: Extensive test suite with 533+ tests including unit tests and doc tests
 - **License**: MIT License
 
@@ -22,12 +22,12 @@
 
 **Build and Validation (in order of speed):**
 ```bash
-cargo check          # Fast validation (4-5s) - run first for syntax/type checking
-cargo build           # Standard build (1-2s) - compiles the library
+cargo check          # Fast validation (1-2s) - run first for syntax/type checking
+cargo build           # Standard build (4-5s) - compiles the library
 cargo test            # Run all 533 tests (6-7s) - validates functionality
-cargo clippy          # Linting (2s) - catches common issues, some warnings expected
+cargo clippy          # Linting (0.14s) - catches common issues, some warnings expected
 cargo fmt             # Code formatting - ensures consistent style
-cargo doc --no-deps   # Generate documentation (3s) - creates API docs
+cargo doc --no-deps   # Generate documentation (0.09s) - creates API docs
 ```
 
 **Examples and Benchmarks:**
