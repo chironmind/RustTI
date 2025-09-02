@@ -19,6 +19,7 @@
 //! - [`mean`](bulk::mean): Average
 //! - [`median`](bulk::median): Median
 //! - [`mode`](bulk::mode): Mode
+//! - [`price_distribution`](bulk::price_distribution): Distribution of prices (count of each unique price) over each period
 //! - [`standard_deviation`](bulk::standard_deviation): Standard deviation
 //! - [`variance`](bulk::variance): Variance
 //!
@@ -30,6 +31,7 @@
 //! - [`median`](single::median): Median price
 //! - [`min`](single::min): Minimum price
 //! - [`mode`](single::mode): Mode price
+//! - [`price_distribution`](single::price_distribution): Distribution of prices (count of each unique price)
 //! - [`standard_deviation`](single::standard_deviation): Standard deviation
 //! - [`variance`](single::variance): Variance
 //!
@@ -336,6 +338,51 @@ pub mod single {
             .copied()
             .filter(|f| !f.is_nan())
             .fold(f64::NAN, f64::min)
+    }
+
+    /// Calculates the distribution of prices (count of each unique price) in a slice
+    ///
+    /// Returns a vector of tuples containing (price, count) sorted by price in ascending order.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    ///
+    /// # Panics
+    ///
+    /// Panics if `prices.is_empty()`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
+    /// let distribution = rust_ti::basic_indicators::single::price_distribution(&prices);
+    /// assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
+    /// ```
+    #[inline]
+    pub fn price_distribution(prices: &[f64]) -> Vec<(f64, usize)> {
+        if prices.is_empty() {
+            panic!("Prices ({:?}) is empty", prices);
+        }
+        
+        let mut frequency: HashMap<i64, usize> = HashMap::new();
+        for &price in prices {
+            if !price.is_nan() {
+                // Use a scaling factor to handle floating point precision
+                let key = (price * 100000000.0).round() as i64;
+                *frequency.entry(key).or_insert(0) += 1;
+            }
+        }
+        
+        let mut result: Vec<(f64, usize)> = frequency
+            .into_iter()
+            .map(|(key, count)| ((key as f64) / 100000000.0, count))
+            .collect();
+        
+        // Sort by price in ascending order
+        result.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(Ordering::Equal));
+        
+        result
     }
 }
 
@@ -680,6 +727,55 @@ pub mod bulk {
         prices
             .windows(period)
             .map(|w| single::absolute_deviation(w, central_point))
+            .collect()
+    }
+
+    /// Calculates the distribution of prices (count of each unique price) over a given period
+    ///
+    /// For each sliding window of the specified period, returns a vector of tuples containing
+    /// (price, count) sorted by price in ascending order.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    /// * `period` - Period over which to calculate the price distribution
+    ///
+    /// # Panics
+    ///
+    /// Panics if:
+    ///     * `period` == 0
+    ///     * `period` > `prices.len()`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
+    /// let distribution = rust_ti::basic_indicators::bulk::price_distribution(&prices, 3);
+    /// assert_eq!(
+    ///     vec![
+    ///         vec![(100.0, 2), (102.0, 1)],
+    ///         vec![(100.0, 1), (102.0, 1), (103.0, 1)],
+    ///         vec![(100.0, 1), (102.0, 1), (103.0, 1)]
+    ///     ],
+    ///     distribution
+    /// );
+    /// ```
+    #[inline]
+    pub fn price_distribution(prices: &[f64], period: usize) -> Vec<Vec<(f64, usize)>> {
+        if period == 0 {
+            panic!("Period ({}) must be greater than 0", period);
+        }
+        if period > prices.len() {
+            panic!(
+                "Period ({}) cannot be longer than the length of provided prices ({})",
+                period,
+                prices.len()
+            );
+        }
+        
+        prices
+            .windows(period)
+            .map(single::price_distribution)
             .collect()
     }
 }
@@ -1061,5 +1157,61 @@ mod tests {
     fn test_single_min_panic() {
         let prices = Vec::new();
         single::min(&prices);
+    }
+
+    #[test]
+    fn test_single_price_distribution() {
+        let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
+        let distribution = single::price_distribution(&prices);
+        assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
+    }
+
+    #[test]
+    fn test_single_price_distribution_unique() {
+        let prices = vec![100.0, 101.0, 102.0, 103.0];
+        let distribution = single::price_distribution(&prices);
+        assert_eq!(vec![(100.0, 1), (101.0, 1), (102.0, 1), (103.0, 1)], distribution);
+    }
+
+    #[test]
+    fn test_single_price_distribution_same() {
+        let prices = vec![100.0, 100.0, 100.0];
+        let distribution = single::price_distribution(&prices);
+        assert_eq!(vec![(100.0, 3)], distribution);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_single_price_distribution_panic() {
+        let prices = Vec::new();
+        single::price_distribution(&prices);
+    }
+
+    #[test]
+    fn test_bulk_price_distribution() {
+        let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
+        let distribution = bulk::price_distribution(&prices, 3);
+        assert_eq!(
+            vec![
+                vec![(100.0, 2), (102.0, 1)],
+                vec![(100.0, 1), (102.0, 1), (103.0, 1)],
+                vec![(100.0, 1), (102.0, 1), (103.0, 1)]
+            ],
+            distribution
+        );
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_price_distribution_period_too_long() {
+        let prices = vec![100.0, 102.0, 100.0];
+        bulk::price_distribution(&prices, 5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_price_distribution_zero_period() {
+        let prices = vec![100.0, 102.0, 100.0];
+        bulk::price_distribution(&prices, 0);
     }
 }
