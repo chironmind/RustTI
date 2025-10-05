@@ -1,6 +1,6 @@
 //! # Chart Trends
 //!
-//! The `chart_trends` module provides utilities for detecting, analyzing, and breaking down trends in price charts.
+//! The `chart_trends` module provides utilities for detecting, analyzing, and breaking downtrends in price charts.
 //! These functions help identify overall direction, peaks, valleys, and trend segments in a time series.
 //!
 //! ## When to Use
