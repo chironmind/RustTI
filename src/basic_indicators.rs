@@ -356,27 +356,30 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
-    /// let distribution = rust_ti::basic_indicators::single::price_distribution(&prices);
+    /// let distribution = rust_ti::basic_indicators::single::price_distribution(&prices, 1.0);
     /// assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
     /// ```
     #[inline]
-    pub fn price_distribution(prices: &[f64]) -> Vec<(f64, usize)> {
+    pub fn price_distribution(prices: &[f64], precision: f64) -> Vec<(f64, usize)> {
         if prices.is_empty() {
             panic!("Prices ({:?}) is empty", prices);
         }
-        
+        if !(precision > 0.0) {
+            panic!("precision ({}) must be > 0.0 and not NaN", precision);
+        }
+
         let mut frequency: HashMap<i64, usize> = HashMap::new();
         for &price in prices {
             if !price.is_nan() {
                 // Use a scaling factor to handle floating point precision
-                let key = (price * 100000000.0).round() as i64;
+                let key = (price / precision).round() as i64;
                 *frequency.entry(key).or_insert(0) += 1;
             }
         }
         
         let mut result: Vec<(f64, usize)> = frequency
             .into_iter()
-            .map(|(key, count)| ((key as f64) / 100000000.0, count))
+            .map(|(key, count)| ((key as f64) * precision, count))
             .collect();
         
         // Sort by price in ascending order
@@ -750,7 +753,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
-    /// let distribution = rust_ti::basic_indicators::bulk::price_distribution(&prices, 3);
+    /// let distribution = rust_ti::basic_indicators::bulk::price_distribution(&prices, 3, 1.0);
     /// assert_eq!(
     ///     vec![
     ///         vec![(100.0, 2), (102.0, 1)],
@@ -761,7 +764,7 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn price_distribution(prices: &[f64], period: usize) -> Vec<Vec<(f64, usize)>> {
+    pub fn price_distribution(prices: &[f64], period: usize, precision: f64) -> Vec<Vec<(f64, usize)>> {
         if period == 0 {
             panic!("Period ({}) must be greater than 0", period);
         }
@@ -775,7 +778,7 @@ pub mod bulk {
         
         prices
             .windows(period)
-            .map(single::price_distribution)
+            .map(|w| single::price_distribution(w, precision))
             .collect()
     }
 }
@@ -1162,21 +1165,21 @@ mod tests {
     #[test]
     fn test_single_price_distribution() {
         let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
-        let distribution = single::price_distribution(&prices);
+        let distribution = single::price_distribution(&prices, 1.0);
         assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
     }
 
     #[test]
     fn test_single_price_distribution_unique() {
         let prices = vec![100.0, 101.0, 102.0, 103.0];
-        let distribution = single::price_distribution(&prices);
+        let distribution = single::price_distribution(&prices,1.0);
         assert_eq!(vec![(100.0, 1), (101.0, 1), (102.0, 1), (103.0, 1)], distribution);
     }
 
     #[test]
     fn test_single_price_distribution_same() {
         let prices = vec![100.0, 100.0, 100.0];
-        let distribution = single::price_distribution(&prices);
+        let distribution = single::price_distribution(&prices, 1.0);
         assert_eq!(vec![(100.0, 3)], distribution);
     }
 
@@ -1184,13 +1187,60 @@ mod tests {
     #[should_panic]
     fn test_single_price_distribution_panic() {
         let prices = Vec::new();
-        single::price_distribution(&prices);
+        single::price_distribution(&prices, 1.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_single_price_distribution_bad_precision() {
+        single::price_distribution(&[1.0], 0.0);
+    }
+
+    #[test]
+    fn test_single_price_distribution_precision_examples() {
+        let prices = vec![5949.41];
+        assert_eq!(
+            vec![(6000.0, 1)],
+            single::price_distribution(&prices, 1000.0)
+        );
+        assert_eq!(
+            vec![(5900.0, 1)],
+            single::price_distribution(&prices, 100.0)
+        );
+        assert_eq!(vec![(5950.0, 1)], single::price_distribution(&prices, 10.0));
+        assert_eq!(vec![(5949.0, 1)], single::price_distribution(&prices, 1.0));
+        assert_eq!(vec![(5949.400000000001, 1)], single::price_distribution(&prices, 0.1));
+    }
+
+    #[test]
+    fn test_single_price_distribution_half_precision() {
+        let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
+        // precision 1.0
+        assert_eq!(
+            vec![(100.0, 2), (101.0, 3)],
+            single::price_distribution(&prices, 1.0)
+        );
+        // precision 0.5
+        assert_eq!(
+            vec![(100.0, 1), (100.5, 2), (101.0, 2)],
+            single::price_distribution(&prices, 0.5)
+        );
+    }
+
+    #[test]
+    fn test_single_price_distribution_nan_ignored() {
+        let prices = vec![100.0, f64::NAN, 100.4, 100.49, 100.51];
+        // precision 0.5 -> 100.0, 100.5 buckets
+        assert_eq!(
+            vec![(100.0, 1), (100.5, 3)],
+            single::price_distribution(&prices, 0.5)
+        );
     }
 
     #[test]
     fn test_bulk_price_distribution() {
         let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
-        let distribution = bulk::price_distribution(&prices, 3);
+        let distribution = bulk::price_distribution(&prices, 3, 1.0);
         assert_eq!(
             vec![
                 vec![(100.0, 2), (102.0, 1)],
@@ -1202,16 +1252,40 @@ mod tests {
     }
 
     #[test]
+    fn test_bulk_price_distribution_half_precision() {
+        let prices = vec![100.2, 100.46, 100.53, 101.08];
+        // period 3, precision 0.5
+        // windows:
+        // [100.2,100.46,100.53] -> 100.0 (1), 100.5 (2)
+        // [100.46,100.53,101.08] -> 100.5 (2), 101.0 (1)
+        let distribution = bulk::price_distribution(&prices, 3, 0.5);
+        assert_eq!(
+            vec![
+                vec![(100.0, 1), (100.5, 2)],
+                vec![(100.5, 2), (101.0, 1)],
+            ],
+            distribution
+        );
+    }
+
+    #[test]
     #[should_panic]
     fn test_bulk_price_distribution_period_too_long() {
         let prices = vec![100.0, 102.0, 100.0];
-        bulk::price_distribution(&prices, 5);
+        bulk::price_distribution(&prices, 5, 1.0);
     }
 
     #[test]
     #[should_panic]
     fn test_bulk_price_distribution_zero_period() {
         let prices = vec![100.0, 102.0, 100.0];
-        bulk::price_distribution(&prices, 0);
+        bulk::price_distribution(&prices, 0, 1.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_price_distribution_bad_precision() {
+        let prices = vec![100.0, 101.0, 102.0];
+        bulk::price_distribution(&prices, 2, -1.0);
     }
 }
