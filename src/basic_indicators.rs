@@ -347,6 +347,7 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    /// * `precision` - Precision to group prices (e.g., 1.0 for whole numbers, 0.1 for one decimal place)
     ///
     /// # Panics
     ///
@@ -741,6 +742,7 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    /// * `precision` - Precision to group prices (e.g., 1.0 for whole numbers, 0.1 for one decimal place)
     /// * `period` - Period over which to calculate the price distribution
     ///
     /// # Panics
