@@ -1,6 +1,6 @@
 //! # Chart Trends
 //!
-//! The `chart_trends` module provides utilities for detecting, analyzing, and breaking down trends in price charts.
+//! The `chart_trends` module provides utilities for detecting, analyzing, and breaking downtrends in price charts.
 //! These functions help identify overall direction, peaks, valleys, and trend segments in a time series.
 //!
 //! ## When to Use
@@ -288,6 +288,20 @@ pub fn overall_trend(prices: &[f64]) -> (f64, f64) {
     get_trend_line(&indexed_prices)
 }
 
+// TODO: doc text, impl default
+#[derive(Copy, Clone, Debug)]
+pub struct TrendBreakConfig {
+    pub max_outliers: usize,
+    pub soft_adj_r_squared_minimum: f64,
+    pub hard_adj_r_squared_minimum: f64,
+    pub soft_rmse_multiplier: f64,
+    pub hard_rmse_multiplier: f64,
+    pub soft_durbin_watson_min: f64,
+    pub soft_durbin_watson_max: f64,
+    pub hard_durbin_watson_min: f64,
+    pub hard_durbin_watson_max: f64,
+}
+
 /// Calculates price trends and their slopes and intercepts.
 ///
 /// # Arguments
@@ -311,49 +325,38 @@ pub fn overall_trend(prices: &[f64]) -> (f64, f64) {
 /// # Examples
 ///
 /// ```rust
-/// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0, 103.0, 106.0, 107.0, 105.0,
-/// 104.0, 101.0, 97.0, 100.0];
-/// let max_outliers = 1;
-/// let soft_r_squared_minimum = 0.75;
-/// let soft_r_squared_maximum = 1.0;
-/// let hard_r_squared_minimum = 0.5;
-/// let hard_r_squared_maximum = 1.5;
-/// let soft_standard_error_multiplier = 2.0;
-/// let hard_standard_error_multiplier = 3.0;
-/// let soft_reduced_chi_squared_multiplier = 2.0;
-/// let hard_reduced_chi_squared_multiplier = 3.0;
+/// let prices = vec![
+///     100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0,
+///     103.0, 106.0, 107.0, 105.0, 104.0, 101.0, 97.0, 100.0
+/// ];
+/// let trend_break_config = rust_ti::chart_trends::TrendBreakConfig {
+///     max_outliers: 1,
+///     soft_adj_r_squared_minimum: 0.25,
+///     hard_adj_r_squared_minimum: 0.05,
+///     soft_rmse_multiplier: 1.2,
+///     hard_rmse_multiplier: 1.8,
+///     soft_durbin_watson_min: 1.0,
+///     soft_durbin_watson_max: 3.0,
+///     hard_durbin_watson_min: 0.5,
+///     hard_durbin_watson_max: 3.5,
+/// };
+///
 /// let trend_break_down = rust_ti::chart_trends::break_down_trends(
 ///     &prices,
-///     max_outliers,
-///     soft_r_squared_minimum,
-///     soft_r_squared_maximum,
-///     hard_r_squared_minimum,
-///     hard_r_squared_maximum,
-///     soft_standard_error_multiplier,
-///     hard_standard_error_multiplier,
-///     soft_reduced_chi_squared_multiplier,
-///     hard_reduced_chi_squared_multiplier
+///     trend_break_config
 /// );
+///
 /// assert_eq!(
 ///     vec![
 ///         (0, 2, 1.5, 100.16666666666667),
 ///         (2, 4, -2.0, 107.0),
 ///         (4, 9, 1.7714285714285714, 91.15238095238095),
-///         (9, 11, -1.5, 120.33333333333333),
-///         (11, 13, -3.5, 142.66666666666669)
+///         (9, 14, -1.4459459459459458, 119.5945945945946)
 ///     ], trend_break_down);
 /// ```
 pub fn break_down_trends(
     prices: &[f64],
-    max_outliers: usize,
-    soft_r_squared_minimum: f64,
-    soft_r_squared_maximum: f64,
-    hard_r_squared_minimum: f64,
-    hard_r_squared_maximum: f64,
-    soft_standard_error_multiplier: f64,
-    hard_standard_error_multiplier: f64,
-    soft_reduced_chi_squared_multiplier: f64,
-    hard_reduced_chi_squared_multiplier: f64,
+    trend_break_config: TrendBreakConfig
 ) -> Vec<(usize, usize, f64, f64)> {
     if prices.is_empty() {
         panic!("Prices cannot be empty");
@@ -366,8 +369,7 @@ pub fn break_down_trends(
     let mut start_index: usize = 0;
     let mut end_index: usize = 1;
     let mut indexed_points: Vec<(f64, usize)> = Vec::new();
-    let mut previous_standard_error = 10000.0;
-    let mut previous_reduced_chi_squared = 10000.0;
+    let mut previous_rmse = f64::MAX;
 
     for (index, &price) in prices.iter().enumerate() {
         indexed_points.push((price, index));
@@ -377,23 +379,21 @@ pub fn break_down_trends(
         }
         if index > end_index {
             let current_trend = get_trend_line(&indexed_points);
-            let (standard_error, r_squared, reduced_chi_squared) =
+            let (adjusted_r_squared, rmse, durbin_watson) =
                 goodness_of_fit(&indexed_points, &current_trend);
 
-            let soft_break = standard_error
-                > soft_standard_error_multiplier * previous_standard_error
-                && (r_squared < soft_r_squared_minimum || r_squared > soft_r_squared_maximum)
-                && reduced_chi_squared
-                    > soft_reduced_chi_squared_multiplier * previous_reduced_chi_squared;
+            let soft_break =
+                (adjusted_r_squared < trend_break_config.soft_adj_r_squared_minimum) &&
+                    (rmse > trend_break_config.soft_rmse_multiplier * previous_rmse) &&
+                    (durbin_watson < trend_break_config.soft_durbin_watson_min || durbin_watson > trend_break_config.soft_durbin_watson_max);  // Autocorrelation detected
 
-            let hard_break = r_squared < hard_r_squared_minimum
-                || r_squared > hard_r_squared_maximum
-                || standard_error > hard_standard_error_multiplier * previous_standard_error
-                || reduced_chi_squared
-                    > hard_reduced_chi_squared_multiplier * previous_reduced_chi_squared;
+            let hard_break =
+                adjusted_r_squared < trend_break_config.hard_adj_r_squared_minimum ||
+                    rmse > trend_break_config.hard_rmse_multiplier * previous_rmse ||
+                    (durbin_watson < trend_break_config.hard_durbin_watson_min || durbin_watson > trend_break_config.hard_durbin_watson_max);  // Strong autocorrelation
 
             if soft_break || hard_break {
-                if outliers.len() < max_outliers {
+                if outliers.len() < trend_break_config.max_outliers {
                     outliers.push(index);
                     indexed_points.pop();
                     continue;
@@ -407,18 +407,17 @@ pub fn break_down_trends(
                 current_intercept = current_trend.1;
                 // if list bigger than 2
                 if indexed_points.len() > 2 {
-                    (previous_standard_error, _, previous_reduced_chi_squared) =
+                    (_, previous_rmse, _) =
                         goodness_of_fit(&indexed_points, &current_trend);
                 } else {
-                    previous_standard_error = 10000.0;
-                    previous_reduced_chi_squared = 10000.0;
+                    previous_rmse = f64::MAX;
                 };
                 outliers.clear();
             } else {
-                previous_standard_error = standard_error;
-                previous_reduced_chi_squared = reduced_chi_squared;
+                previous_rmse = rmse;
                 current_slope = current_trend.0;
                 current_intercept = current_trend.1;
+                // TODO: consider removing this line
                 outliers.clear();
             }
         }
@@ -428,6 +427,65 @@ pub fn break_down_trends(
     trends
 }
 
+fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64, f64, f64) {
+    let n = indexed_points.len();
+    if n < 2 {
+        return (0.0, 0.0, 2.0);  // Bad fit indicators
+    }
+
+    let trend_line: Vec<f64> = indexed_points
+        .iter()
+        .map(|&(_, x)| trend.1 + trend.0 * x as f64)
+        .collect();
+    let observed_prices: Vec<f64> = indexed_points.iter().map(|&(y, _)| y).collect();
+
+    let observed_mean = mean(&observed_prices);
+
+    let (sum_sq_residuals, total_squares) =
+        (0..n).fold((0.0, 0.0), |(ssr, tss), i| {
+            let resid = observed_prices[i] - trend_line[i];
+            let total = observed_prices[i] - observed_mean;
+            (ssr + resid.powi(2), tss + total.powi(2))
+        });
+
+    // Calculate metrics
+    let degrees_of_freedom = ((n as f64) - 2.0).max(1.0);
+
+    let r_squared = if total_squares > 1e-10 {
+        (1.0 - (sum_sq_residuals / total_squares)).max(0.0)
+    } else {
+        0.0
+    };
+
+    let adjusted_r_squared = if n > 2 {
+        1.0 - ((1.0 - r_squared) * ((n - 1) as f64) / degrees_of_freedom)
+    } else {
+        r_squared
+    };
+
+    // Calculate Durbin-Watson for autocorrelation
+    let durbin_watson = if n > 1 {
+        let dw_num = (1..n).fold(0.0, |acc, i| {
+            let diff = (observed_prices[i] - trend_line[i]) -
+                (observed_prices[i-1] - trend_line[i-1]);
+            acc + diff.powi(2)
+        });
+        if sum_sq_residuals > 1e-10 {
+            dw_num / sum_sq_residuals
+        } else {
+            2.0
+        }
+    } else {
+        2.0
+    };
+
+    // RMSE (root mean square error) - more interpretable than standard error
+    let rmse = (sum_sq_residuals / n as f64).sqrt();
+
+    (adjusted_r_squared, rmse, durbin_watson)
+}
+
+/*
 fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64, f64, f64) {
     let trend_line: Vec<f64> = indexed_points
         .iter()
@@ -456,7 +514,10 @@ fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64,
     let r_squared = 1.0 - (sum_sq_residuals / total_squares);
     let reduced_chi_squared = sum_sq_residuals / trend_length as f64;
     (standard_error, r_squared, reduced_chi_squared)
+
 }
+
+ */
 
 #[cfg(test)]
 mod tests {
@@ -548,26 +609,20 @@ mod tests {
     #[test]
     fn break_down_trends_std_dev() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        let max_outliers = 1;
-        let soft_r_squared_minimum = 0.75;
-        let soft_r_squared_maximum = 1.0;
-        let hard_r_squared_minimum = 0.5;
-        let hard_r_squared_maximum = 1.5;
-        let soft_standard_error_multiplier = 2.0;
-        let hard_standard_error_multiplier = 3.0;
-        let soft_reduced_chi_squared_multiplier = 2.0;
-        let hard_reduced_chi_squared_multiplier = 3.0;
+        let trend_break_config = TrendBreakConfig {
+                max_outliers: 1,
+                soft_adj_r_squared_minimum: 0.5,
+                hard_adj_r_squared_minimum: 0.25,
+                soft_rmse_multiplier: 1.2,
+                hard_rmse_multiplier: 2.0,
+                soft_durbin_watson_min: 1.0,
+                soft_durbin_watson_max: 3.0,
+                hard_durbin_watson_min: 0.5,
+                hard_durbin_watson_max: 3.5,
+        };
         let trend_break_down = break_down_trends(
             &prices,
-            max_outliers,
-            soft_r_squared_minimum,
-            soft_r_squared_maximum,
-            hard_r_squared_minimum,
-            hard_r_squared_maximum,
-            soft_standard_error_multiplier,
-            hard_standard_error_multiplier,
-            soft_reduced_chi_squared_multiplier,
-            hard_reduced_chi_squared_multiplier,
+            trend_break_config
         );
         assert_eq!(
             vec![
