@@ -339,8 +339,6 @@ impl Default for TrendBreakConfig {
 
 /// Calculates price trends and their slopes and intercepts.
 ///
-///
-///
 /// # Arguments
 ///
 /// * `prices` - Slice of prices
@@ -349,7 +347,6 @@ impl Default for TrendBreakConfig {
 /// # Panics
 ///
 /// Panics if `prices.is_empty()`
-///
 ///
 /// # Examples
 ///
