@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [2.1.5] - 2025-10-07
+### Added
+- Added new indicator: Price distribution
+
+### Changed
+- Minor document updates
+- `break_down_trends` made more reliable and easier to use 
+  - Added a config struct to hold parameters
+  - Fixed internal logic to be more robust
+
 ## [2.1.4] - 2025-08-07
 ### Changes
 - Minor document updates

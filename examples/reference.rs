@@ -699,9 +699,9 @@ fn main() {
     }
 
     // Chart trends (truncated, see documentation for argument meaning)
+    let trend_break_config = rust_ti::chart_trends::TrendBreakConfig::default();
     let break_down_trends = rust_ti::chart_trends::break_down_trends(
-        &close, 1, 0.75, 1.0, 0.5, 1.5, 1.0, 1.0, 2.0, 2.0,
-    );
+        &close, trend_break_config);
     println!("Broken down trends: {:?}", break_down_trends);
 
     let valleys = rust_ti::chart_trends::valleys(&close, 30, 5);
