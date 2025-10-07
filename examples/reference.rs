@@ -699,17 +699,7 @@ fn main() {
     }
 
     // Chart trends (truncated, see documentation for argument meaning)
-    let trend_break_config = rust_ti::chart_trends::TrendBreakConfig {
-        max_outliers: 1,
-        soft_adj_r_squared_minimum: 0.5,
-        hard_adj_r_squared_minimum: 0.25,
-        soft_rmse_multiplier: 1.2,
-        hard_rmse_multiplier: 2.0,
-        soft_durbin_watson_min: 1.0,
-        soft_durbin_watson_max: 3.0,
-        hard_durbin_watson_min: 0.5,
-        hard_durbin_watson_max: 3.5,
-    };
+    let trend_break_config = rust_ti::chart_trends::TrendBreakConfig::default();
     let break_down_trends = rust_ti::chart_trends::break_down_trends(
         &close, trend_break_config);
     println!("Broken down trends: {:?}", break_down_trends);

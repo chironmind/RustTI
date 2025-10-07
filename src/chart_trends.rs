@@ -288,7 +288,25 @@ pub fn overall_trend(prices: &[f64]) -> (f64, f64) {
     get_trend_line(&indexed_prices)
 }
 
-// TODO: doc text, impl default
+/// Configuration for trend break detection.
+///
+/// # Fields
+/// * `max_outliers` - Consecutive candidate break points allowed to be treated as outliers
+///     (skipped) before a segment is forcibly split.
+/// * `soft_adj_r_squared_minimum` - Below this adjusted R² (AND with other soft conditions),
+///     a *soft* break is considered.
+/// * `hard_adj_r_squared_minimum` - Below this adjusted R² alone triggers a *hard* break.
+/// * `soft_rmse_multiplier` - Relative RMSE growth factor (vs previous accepted RMSE)
+///     required (with other soft factors) to flag a soft break.
+/// * `hard_rmse_multiplier` - Larger deterioration factor that alone helps force a hard break.
+/// * `soft_durbin_watson_min` / `soft_durbin_watson_max` - Soft residual autocorrelation band.
+/// * `hard_durbin_watson_min` / `hard_durbin_watson_max` - Hard residual autocorrelation band.
+///     Values far from 2.0 imply structured residuals (model misspecification).
+///
+/// # Notes
+/// - Adjust `max_outliers` to tolerate transient spikes without fragmenting segments.
+/// - Durbin–Watson: (0, 4); near 2 = little autocorrelation, < 1 or > 3 => strong correlation.
+
 #[derive(Copy, Clone, Debug)]
 pub struct TrendBreakConfig {
     pub max_outliers: usize,
@@ -302,20 +320,31 @@ pub struct TrendBreakConfig {
     pub hard_durbin_watson_max: f64,
 }
 
+impl Default for TrendBreakConfig {
+    fn default() -> Self {
+        Self {
+            max_outliers: 1,
+            soft_adj_r_squared_minimum: 0.25,
+            hard_adj_r_squared_minimum: 0.05,
+            soft_rmse_multiplier: 1.3,
+            hard_rmse_multiplier: 2.0,
+            soft_durbin_watson_min: 1.0,
+            soft_durbin_watson_max: 3.0,
+            hard_durbin_watson_min: 0.7,
+            hard_durbin_watson_max: 3.3,
+        }
+    }
+}
+
+
 /// Calculates price trends and their slopes and intercepts.
+///
+///
 ///
 /// # Arguments
 ///
 /// * `prices` - Slice of prices
-/// * `max_outliers` - Allowed consecutive trend-breaks before splitting
-/// * `soft_r_squared_minimum` - Soft minimum value for r squared
-/// * `soft_r_squared_maximum` - Soft maximum value for r squared
-/// * `hard_r_squared_minimum` - Hard minimum value for r squared
-/// * `hard_r_squared_maximum` - Hard maximum value for r squared
-/// * `soft_standard_error_multiplier` - Soft standard error multiplier
-/// * `hard_standard_error_multiplier` - Hard standard error multiplier
-/// * `soft_reduced_chi_squared_multiplier` - Soft chi squared multiplier
-/// * `hard_reduced_chi_squared_multiplier` - Hard chi squared multiplier
+/// * `trend_break_config` - Configuration thresholds (see [`TrendBreakConfig`])
 ///
 /// # Panics
 ///
@@ -417,8 +446,6 @@ pub fn break_down_trends(
                 previous_rmse = rmse;
                 current_slope = current_trend.0;
                 current_intercept = current_trend.1;
-                // TODO: consider removing this line
-                outliers.clear();
             }
         }
         end_index = index;
@@ -427,6 +454,20 @@ pub fn break_down_trends(
     trends
 }
 
+/// Computes adjusted R², RMSE, and Durbin–Watson statistic for an OLS fit.
+///
+/// # Arguments
+/// * `indexed_points` - Slice of `(price, index)` pairs
+/// * `trend` - `(slope, intercept)` from `get_trend_line`
+///
+/// # Returns
+/// `(adjusted_r_squared, rmse, durbin_watson)`
+///
+/// # Notes
+/// - For `n < 2` returns `(0.0, 0.0, 2.0)` (neutral DW).
+/// - Adjusted R² penalizes small samples; negative raw R² values are clamped to 0.0 here.
+/// - RMSE is unnormalized; if you need scale invariance, normalize externally.
+/// - Durbin–Watson near 2.0 suggests little autocorrelation; < 1 or > 3 signals structural issues.
 fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64, f64, f64) {
     let n = indexed_points.len();
     if n < 2 {
@@ -484,40 +525,6 @@ fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64,
 
     (adjusted_r_squared, rmse, durbin_watson)
 }
-
-/*
-fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64, f64, f64) {
-    let trend_line: Vec<f64> = indexed_points
-        .iter()
-        .map(|&(_, x)| trend.1 + trend.0 * x as f64)
-        .collect();
-    let observed_prices: Vec<f64> = indexed_points.iter().map(|&(y, _)| y).collect();
-
-    let trend_length = trend_line.len();
-    if trend_length != observed_prices.len() {
-        panic!(
-            "trend line length ({}) and prices length ({}) must be equal!",
-            trend_length,
-            trend_line.len()
-        );
-    };
-
-    let observed_mean = mean(&observed_prices);
-    let (sum_sq_residuals, total_squares): (f64, f64) =
-        (0..trend_length).fold((0.0, 0.0), |(ssr, tss), i| {
-            let resid = observed_prices[i] - trend_line[i];
-            let total = observed_prices[i] - observed_mean;
-            (ssr + resid.powi(2), tss + total.powi(2))
-        });
-
-    let standard_error = (sum_sq_residuals / trend_length as f64).sqrt();
-    let r_squared = 1.0 - (sum_sq_residuals / total_squares);
-    let reduced_chi_squared = sum_sq_residuals / trend_length as f64;
-    (standard_error, r_squared, reduced_chi_squared)
-
-}
-
- */
 
 #[cfg(test)]
 mod tests {
