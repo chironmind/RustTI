@@ -62,23 +62,28 @@ pub trait Distribution {
     ///
     /// # Returns
     ///
-    /// `Some(mean)` if the mean is defined, `None` otherwise
-    fn mean(&self) -> Option<f64>;
+    /// The mean if defined, `f64::NAN` if undefined
+    fn mean(&self) -> f64;
 
     /// Variance of the distribution
     ///
     /// # Returns
     ///
-    /// `Some(variance)` if the variance is defined, `None` otherwise
-    fn variance(&self) -> Option<f64>;
+    /// The variance if defined, `f64::NAN` if undefined
+    fn variance(&self) -> f64;
 
     /// Standard deviation of the distribution
     ///
     /// # Returns
     ///
-    /// `Some(std_dev)` if the standard deviation is defined, `None` otherwise
-    fn std_dev(&self) -> Option<f64> {
-        self.variance().map(|v| v.sqrt())
+    /// The standard deviation if defined, `f64::NAN` if undefined
+    fn std_dev(&self) -> f64 {
+        let v = self.variance();
+        if v.is_nan() {
+            f64::NAN
+        } else {
+            v.sqrt()
+        }
     }
 }
 
@@ -92,8 +97,8 @@ pub trait Distribution {
 /// use rust_ti::distributions::{Distribution, Normal};
 ///
 /// let normal = Normal::new(0.0, 1.0); // Standard normal
-/// assert_eq!(normal.mean(), Some(0.0));
-/// assert_eq!(normal.variance(), Some(1.0));
+/// assert_eq!(normal.mean(), 0.0);
+/// assert_eq!(normal.variance(), 1.0);
 ///
 /// // PDF at mean is highest
 /// let pdf_at_mean = normal.pdf(0.0);
@@ -165,12 +170,12 @@ impl Distribution for Normal {
         0.5 * (1.0 + erf(z))
     }
 
-    fn mean(&self) -> Option<f64> {
-        Some(self.mean)
+    fn mean(&self) -> f64 {
+        self.mean
     }
 
-    fn variance(&self) -> Option<f64> {
-        Some(self.std_dev.powi(2))
+    fn variance(&self) -> f64 {
+        self.std_dev.powi(2)
     }
 }
 
@@ -185,8 +190,8 @@ impl Distribution for Normal {
 /// use rust_ti::distributions::{Distribution, Cauchy};
 ///
 /// let cauchy = Cauchy::new(0.0, 1.0); // Standard Cauchy
-/// assert_eq!(cauchy.mean(), None); // Mean is undefined
-/// assert_eq!(cauchy.variance(), None); // Variance is undefined
+/// assert!(cauchy.mean().is_nan()); // Mean is undefined
+/// assert!(cauchy.variance().is_nan()); // Variance is undefined
 ///
 /// // CDF at location is 0.5
 /// let cdf_at_location = cauchy.cdf(0.0);
@@ -252,12 +257,12 @@ impl Distribution for Cauchy {
         0.5 + (1.0 / PI) * ((x - self.location) / self.scale).atan()
     }
 
-    fn mean(&self) -> Option<f64> {
-        None // Mean is undefined for Cauchy distribution
+    fn mean(&self) -> f64 {
+        f64::NAN // Mean is undefined for Cauchy distribution
     }
 
-    fn variance(&self) -> Option<f64> {
-        None // Variance is undefined for Cauchy distribution
+    fn variance(&self) -> f64 {
+        f64::NAN // Variance is undefined for Cauchy distribution
     }
 }
 
@@ -272,8 +277,8 @@ impl Distribution for Cauchy {
 /// use rust_ti::distributions::{Distribution, StudentT};
 ///
 /// let student_t = StudentT::new(5.0);
-/// assert_eq!(student_t.mean(), Some(0.0));
-/// assert!(student_t.variance().is_some());
+/// assert_eq!(student_t.mean(), 0.0);
+/// assert!(!student_t.variance().is_nan());
 ///
 /// // CDF at 0 is 0.5 (symmetric around 0)
 /// let cdf_at_zero = student_t.cdf(0.0);
@@ -335,22 +340,22 @@ impl Distribution for StudentT {
         }
     }
 
-    fn mean(&self) -> Option<f64> {
+    fn mean(&self) -> f64 {
         if self.degrees_of_freedom > 1.0 {
-            Some(0.0)
+            0.0
         } else {
-            None
+            f64::NAN
         }
     }
 
-    fn variance(&self) -> Option<f64> {
+    fn variance(&self) -> f64 {
         let nu = self.degrees_of_freedom;
         if nu > 2.0 {
-            Some(nu / (nu - 2.0))
+            nu / (nu - 2.0)
         } else if nu > 1.0 {
-            Some(f64::INFINITY)
+            f64::INFINITY
         } else {
-            None
+            f64::NAN
         }
     }
 }
@@ -366,8 +371,8 @@ impl Distribution for StudentT {
 /// use rust_ti::distributions::{Distribution, Laplace};
 ///
 /// let laplace = Laplace::new(0.0, 1.0);
-/// assert_eq!(laplace.mean(), Some(0.0));
-/// assert_eq!(laplace.variance(), Some(2.0));
+/// assert_eq!(laplace.mean(), 0.0);
+/// assert_eq!(laplace.variance(), 2.0);
 ///
 /// // CDF at location is 0.5
 /// let cdf_at_location = laplace.cdf(0.0);
@@ -436,12 +441,12 @@ impl Distribution for Laplace {
         }
     }
 
-    fn mean(&self) -> Option<f64> {
-        Some(self.location)
+    fn mean(&self) -> f64 {
+        self.location
     }
 
-    fn variance(&self) -> Option<f64> {
-        Some(2.0 * self.scale.powi(2))
+    fn variance(&self) -> f64 {
+        2.0 * self.scale.powi(2)
     }
 }
 
@@ -456,8 +461,8 @@ impl Distribution for Laplace {
 /// use rust_ti::distributions::{Distribution, LogNormal};
 ///
 /// let lognormal = LogNormal::new(0.0, 1.0);
-/// assert!(lognormal.mean().is_some());
-/// assert!(lognormal.variance().is_some());
+/// assert!(!lognormal.mean().is_nan());
+/// assert!(!lognormal.variance().is_nan());
 ///
 /// // PDF is only positive for x > 0
 /// assert!(lognormal.pdf(1.0) > 0.0);
@@ -530,13 +535,13 @@ impl Distribution for LogNormal {
         0.5 * (1.0 + erf(z))
     }
 
-    fn mean(&self) -> Option<f64> {
-        Some(E.powf(self.mu + self.sigma.powi(2) / 2.0))
+    fn mean(&self) -> f64 {
+        E.powf(self.mu + self.sigma.powi(2) / 2.0)
     }
 
-    fn variance(&self) -> Option<f64> {
+    fn variance(&self) -> f64 {
         let exp_2mu_sigma2 = E.powf(2.0 * self.mu + self.sigma.powi(2));
-        Some(exp_2mu_sigma2 * (E.powf(self.sigma.powi(2)) - 1.0))
+        exp_2mu_sigma2 * (E.powf(self.sigma.powi(2)) - 1.0)
     }
 }
 
@@ -677,9 +682,9 @@ mod tests {
     #[test]
     fn normal_standard_properties() {
         let normal = Normal::standard();
-        assert_eq!(normal.mean(), Some(0.0));
-        assert_eq!(normal.variance(), Some(1.0));
-        assert_eq!(normal.std_dev(), Some(1.0));
+        assert_eq!(normal.mean(), 0.0);
+        assert_eq!(normal.variance(), 1.0);
+        assert_eq!(normal.std_dev(), 1.0);
     }
 
     #[test]
@@ -716,9 +721,9 @@ mod tests {
     #[test]
     fn cauchy_undefined_moments() {
         let cauchy = Cauchy::standard();
-        assert_eq!(cauchy.mean(), None);
-        assert_eq!(cauchy.variance(), None);
-        assert_eq!(cauchy.std_dev(), None);
+        assert!(cauchy.mean().is_nan());
+        assert!(cauchy.variance().is_nan());
+        assert!(cauchy.std_dev().is_nan());
     }
 
     #[test]
@@ -755,13 +760,13 @@ mod tests {
     #[test]
     fn student_t_mean_defined() {
         let student_t = StudentT::new(5.0);
-        assert_eq!(student_t.mean(), Some(0.0));
+        assert_eq!(student_t.mean(), 0.0);
     }
 
     #[test]
     fn student_t_variance_defined() {
         let student_t = StudentT::new(5.0);
-        let var = student_t.variance().unwrap();
+        let var = student_t.variance();
         assert!((var - 5.0 / 3.0).abs() < EPSILON);
     }
 
@@ -789,8 +794,8 @@ mod tests {
     #[test]
     fn laplace_properties() {
         let laplace = Laplace::standard();
-        assert_eq!(laplace.mean(), Some(0.0));
-        assert_eq!(laplace.variance(), Some(2.0));
+        assert_eq!(laplace.mean(), 0.0);
+        assert_eq!(laplace.variance(), 2.0);
     }
 
     #[test]
@@ -827,8 +832,8 @@ mod tests {
     #[test]
     fn lognormal_properties() {
         let lognormal = LogNormal::standard();
-        assert!(lognormal.mean().is_some());
-        assert!(lognormal.variance().is_some());
+        assert!(!lognormal.mean().is_nan());
+        assert!(!lognormal.variance().is_nan());
     }
 
     #[test]
@@ -866,9 +871,9 @@ mod tests {
     #[test]
     fn normal_custom_parameters() {
         let normal = Normal::new(10.0, 2.0);
-        assert_eq!(normal.mean(), Some(10.0));
-        assert_eq!(normal.variance(), Some(4.0));
-        assert_eq!(normal.std_dev(), Some(2.0));
+        assert_eq!(normal.mean(), 10.0);
+        assert_eq!(normal.variance(), 4.0);
+        assert_eq!(normal.std_dev(), 2.0);
 
         let cdf = normal.cdf(10.0);
         assert!((cdf - 0.5).abs() < EPSILON);
@@ -884,8 +889,8 @@ mod tests {
     #[test]
     fn laplace_custom_parameters() {
         let laplace = Laplace::new(3.0, 1.5);
-        assert_eq!(laplace.mean(), Some(3.0));
-        assert_eq!(laplace.variance(), Some(2.0 * 1.5 * 1.5));
+        assert_eq!(laplace.mean(), 3.0);
+        assert_eq!(laplace.variance(), 2.0 * 1.5 * 1.5);
 
         let cdf = laplace.cdf(3.0);
         assert!((cdf - 0.5).abs() < EPSILON);
