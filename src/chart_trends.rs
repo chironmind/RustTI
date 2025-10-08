@@ -336,7 +336,6 @@ impl Default for TrendBreakConfig {
     }
 }
 
-
 /// Calculates price trends and their slopes and intercepts.
 ///
 /// # Arguments
@@ -382,7 +381,7 @@ impl Default for TrendBreakConfig {
 /// ```
 pub fn break_down_trends(
     prices: &[f64],
-    trend_break_config: TrendBreakConfig
+    trend_break_config: TrendBreakConfig,
 ) -> Vec<(usize, usize, f64, f64)> {
     if prices.is_empty() {
         panic!("Prices cannot be empty");
@@ -408,15 +407,15 @@ pub fn break_down_trends(
             let (adjusted_r_squared, rmse, durbin_watson) =
                 goodness_of_fit(&indexed_points, &current_trend);
 
-            let soft_break =
-                (adjusted_r_squared < trend_break_config.soft_adj_r_squared_minimum) &&
-                    (rmse > trend_break_config.soft_rmse_multiplier * previous_rmse) &&
-                    (durbin_watson < trend_break_config.soft_durbin_watson_min || durbin_watson > trend_break_config.soft_durbin_watson_max);  // Autocorrelation detected
+            let soft_break = (adjusted_r_squared < trend_break_config.soft_adj_r_squared_minimum)
+                && (rmse > trend_break_config.soft_rmse_multiplier * previous_rmse)
+                && (durbin_watson < trend_break_config.soft_durbin_watson_min
+                    || durbin_watson > trend_break_config.soft_durbin_watson_max); // Autocorrelation detected
 
-            let hard_break =
-                adjusted_r_squared < trend_break_config.hard_adj_r_squared_minimum ||
-                    rmse > trend_break_config.hard_rmse_multiplier * previous_rmse ||
-                    (durbin_watson < trend_break_config.hard_durbin_watson_min || durbin_watson > trend_break_config.hard_durbin_watson_max);  // Strong autocorrelation
+            let hard_break = adjusted_r_squared < trend_break_config.hard_adj_r_squared_minimum
+                || rmse > trend_break_config.hard_rmse_multiplier * previous_rmse
+                || (durbin_watson < trend_break_config.hard_durbin_watson_min
+                    || durbin_watson > trend_break_config.hard_durbin_watson_max); // Strong autocorrelation
 
             if soft_break || hard_break {
                 if outliers.len() < trend_break_config.max_outliers {
@@ -433,8 +432,7 @@ pub fn break_down_trends(
                 current_intercept = current_trend.1;
                 // if list bigger than 2
                 if indexed_points.len() > 2 {
-                    (_, previous_rmse, _) =
-                        goodness_of_fit(&indexed_points, &current_trend);
+                    (_, previous_rmse, _) = goodness_of_fit(&indexed_points, &current_trend);
                 } else {
                     previous_rmse = f64::MAX;
                 };
@@ -468,7 +466,7 @@ pub fn break_down_trends(
 fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64, f64, f64) {
     let n = indexed_points.len();
     if n < 2 {
-        return (0.0, 0.0, 2.0);  // Bad fit indicators
+        return (0.0, 0.0, 2.0); // Bad fit indicators
     }
 
     let trend_line: Vec<f64> = indexed_points
@@ -479,12 +477,11 @@ fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64,
 
     let observed_mean = mean(&observed_prices);
 
-    let (sum_sq_residuals, total_squares) =
-        (0..n).fold((0.0, 0.0), |(ssr, tss), i| {
-            let resid = observed_prices[i] - trend_line[i];
-            let total = observed_prices[i] - observed_mean;
-            (ssr + resid.powi(2), tss + total.powi(2))
-        });
+    let (sum_sq_residuals, total_squares) = (0..n).fold((0.0, 0.0), |(ssr, tss), i| {
+        let resid = observed_prices[i] - trend_line[i];
+        let total = observed_prices[i] - observed_mean;
+        (ssr + resid.powi(2), tss + total.powi(2))
+    });
 
     // Calculate metrics
     let degrees_of_freedom = ((n as f64) - 2.0).max(1.0);
@@ -504,8 +501,8 @@ fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64,
     // Calculate Durbin-Watson for autocorrelation
     let durbin_watson = if n > 1 {
         let dw_num = (1..n).fold(0.0, |acc, i| {
-            let diff = (observed_prices[i] - trend_line[i]) -
-                (observed_prices[i-1] - trend_line[i-1]);
+            let diff =
+                (observed_prices[i] - trend_line[i]) - (observed_prices[i - 1] - trend_line[i - 1]);
             acc + diff.powi(2)
         });
         if sum_sq_residuals > 1e-10 {
@@ -614,20 +611,17 @@ mod tests {
     fn break_down_trends_std_dev() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let trend_break_config = TrendBreakConfig {
-                max_outliers: 1,
-                soft_adj_r_squared_minimum: 0.5,
-                hard_adj_r_squared_minimum: 0.25,
-                soft_rmse_multiplier: 1.2,
-                hard_rmse_multiplier: 2.0,
-                soft_durbin_watson_min: 1.0,
-                soft_durbin_watson_max: 3.0,
-                hard_durbin_watson_min: 0.5,
-                hard_durbin_watson_max: 3.5,
+            max_outliers: 1,
+            soft_adj_r_squared_minimum: 0.5,
+            hard_adj_r_squared_minimum: 0.25,
+            soft_rmse_multiplier: 1.2,
+            hard_rmse_multiplier: 2.0,
+            soft_durbin_watson_min: 1.0,
+            soft_durbin_watson_max: 3.0,
+            hard_durbin_watson_min: 0.5,
+            hard_durbin_watson_max: 3.5,
         };
-        let trend_break_down = break_down_trends(
-            &prices,
-            trend_break_config
-        );
+        let trend_break_down = break_down_trends(&prices, trend_break_config);
         assert_eq!(
             vec![
                 (0, 2, 0.16499999999999915, 100.23166666666665),

@@ -377,15 +377,15 @@ pub mod single {
                 *frequency.entry(key).or_insert(0) += 1;
             }
         }
-        
+
         let mut result: Vec<(f64, usize)> = frequency
             .into_iter()
             .map(|(key, count)| ((key as f64) * precision, count))
             .collect();
-        
+
         // Sort by price in ascending order
         result.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(Ordering::Equal));
-        
+
         result
     }
 }
@@ -766,7 +766,11 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn price_distribution(prices: &[f64], period: usize, precision: f64) -> Vec<Vec<(f64, usize)>> {
+    pub fn price_distribution(
+        prices: &[f64],
+        period: usize,
+        precision: f64,
+    ) -> Vec<Vec<(f64, usize)>> {
         if period == 0 {
             panic!("Period ({}) must be greater than 0", period);
         }
@@ -777,7 +781,7 @@ pub mod bulk {
                 prices.len()
             );
         }
-        
+
         prices
             .windows(period)
             .map(|w| single::price_distribution(w, precision))
@@ -1174,8 +1178,11 @@ mod tests {
     #[test]
     fn test_single_price_distribution_unique() {
         let prices = vec![100.0, 101.0, 102.0, 103.0];
-        let distribution = single::price_distribution(&prices,1.0);
-        assert_eq!(vec![(100.0, 1), (101.0, 1), (102.0, 1), (103.0, 1)], distribution);
+        let distribution = single::price_distribution(&prices, 1.0);
+        assert_eq!(
+            vec![(100.0, 1), (101.0, 1), (102.0, 1), (103.0, 1)],
+            distribution
+        );
     }
 
     #[test]
@@ -1211,7 +1218,10 @@ mod tests {
         );
         assert_eq!(vec![(5950.0, 1)], single::price_distribution(&prices, 10.0));
         assert_eq!(vec![(5949.0, 1)], single::price_distribution(&prices, 1.0));
-        assert_eq!(vec![(5949.400000000001, 1)], single::price_distribution(&prices, 0.1));
+        assert_eq!(
+            vec![(5949.400000000001, 1)],
+            single::price_distribution(&prices, 0.1)
+        );
     }
 
     #[test]
@@ -1262,10 +1272,7 @@ mod tests {
         // [100.46,100.53,101.08] -> 100.5 (2), 101.0 (1)
         let distribution = bulk::price_distribution(&prices, 3, 0.5);
         assert_eq!(
-            vec![
-                vec![(100.0, 1), (100.5, 2)],
-                vec![(100.5, 2), (101.0, 1)],
-            ],
+            vec![vec![(100.0, 1), (100.5, 2)], vec![(100.5, 2), (101.0, 1)],],
             distribution
         );
     }
