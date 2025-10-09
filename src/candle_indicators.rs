@@ -43,7 +43,8 @@
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
     use crate::basic_indicators::single::{
-        absolute_deviation, max, median, min, mode, standard_deviation,
+        absolute_deviation, cauchy_iqr_scale, laplace_std_equivalent, log_standard_deviation, max,
+        median, min, mode, standard_deviation, student_t_adjusted_std,
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::other_indicators::single::average_true_range;
@@ -278,8 +279,12 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
+            DeviationModel::CustomAbsoluteDeviation(config) => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
-            _ => panic!("Unsupported DeviationModel"),
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
         };
         let upper_band = moving_constant + (deviation * deviation_multiplier);
         let lower_band = moving_constant - (deviation * deviation_multiplier);
@@ -362,8 +367,12 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
+            DeviationModel::CustomAbsoluteDeviation(config) => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
-            _ => panic!("Unsupported DeviationModel"),
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
         };
         let upper_band = mcginley_dynamic + (deviation * deviation_multiplier);
         let lower_band = mcginley_dynamic - (deviation * deviation_multiplier);

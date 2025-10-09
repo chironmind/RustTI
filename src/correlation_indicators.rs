@@ -29,7 +29,10 @@
 
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
-    use crate::basic_indicators::single::{absolute_deviation, median, mode, standard_deviation};
+    use crate::basic_indicators::single::{
+        absolute_deviation, cauchy_iqr_scale, laplace_std_equivalent, log_standard_deviation,
+        median, mode, standard_deviation, student_t_adjusted_std,
+    };
     use crate::moving_average::single::moving_average;
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
@@ -174,8 +177,14 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
+            DeviationModel::CustomAbsoluteDeviation(config) => {
+                absolute_deviation(prices_asset_a, config)
+            }
             DeviationModel::UlcerIndex => ulcer_index(prices_asset_a),
-            _ => panic!("Unsupported DeviationModel"),
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices_asset_a),
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_a, df),
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_a),
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_a),
         };
 
         let asset_b_deviation = match deviation_model {
@@ -201,8 +210,14 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
+            DeviationModel::CustomAbsoluteDeviation(config) => {
+                absolute_deviation(prices_asset_b, config)
+            }
             DeviationModel::UlcerIndex => ulcer_index(prices_asset_b),
-            _ => panic!("Unsupported DeviationModel"),
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices_asset_b),
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_b, df),
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_b),
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_b),
         };
         covariance / (asset_a_deviation * asset_b_deviation)
     }
