@@ -67,7 +67,10 @@ pub mod single {
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::strength_indicators::single::accumulation_distribution;
     use crate::volatility_indicators::single::ulcer_index;
-    use crate::{CentralPoint, ConstantModelType, DeviationModel, MovingAverageType};
+    use crate::{
+        AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
+        MovingAverageType,
+    };
     use std::cmp::Ordering;
 
     /// Calculates the Relative Strength Index (RSI)
@@ -575,7 +578,7 @@ pub mod single {
     ///         rust_ti::DeviationModel::MedianAbsoluteDeviation,
     ///         constant_multiplier
     ///     );  
-    /// assert_eq!(-111.11111111111111, median_mad_cci);
+    /// assert_eq!(-133.33333333333334, median_mad_cci);
     /// ```
     #[inline]
     pub fn commodity_channel_index(
@@ -615,11 +618,27 @@ pub mod single {
 
         let deviation = match deviation_model {
             DeviationModel::StandardDeviation => standard_deviation(prices),
-            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mean),
-            DeviationModel::MedianAbsoluteDeviation => {
-                absolute_deviation(prices, CentralPoint::Median)
-            }
-            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mode),
+            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mean,
+                    aggregate: DeviationAggregate::Mean,
+                },
+            ),
+            DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Median,
+                    aggregate: DeviationAggregate::Median,
+                },
+            ),
+            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mode,
+                    aggregate: DeviationAggregate::Mode,
+                },
+            ),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -686,11 +705,27 @@ pub mod single {
 
         let deviation = match deviation_model {
             DeviationModel::StandardDeviation => standard_deviation(prices),
-            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mean),
-            DeviationModel::MedianAbsoluteDeviation => {
-                absolute_deviation(prices, CentralPoint::Median)
-            }
-            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mode),
+            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mean,
+                    aggregate: DeviationAggregate::Mean,
+                },
+            ),
+            DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Median,
+                    aggregate: DeviationAggregate::Median,
+                },
+            ),
+            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mode,
+                    aggregate: DeviationAggregate::Mode,
+                },
+            ),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -1754,7 +1789,7 @@ pub mod bulk {
     ///         period
     ///     );  
     /// assert_eq!(
-    ///     vec![66.66666666666667, -100.00000000000001, -100.00000000000001],
+    ///     vec![66.66666666666667, -66.66666666666667, -66.66666666666667],
     ///     median_mad_cci
     /// );
     /// ```
@@ -3315,7 +3350,7 @@ mod tests {
     fn test_single_ma_median_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
-            -81.35593220339244,
+            -64.0,
             single::commodity_channel_index(
                 &prices,
                 crate::ConstantModelType::SimpleMovingAverage,
@@ -3329,7 +3364,7 @@ mod tests {
     fn test_single_ma_mode_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
-            -27.11864406779792,
+            0.0,
             single::commodity_channel_index(
                 &prices,
                 crate::ConstantModelType::SimpleMovingAverage,
@@ -3502,7 +3537,7 @@ mod tests {
     fn test_single_mcginley_cci_previous_median_absolute_deviation() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
-            (57.57930237998023, 100.23190366735862),
+            (53.39171675234611, 100.23190366735862),
             single::mcginley_dynamic_commodity_channel_index(
                 &prices,
                 100.21,
@@ -3516,7 +3551,7 @@ mod tests {
     fn test_single_mcginley_cci_previous_mode_absolute_deviation() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
-            (18.015609947110768, 100.23190366735862),
+            (0.0, 100.23190366735862),
             single::mcginley_dynamic_commodity_channel_index(
                 &prices,
                 100.21,

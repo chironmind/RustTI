@@ -61,7 +61,10 @@ fn main() {
     println!("   Variance: {:?}", lognormal.variance());
     println!("   PDF at x=1.0: {:.6}", lognormal.pdf(1.0));
     println!("   CDF at x=1.0: {:.6}", lognormal.cdf(1.0));
-    println!("   PDF at x=0.0: {:.6} (always 0 for x≤0)", lognormal.pdf(0.0));
+    println!(
+        "   PDF at x=0.0: {:.6} (always 0 for x≤0)",
+        lognormal.pdf(0.0)
+    );
     println!();
 
     // Comparison of tail behavior

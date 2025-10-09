@@ -32,7 +32,10 @@ pub mod single {
     use crate::basic_indicators::single::{absolute_deviation, median, mode, standard_deviation};
     use crate::moving_average::single::moving_average;
     use crate::volatility_indicators::single::ulcer_index;
-    use crate::{CentralPoint, ConstantModelType, DeviationModel, MovingAverageType};
+    use crate::{
+        AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
+        MovingAverageType,
+    };
 
     /// Calculates the correlation between two assets prices.
     ///
@@ -150,34 +153,57 @@ pub mod single {
 
         let asset_a_deviation = match deviation_model {
             DeviationModel::StandardDeviation => standard_deviation(prices_asset_a),
-            DeviationModel::MeanAbsoluteDeviation => {
-                absolute_deviation(prices_asset_a, CentralPoint::Mean)
-            }
-            DeviationModel::MedianAbsoluteDeviation => {
-                absolute_deviation(prices_asset_a, CentralPoint::Median)
-            }
-            DeviationModel::ModeAbsoluteDeviation => {
-                absolute_deviation(prices_asset_a, CentralPoint::Mode)
-            }
+            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
+                prices_asset_a,
+                AbsDevConfig {
+                    center: CentralPoint::Mean,
+                    aggregate: DeviationAggregate::Mean,
+                },
+            ),
+            DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
+                prices_asset_a,
+                AbsDevConfig {
+                    center: CentralPoint::Median,
+                    aggregate: DeviationAggregate::Median,
+                },
+            ),
+            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
+                prices_asset_a,
+                AbsDevConfig {
+                    center: CentralPoint::Mode,
+                    aggregate: DeviationAggregate::Mode,
+                },
+            ),
             DeviationModel::UlcerIndex => ulcer_index(prices_asset_a),
             _ => panic!("Unsupported DeviationModel"),
         };
 
         let asset_b_deviation = match deviation_model {
             DeviationModel::StandardDeviation => standard_deviation(prices_asset_b),
-            DeviationModel::MeanAbsoluteDeviation => {
-                absolute_deviation(prices_asset_b, CentralPoint::Mean)
-            }
-            DeviationModel::MedianAbsoluteDeviation => {
-                absolute_deviation(prices_asset_b, CentralPoint::Median)
-            }
-            DeviationModel::ModeAbsoluteDeviation => {
-                absolute_deviation(prices_asset_b, CentralPoint::Mode)
-            }
+            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
+                prices_asset_b,
+                AbsDevConfig {
+                    center: CentralPoint::Mean,
+                    aggregate: DeviationAggregate::Mean,
+                },
+            ),
+            DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
+                prices_asset_b,
+                AbsDevConfig {
+                    center: CentralPoint::Median,
+                    aggregate: DeviationAggregate::Median,
+                },
+            ),
+            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
+                prices_asset_b,
+                AbsDevConfig {
+                    center: CentralPoint::Mode,
+                    aggregate: DeviationAggregate::Mode,
+                },
+            ),
             DeviationModel::UlcerIndex => ulcer_index(prices_asset_b),
             _ => panic!("Unsupported DeviationModel"),
         };
-
         covariance / (asset_a_deviation * asset_b_deviation)
     }
 }
@@ -384,7 +410,7 @@ mod tests {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92];
         assert_eq!(
-            1.205018607543699,
+            0.8918502283104672,
             single::correlate_asset_prices(
                 &prices_a,
                 &prices_b,
@@ -399,7 +425,7 @@ mod tests {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92];
         assert_eq!(
-            0.38658762129158525,
+            f64::INFINITY,
             single::correlate_asset_prices(
                 &prices_a,
                 &prices_b,
