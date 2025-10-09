@@ -14,18 +14,25 @@
 //!
 //! ### Bulk
 //! - [`absolute_deviation`](bulk::absolute_deviation): Mean/Median/Mode absolute deviation over each period
+//! - [`cauchy_iqr_scale`](bulk::cauchy_iqr_scale): Cauchy IQR-based scale parameter over each period
+//! - [`laplace_std_equivalent`](bulk::laplace_std_equivalent): Laplace standard deviation equivalent over each period
 //! - [`log`](bulk::log): Natural logarithm of each price
 //! - [`log_difference`](bulk::log_difference): Difference in log(price) at t and t-1
+//! - [`log_standard_deviation`](bulk::log_standard_deviation): Log standard deviation over each period
 //! - [`mean`](bulk::mean): Average
 //! - [`median`](bulk::median): Median
 //! - [`mode`](bulk::mode): Mode
 //! - [`price_distribution`](bulk::price_distribution): Distribution of prices (count of each unique price) over each period
 //! - [`standard_deviation`](bulk::standard_deviation): Standard deviation
+//! - [`student_t_adjusted_std`](bulk::student_t_adjusted_std): Student's t-adjusted standard deviation over each period
 //! - [`variance`](bulk::variance): Variance
 //!
 //! ### Single
 //! - [`absolute_deviation`](single::absolute_deviation): Mean/Median/Mode absolute deviation
+//! - [`cauchy_iqr_scale`](single::cauchy_iqr_scale): Cauchy IQR-based scale parameter
+//! - [`laplace_std_equivalent`](single::laplace_std_equivalent): Laplace standard deviation equivalent
 //! - [`log_difference`](single::log_difference): Log difference between two prices
+//! - [`log_standard_deviation`](single::log_standard_deviation): Log standard deviation
 //! - [`max`](single::max): Maximum price
 //! - [`mean`](single::mean): Mean price
 //! - [`median`](single::median): Median price
@@ -33,6 +40,7 @@
 //! - [`mode`](single::mode): Mode price
 //! - [`price_distribution`](single::price_distribution): Distribution of prices (count of each unique price)
 //! - [`standard_deviation`](single::standard_deviation): Standard deviation
+//! - [`student_t_adjusted_std`](single::student_t_adjusted_std): Student's t-adjusted standard deviation
 //! - [`variance`](single::variance): Variance
 //!
 //! ---
@@ -298,6 +306,29 @@ pub mod single {
         }
     }
 
+    /// Calculates the log standard deviation of a slice of prices.
+    ///
+    /// Computes the standard deviation of log-transformed prices.
+    /// Useful for analyzing multiplicative/percentage-based volatility.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices (must all be positive)
+    ///
+    /// # Panics
+    ///
+    /// Panics if:
+    ///     * `prices.is_empty()`
+    ///     * Any price is <= 0
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use std::f64::consts::E;
+    /// let prices = vec![1.0, E, E.powi(2)];
+    /// let log_std = rust_ti::basic_indicators::single::log_standard_deviation(&prices);
+    /// assert!(log_std > 0.0);
+    /// ```
     #[inline]
     pub fn log_standard_deviation(prices: &[f64]) -> f64 {
         if prices.is_empty() {
@@ -313,6 +344,27 @@ pub mod single {
         standard_deviation(&logs)
     }
 
+    /// Calculates the Student's t-adjusted standard deviation.
+    ///
+    /// Adjusts the sample standard deviation by the factor sqrt(df/(df-2))
+    /// to match the standard deviation of a Student's t-distribution.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    /// * `df` - Degrees of freedom (must be > 2)
+    ///
+    /// # Panics
+    ///
+    /// Panics if `df` <= 2.0
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![1.0, 2.0, 3.0];
+    /// let student_std = rust_ti::basic_indicators::single::student_t_adjusted_std(&prices, 5.0);
+    /// assert!(student_std > 0.0);
+    /// ```
     #[inline]
     pub fn student_t_adjusted_std(prices: &[f64], df: f64) -> f64 {
         if df <= 2.0 {
@@ -322,6 +374,26 @@ pub mod single {
         s * (df / (df - 2.0)).sqrt()
     }
 
+    /// Calculates the Laplace standard deviation equivalent.
+    ///
+    /// Estimates the scale parameter of a Laplace distribution as sqrt(2) * MAD,
+    /// where MAD is the median absolute deviation from the median.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    ///
+    /// # Panics
+    ///
+    /// Panics if `prices.is_empty()`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
+    /// let laplace_std = rust_ti::basic_indicators::single::laplace_std_equivalent(&prices);
+    /// assert!(laplace_std > 0.0);
+    /// ```
     #[inline]
     pub fn laplace_std_equivalent(prices: &[f64]) -> f64 {
         // b_hat = MAD about median; σ_laplace = sqrt(2) * b
@@ -335,6 +407,26 @@ pub mod single {
         mad * 2.0f64.sqrt()
     }
 
+    /// Calculates the Cauchy IQR-based scale parameter.
+    ///
+    /// Estimates the scale parameter (gamma) of a Cauchy distribution as (Q3 - Q1) / 2,
+    /// where Q1 and Q3 are the first and third quartiles.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices (must have at least 4 values)
+    ///
+    /// # Panics
+    ///
+    /// Panics if `prices.len()` < 4
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![1.0, 2.0, 3.0, 4.0];
+    /// let cauchy_scale = rust_ti::basic_indicators::single::cauchy_iqr_scale(&prices);
+    /// assert!(cauchy_scale > 0.0);
+    /// ```
     #[inline]
     pub fn cauchy_iqr_scale(prices: &[f64]) -> f64 {
         if prices.len() < 4 {
@@ -871,6 +963,180 @@ pub mod bulk {
             .windows(period)
             .map(|w| single::price_distribution(w, precision))
             .collect()
+    }
+
+    /// Calculates the log standard deviation of a slice of prices over a given period.
+    ///
+    /// Computes the standard deviation of log-transformed prices in each window.
+    /// Useful for analyzing multiplicative/percentage-based volatility.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices (must be positive)
+    /// * `period` - Period over which to calculate the log standard deviation
+    ///
+    /// # Panics
+    ///
+    /// Panics if:
+    ///     * `period` == 0
+    ///     * `period` > `prices.len()`
+    ///     * Any price in a window is <= 0
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+    /// let log_std = rust_ti::basic_indicators::bulk::log_standard_deviation(&prices, 3);
+    /// assert_eq!(3, log_std.len());
+    /// ```
+    #[inline]
+    pub fn log_standard_deviation(prices: &[f64], period: usize) -> Vec<f64> {
+        if period == 0 {
+            panic!("Period ({}) must be greater than 0", period);
+        }
+        if period > prices.len() {
+            panic!(
+                "Period ({}) cannot be longer than the length of prices ({})",
+                period,
+                prices.len()
+            );
+        }
+        let mut result = Vec::with_capacity(prices.len());
+        for window in prices.windows(period) {
+            result.push(single::log_standard_deviation(window))
+        }
+        result
+    }
+
+    /// Calculates the Student's t-adjusted standard deviation over a given period.
+    ///
+    /// Adjusts the sample standard deviation by the factor sqrt(df/(df-2))
+    /// to match the standard deviation of a Student's t-distribution.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    /// * `period` - Period over which to calculate the standard deviation
+    /// * `df` - Degrees of freedom (must be > 2)
+    ///
+    /// # Panics
+    ///
+    /// Panics if:
+    ///     * `period` == 0
+    ///     * `period` > `prices.len()`
+    ///     * `df` <= 2.0
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+    /// let student_std = rust_ti::basic_indicators::bulk::student_t_adjusted_std(&prices, 3, 5.0);
+    /// assert_eq!(3, student_std.len());
+    /// ```
+    #[inline]
+    pub fn student_t_adjusted_std(prices: &[f64], period: usize, df: f64) -> Vec<f64> {
+        if period == 0 {
+            panic!("Period ({}) must be greater than 0", period);
+        }
+        if period > prices.len() {
+            panic!(
+                "Period ({}) cannot be longer than the length of prices ({})",
+                period,
+                prices.len()
+            );
+        }
+        let mut result = Vec::with_capacity(prices.len());
+        for window in prices.windows(period) {
+            result.push(single::student_t_adjusted_std(window, df))
+        }
+        result
+    }
+
+    /// Calculates the Laplace standard deviation equivalent over a given period.
+    ///
+    /// Estimates the scale parameter of a Laplace distribution as sqrt(2) * MAD,
+    /// where MAD is the median absolute deviation from the median.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    /// * `period` - Period over which to calculate the Laplace std equivalent
+    ///
+    /// # Panics
+    ///
+    /// Panics if:
+    ///     * `period` == 0
+    ///     * `period` > `prices.len()`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
+    /// let laplace_std = rust_ti::basic_indicators::bulk::laplace_std_equivalent(&prices, 3);
+    /// assert_eq!(3, laplace_std.len());
+    /// ```
+    #[inline]
+    pub fn laplace_std_equivalent(prices: &[f64], period: usize) -> Vec<f64> {
+        if period == 0 {
+            panic!("Period ({}) must be greater than 0", period);
+        }
+        if period > prices.len() {
+            panic!(
+                "Period ({}) cannot be longer than the length of prices ({})",
+                period,
+                prices.len()
+            );
+        }
+        let mut result = Vec::with_capacity(prices.len());
+        for window in prices.windows(period) {
+            result.push(single::laplace_std_equivalent(window))
+        }
+        result
+    }
+
+    /// Calculates the Cauchy IQR-based scale parameter over a given period.
+    ///
+    /// Estimates the scale parameter (gamma) of a Cauchy distribution as (Q3 - Q1) / 2,
+    /// where Q1 and Q3 are the first and third quartiles.
+    ///
+    /// # Arguments
+    ///
+    /// * `prices` - Slice of prices
+    /// * `period` - Period over which to calculate the Cauchy scale (must be >= 4)
+    ///
+    /// # Panics
+    ///
+    /// Panics if:
+    ///     * `period` < 4
+    ///     * `period` > `prices.len()`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+    /// let cauchy_scale = rust_ti::basic_indicators::bulk::cauchy_iqr_scale(&prices, 4);
+    /// assert_eq!(3, cauchy_scale.len());
+    /// ```
+    #[inline]
+    pub fn cauchy_iqr_scale(prices: &[f64], period: usize) -> Vec<f64> {
+        if period < 4 {
+            panic!(
+                "Period ({}) must be at least 4 for Cauchy IQR scale",
+                period
+            );
+        }
+        if period > prices.len() {
+            panic!(
+                "Period ({}) cannot be longer than the length of prices ({})",
+                period,
+                prices.len()
+            );
+        }
+        let mut result = Vec::with_capacity(prices.len());
+        for window in prices.windows(period) {
+            result.push(single::cauchy_iqr_scale(window))
+        }
+        result
     }
 }
 
@@ -1506,5 +1772,112 @@ mod tests {
     fn test_cauchy_iqr_scale_panics_on_short_input() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::cauchy_iqr_scale(&prices);
+    }
+
+    // Bulk tests for new functions
+
+    #[test]
+    fn test_bulk_log_standard_deviation() {
+        let prices = vec![1.0, E, E.powi(2), E.powi(3), E.powi(4)];
+        let log_std = bulk::log_standard_deviation(&prices, 3);
+        assert_eq!(3, log_std.len());
+        // Each window should have similar behavior to single version
+        assert!(log_std[0] > 0.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_log_standard_deviation_zero_period() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = bulk::log_standard_deviation(&prices, 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_log_standard_deviation_period_too_long() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = bulk::log_standard_deviation(&prices, 5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_log_standard_deviation_panics_on_non_positive() {
+        let prices = vec![1.0, 0.0, 2.0, 3.0];
+        let _ = bulk::log_standard_deviation(&prices, 2);
+    }
+
+    #[test]
+    fn test_bulk_student_t_adjusted_std() {
+        let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+        let df = 5.0;
+        let student_std = bulk::student_t_adjusted_std(&prices, 3, df);
+        assert_eq!(3, student_std.len());
+        // Each value should be adjusted by sqrt(df/(df-2))
+        assert!(student_std[0] > 0.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_student_t_adjusted_std_zero_period() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = bulk::student_t_adjusted_std(&prices, 0, 5.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_student_t_adjusted_std_period_too_long() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = bulk::student_t_adjusted_std(&prices, 5, 5.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_student_t_adjusted_std_panics_on_low_df() {
+        let prices = vec![1.0, 2.0, 3.0, 4.0];
+        let _ = bulk::student_t_adjusted_std(&prices, 2, 2.0);
+    }
+
+    #[test]
+    fn test_bulk_laplace_std_equivalent() {
+        let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
+        let laplace_std = bulk::laplace_std_equivalent(&prices, 3);
+        assert_eq!(3, laplace_std.len());
+        assert!(laplace_std[0] > 0.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_laplace_std_equivalent_zero_period() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = bulk::laplace_std_equivalent(&prices, 0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_laplace_std_equivalent_period_too_long() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = bulk::laplace_std_equivalent(&prices, 5);
+    }
+
+    #[test]
+    fn test_bulk_cauchy_iqr_scale() {
+        let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+        let cauchy_scale = bulk::cauchy_iqr_scale(&prices, 4);
+        assert_eq!(3, cauchy_scale.len());
+        assert!(cauchy_scale[0] > 0.0);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_cauchy_iqr_scale_period_less_than_four() {
+        let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
+        let _ = bulk::cauchy_iqr_scale(&prices, 3);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_bulk_cauchy_iqr_scale_period_too_long() {
+        let prices = vec![1.0, 2.0, 3.0, 4.0];
+        let _ = bulk::cauchy_iqr_scale(&prices, 5);
     }
 }
