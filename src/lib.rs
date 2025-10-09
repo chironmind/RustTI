@@ -37,6 +37,7 @@
 //! - [`candle_indicators`] - Candle chart tools (Ichimoku, bands, envelopes, etc.)
 //! - [`chart_trends`] - Trend and peak/valley analysis
 //! - [`correlation_indicators`] - Asset correlation metrics
+//! - [`distributions`] - Probability distributions (Normal, Cauchy, Student-t, Laplace, Log-normal)
 //! - [`momentum_indicators`] - Momentum and oscillator indicators
 //! - [`moving_average`] - Moving averages: simple, smoothed, exponential, McGinley, etc.
 //! - [`other_indicators`] - ROI, true range, internal bar strength, etc.
@@ -69,6 +70,7 @@ pub mod basic_indicators;
 pub mod candle_indicators;
 pub mod chart_trends;
 pub mod correlation_indicators;
+pub mod distributions;
 pub mod momentum_indicators;
 pub mod moving_average;
 pub mod other_indicators;

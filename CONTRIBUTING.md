@@ -25,9 +25,7 @@ See [open issues](https://github.com/ChironMind/RustTI/issues) if you want to st
 
 ### New Indicator Ideas
 
-- Indicator showing price distribution over a period (count unique prices, order ascending)
-- Median/mode absolute deviation based on deviation from mode/median (not mean)
-- McGinley dynamic versions of indicators using MA (Donchian, Keltner, Supertrend, PPO, RVI, etc.)
+- McGinley dynamic versions of indicators using MA (Donchian, Keltner, Supertrend, PPO, RVI, etc.)?
 
 ---
 
