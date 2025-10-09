@@ -185,6 +185,8 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_a, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_a),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_a),
+            #[allow(unreachable_patterns)]
+            _ => panic!("Unsupported DeviationModel"),
         };
 
         let asset_b_deviation = match deviation_model {
@@ -218,6 +220,8 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_b, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_b),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_b),
+            #[allow(unreachable_patterns)]
+            _ => panic!("Unsupported DeviationModel"),
         };
         covariance / (asset_a_deviation * asset_b_deviation)
     }
@@ -582,5 +586,59 @@ mod tests {
                 5_usize
             )
         );
+    }
+
+    // Tests for new deviation models
+    #[test]
+    fn test_correlate_asset_prices_log_std() {
+        let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
+        let result = single::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LogStandardDeviation,
+        );
+        // Just verify it produces a finite result
+        assert!(result.is_finite());
+    }
+
+    #[test]
+    fn test_correlate_asset_prices_student_t() {
+        let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
+        let result = single::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StudentT { df: 5.0 },
+        );
+        assert!(result.is_finite());
+    }
+
+    #[test]
+    fn test_correlate_asset_prices_laplace_std() {
+        let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
+        let result = single::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LaplaceStdEquivalent,
+        );
+        assert!(result.is_finite());
+    }
+
+    #[test]
+    fn test_correlate_asset_prices_cauchy_iqr() {
+        let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
+        let result = single::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::CauchyIQRScale,
+        );
+        assert!(result.is_finite());
     }
 }

@@ -285,6 +285,8 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            #[allow(unreachable_patterns)]
+            _ => panic!("Unsupported DeviationModel"),
         };
         let upper_band = moving_constant + (deviation * deviation_multiplier);
         let lower_band = moving_constant - (deviation * deviation_multiplier);
@@ -373,6 +375,8 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            #[allow(unreachable_patterns)]
+            _ => panic!("Unsupported DeviationModel"),
         };
         let upper_band = mcginley_dynamic + (deviation * deviation_multiplier);
         let lower_band = mcginley_dynamic - (deviation * deviation_multiplier);
@@ -2460,5 +2464,72 @@ mod tests {
             2.0,
             5_usize,
         );
+    }
+
+    // Tests for new deviation models
+    #[test]
+    fn test_moving_constant_bands_log_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LogStandardDeviation,
+            2.0,
+        );
+        assert!(result.0 > 0.0); // Lower band
+        assert!(result.1 > 0.0); // Middle (SMA)
+        assert!(result.2 > result.1); // Upper band > middle
+    }
+
+    #[test]
+    fn test_moving_constant_bands_student_t() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StudentT { df: 5.0 },
+            2.0,
+        );
+        assert!(result.0 > 0.0);
+        assert!(result.2 > result.1);
+    }
+
+    #[test]
+    fn test_moving_constant_bands_laplace_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LaplaceStdEquivalent,
+            2.0,
+        );
+        assert!(result.0 > 0.0);
+        assert!(result.2 > result.1);
+    }
+
+    #[test]
+    fn test_moving_constant_bands_cauchy_iqr() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::CauchyIQRScale,
+            2.0,
+        );
+        assert!(result.0 > 0.0);
+        assert!(result.2 > result.1);
+    }
+
+    #[test]
+    fn test_mcginley_dynamic_bands_log_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::mcginley_dynamic_bands(
+            &prices,
+            crate::DeviationModel::LogStandardDeviation,
+            2.0,
+            100.5,
+        );
+        assert!(result.0 > 0.0);
+        assert!(result.2 > result.1);
     }
 }

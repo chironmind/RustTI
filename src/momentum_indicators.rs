@@ -646,6 +646,8 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            #[allow(unreachable_patterns)]
+            _ => panic!("Unsupported DeviationModel"),
         };
         if deviation == 0.0 {
             0.0
@@ -737,6 +739,8 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            #[allow(unreachable_patterns)]
+            _ => panic!("Unsupported DeviationModel"),
         };
         if deviation == 0.0 {
             (0.0, mcginley_dynamic)
@@ -4642,5 +4646,67 @@ mod tests {
     fn bulk_chande_momentum_oscillator_panic_empty() {
         let prices = Vec::new();
         bulk::chande_momentum_oscillator(&prices, 5_usize);
+    }
+
+    // Tests for new deviation models
+    #[test]
+    fn test_commodity_channel_index_log_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
+        let result = single::commodity_channel_index(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LogStandardDeviation,
+            0.015,
+        );
+        assert!(!result.is_nan());
+    }
+
+    #[test]
+    fn test_commodity_channel_index_student_t() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
+        let result = single::commodity_channel_index(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StudentT { df: 5.0 },
+            0.015,
+        );
+        assert!(!result.is_nan());
+    }
+
+    #[test]
+    fn test_commodity_channel_index_laplace_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
+        let result = single::commodity_channel_index(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LaplaceStdEquivalent,
+            0.015,
+        );
+        assert!(!result.is_nan());
+    }
+
+    #[test]
+    fn test_commodity_channel_index_cauchy_iqr() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
+        let result = single::commodity_channel_index(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::CauchyIQRScale,
+            0.015,
+        );
+        assert!(!result.is_nan());
+    }
+
+    #[test]
+    fn test_mcginley_dynamic_cci_log_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
+        let result = single::mcginley_dynamic_commodity_channel_index(
+            &prices,
+            100.5,
+            crate::DeviationModel::LogStandardDeviation,
+            0.015,
+        );
+        assert!(!result.0.is_nan());
+        assert!(!result.1.is_nan());
     }
 }
