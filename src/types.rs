@@ -49,12 +49,13 @@ pub enum DeviationModel {
     MeanAbsoluteDeviation,
     MedianAbsoluteDeviation,
     ModeAbsoluteDeviation,
-    CustomAbsoluteDeviation(AbsDevConfig),
+    CustomAbsoluteDeviation{config: AbsDevConfig},
     UlcerIndex,
     LogStandardDeviation,
     StudentT { df: f64 },
     LaplaceStdEquivalent,
     CauchyIQRScale,
+    EmpiricalQuantileRange { low: f64, high: f64, precision: f64 },
 }
 
 /// Trade position.

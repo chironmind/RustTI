@@ -279,12 +279,20 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation(config) => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation{config} => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices,
+                    precision,
+                    low,
+                    high,
+                )
+            }
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -369,7 +377,7 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation(config) => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
@@ -2476,9 +2484,7 @@ mod tests {
             crate::DeviationModel::LogStandardDeviation,
             2.0,
         );
-        assert!(result.0 > 0.0); // Lower band
-        assert!(result.1 > 0.0); // Middle (SMA)
-        assert!(result.2 > result.1); // Upper band > middle
+        assert_eq!((100.97199217847599, 101.0, 101.02800782152401), result);
     }
 
     #[test]
@@ -2490,8 +2496,7 @@ mod tests {
             crate::DeviationModel::StudentT { df: 5.0 },
             2.0,
         );
-        assert!(result.0 > 0.0);
-        assert!(result.2 > result.1);
+        assert_eq!((97.34851628329889, 101.0, 104.65148371670111), result);
     }
 
     #[test]
@@ -2503,8 +2508,7 @@ mod tests {
             crate::DeviationModel::LaplaceStdEquivalent,
             2.0,
         );
-        assert!(result.0 > 0.0);
-        assert!(result.2 > result.1);
+        assert_eq!((98.17157287525382, 101.0, 103.82842712474618), result);
     }
 
     #[test]
@@ -2516,8 +2520,7 @@ mod tests {
             crate::DeviationModel::CauchyIQRScale,
             2.0,
         );
-        assert!(result.0 > 0.0);
-        assert!(result.2 > result.1);
+        assert_eq!((98.0, 101.0, 104.0), result);
     }
 
     #[test]
@@ -2529,7 +2532,6 @@ mod tests {
             2.0,
             100.5,
         );
-        assert!(result.0 > 0.0);
-        assert!(result.2 > result.1);
+        assert_eq!((100.15339294737205, 100.18140076889607, 100.20940859042008), result);
     }
 }

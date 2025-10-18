@@ -640,12 +640,20 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation(config) => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices,
+                    precision,
+                    low,
+                    high,
+                )
+            }
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -733,12 +741,20 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation(config) => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices,
+                    precision,
+                    low,
+                    high,
+                )
+            },
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -4658,7 +4674,7 @@ mod tests {
             crate::DeviationModel::LogStandardDeviation,
             0.015,
         );
-        assert!(!result.is_nan());
+        assert_eq!(-1805.2605574498584, result);
     }
 
     #[test]
@@ -4670,7 +4686,7 @@ mod tests {
             crate::DeviationModel::StudentT { df: 5.0 },
             0.015,
         );
-        assert!(!result.is_nan());
+        assert_eq!(-13.912166872805114, result);
     }
 
     #[test]
@@ -4682,7 +4698,7 @@ mod tests {
             crate::DeviationModel::LaplaceStdEquivalent,
             0.015,
         );
-        assert!(!result.is_nan());
+        assert_eq!(-20.20305089104431, result);
     }
 
     #[test]
@@ -4694,7 +4710,7 @@ mod tests {
             crate::DeviationModel::CauchyIQRScale,
             0.015,
         );
-        assert!(!result.is_nan());
+        assert_eq!(-19.04761904761914, result);
     }
 
     #[test]
@@ -4706,7 +4722,25 @@ mod tests {
             crate::DeviationModel::LogStandardDeviation,
             0.015,
         );
-        assert!(!result.0.is_nan());
-        assert!(!result.1.is_nan());
+        assert_eq!((-1799.197740117997, 100.42713210709822), result);
+    }
+
+    #[test]
+    fn test_single_sma_cci_with_empirical_iqr() {
+        // prices [1,2,3,4], SMA = 2.5, last=4 => numerator=1.5
+        // IQR (0.25,0.75) with precision=1.0 => 1.5 (from basic test)
+        // CCI = 1.5 / (0.015 * 1.5) = 66.666...
+        let prices = vec![1.0, 2.0, 3.0, 4.0];
+        let cci = single::commodity_channel_index(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::EmpiricalQuantileRange {
+                low: 0.25,
+                high: 0.75,
+                precision: 1.0,
+            },
+            0.015,
+        );
+        assert_eq!(50.0, cci);
     }
 }

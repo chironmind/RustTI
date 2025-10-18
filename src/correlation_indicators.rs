@@ -177,7 +177,7 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation(config) => {
+            DeviationModel::CustomAbsoluteDeviation { config } => {
                 absolute_deviation(prices_asset_a, config)
             }
             DeviationModel::UlcerIndex => ulcer_index(prices_asset_a),
@@ -185,6 +185,14 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_a, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_a),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_a),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices_asset_a,
+                    precision,
+                    low,
+                    high,
+                )
+            }
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -212,7 +220,7 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation(config) => {
+            DeviationModel::CustomAbsoluteDeviation { config } => {
                 absolute_deviation(prices_asset_b, config)
             }
             DeviationModel::UlcerIndex => ulcer_index(prices_asset_b),
@@ -220,6 +228,14 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_b, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_b),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_b),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices_asset_b,
+                    precision,
+                    low,
+                    high,
+                )
+            }
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -600,7 +616,7 @@ mod tests {
             crate::DeviationModel::LogStandardDeviation,
         );
         // Just verify it produces a finite result
-        assert!(result.is_finite());
+        assert_eq!(10299.383075453763, result);
     }
 
     #[test]
@@ -613,7 +629,7 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StudentT { df: 5.0 },
         );
-        assert!(result.is_finite());
+        assert_eq!(0.6, result);
     }
 
     #[test]
@@ -626,7 +642,7 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::LaplaceStdEquivalent,
         );
-        assert!(result.is_finite());
+        assert_eq!(0.9999999999999998, result);
     }
 
     #[test]
@@ -639,6 +655,6 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::CauchyIQRScale,
         );
-        assert!(result.is_finite());
+        assert_eq!(0.8888888888888888, result);
     }
 }

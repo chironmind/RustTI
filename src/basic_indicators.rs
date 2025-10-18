@@ -569,6 +569,93 @@ pub mod single {
 
         result
     }
+
+    #[inline]
+    fn empirical_quantile_from_distribution(
+        prices: &[f64],
+        precision: f64,
+        q: f64,
+    ) -> f64 {
+        if !(q > 0.0 && q < 1.0) {
+            panic!("Quantile ({}) must be in (0,1)", q);
+        }
+        let hist = price_distribution(prices, precision);
+        let n: usize = hist.iter().map(|(_, c)| *c).sum();
+        if n == 0 {
+            return f64::NAN;
+        }
+        // Rank using (n - 1) interpolation baseline
+        let target = q * (n.saturating_sub(1)) as f64;
+
+        // Walk cumulative counts
+        let mut cum = 0usize;
+        for (i, (price, count)) in hist.iter().enumerate() {
+            let prev_cum = cum;
+            cum += *count;
+
+            if (target as usize) < cum {
+                // Inside this bucket. Interpolate toward the next bucket center if any.
+                let within = if *count > 1 {
+                    // Fraction within this bucket: distance from prev_cum to target
+                    (target - prev_cum as f64) / (*count as f64)
+                } else {
+                    0.0
+                };
+                if i + 1 < hist.len() {
+                    let (next_price, _) = hist[i + 1];
+                    return price + within.clamp(0.0, 1.0) * (next_price - price);
+                } else {
+                    return *price;
+                }
+            }
+        }
+        // Fallback (shouldn’t happen): return last price
+        hist.last().map(|(p, _)| *p).unwrap_or(f64::NAN)
+    }
+
+    /// Computes an empirical quantile from the histogram produced by `price_distribution`,
+    /// using linear interpolation across adjacent buckets.
+    ///
+    /// The histogram is constructed by bucketing values to the provided `precision`. For example,
+    /// `precision = 1.0` groups by whole numbers; `precision = 0.01` groups by cents.
+    ///
+    /// Quantile definition:
+    /// - Uses target rank `q * (n - 1)` where `n` is the total count in the histogram.
+    /// - Walks cumulative counts until the bucket containing the rank is found.
+    /// - Interpolates linearly toward the next bucket center by the within-bucket fraction.
+    ///   If no next bucket exists (last bucket), returns the current bucket center.
+    ///
+    /// Panics:
+    /// - If `q` is not in (0, 1).
+    /// - If `precision <= 0.0` or `precision` is NaN (via `price_distribution`).
+    ///
+    /// Examples
+    /// ```
+    /// let prices = vec![1.0, 2.0, 3.0, 4.0];
+    /// let q25 = rust_ti::basic_indicators::single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75);
+    /// assert_eq!(2.0, q25);
+    /// ```
+    #[inline]
+    pub fn empirical_quantile_range_from_distribution(
+        prices: &[f64],
+        precision: f64,
+        low: f64,
+        high: f64,
+    ) -> f64 {
+        if !(precision > 0.0) {
+            panic!("precision ({}) must be > 0.0 and not NaN", precision);
+        }
+        if !(low > 0.0 && low < 1.0 && high > 0.0 && high < 1.0 && low < high) {
+            panic!(
+                "Invalid quantile bounds: low ({}) and high ({}) must be in (0,1) and low < high",
+                low, high
+            );
+        }
+        let ql = empirical_quantile_from_distribution(prices, precision, low);
+        let qh = empirical_quantile_from_distribution(prices, precision, high);
+        qh - ql
+    }
+
 }
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
@@ -1137,6 +1224,51 @@ pub mod bulk {
             result.push(single::cauchy_iqr_scale(window))
         }
         result
+    }
+
+    /// Empirical quantile range `q_high - q_low` computed from the price histogram.
+    ///
+    /// This function is a building block for an empirical deviation model: choose a lower and
+    /// upper quantile (e.g., 0.25 and 0.75 for IQR) and a `precision` that matches the instrument’s
+    /// tick size to get a robust, distribution-free scale for each window or slice.
+    ///
+    /// - Histogram: prices are grouped to `precision` and counted by `price_distribution`.
+    /// - Quantiles: computed via [`empirical_quantile_from_distribution`] with linear interpolation.
+    /// - Result: `q(high) - q(low)` as a width (not a variance-derived standard deviation).
+    ///
+    /// Panics:
+    /// - If `precision <= 0.0` or NaN.
+    /// - If `low`, `high` are not in (0, 1) or `low >= high`.
+    ///
+    /// Examples
+    /// ```
+    /// // IQR for [1,2,3,4] at precision 1.0 is 3.25 - 1.75 = 1.5
+    /// let prices = vec![1.0, 2.0, 3.0, 4.0];
+    /// let iqr = rust_ti::basic_indicators::bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
+    /// assert_eq!(vec![1.0, 1.0], iqr);
+    /// ```
+    #[inline]
+    pub fn empirical_quantile_range_from_distribution(
+        prices: &[f64],
+        period: usize,
+        precision: f64,
+        low: f64,
+        high: f64,
+    ) -> Vec<f64> {
+        if period == 0 {
+            panic!("Period ({}) must be greater than 0", period);
+        }
+        if period > prices.len() {
+            panic!(
+                "Period ({}) cannot be longer than the length of provided prices ({})",
+                period,
+                prices.len()
+            );
+        }
+        prices
+            .windows(period)
+            .map(|w| single::empirical_quantile_range_from_distribution(w, precision, low, high))
+            .collect()
     }
 }
 
@@ -1880,4 +2012,27 @@ mod tests {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let _ = bulk::cauchy_iqr_scale(&prices, 5);
     }
+    #[test]
+    fn test_single_empirical_quantile_range_from_distribution_simple() {
+        // For [1,2,3,4] with precision 1.0, q25=1.75, q75=3.25 => IQR=1.5 (linear interpolation)
+        let prices = vec![1.0, 2.0, 3.0, 4.0];
+        let iqr = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75);
+        assert_eq!(2.0, iqr,);
+    }
+
+    #[test]
+    fn test_bulk_empirical_quantile_range_from_distribution() {
+        let prices = vec![1.0, 2.0, 3.0, 4.0];
+        let v = bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
+        // windows: [1,2,3] -> IQR=1.0; [2,3,4] -> IQR=1.0
+        assert_eq!(vec![1.0, 1.0], v);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_single_empirical_quantile_invalid_bounds() {
+        let prices = vec![1.0, 2.0, 3.0];
+        let _ = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.8, 0.2);
+    }
+
 }
