@@ -383,6 +383,14 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices,
+                    precision,
+                    low,
+                    high,
+                )
+            }
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
