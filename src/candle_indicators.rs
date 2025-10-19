@@ -43,12 +43,16 @@
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
     use crate::basic_indicators::single::{
-        absolute_deviation, max, median, min, mode, standard_deviation,
+        absolute_deviation, cauchy_iqr_scale, laplace_std_equivalent, log_standard_deviation, max,
+        median, min, mode, standard_deviation, student_t_adjusted_std,
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::other_indicators::single::average_true_range;
     use crate::volatility_indicators::single::ulcer_index;
-    use crate::{CentralPoint, ConstantModelType, DeviationModel, MovingAverageType};
+    use crate::{
+        AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
+        MovingAverageType,
+    };
 
     /// Calculates upper/lower envelopes around a moving constant (mean, median, etc.)
     ///
@@ -254,12 +258,42 @@ pub mod single {
 
         let deviation = match deviation_model {
             DeviationModel::StandardDeviation => standard_deviation(prices),
-            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mean),
-            DeviationModel::MedianAbsoluteDeviation => {
-                absolute_deviation(prices, CentralPoint::Median)
-            }
-            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mode),
+            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mean,
+                    aggregate: DeviationAggregate::Mean,
+                },
+            ),
+            DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Median,
+                    aggregate: DeviationAggregate::Median,
+                },
+            ),
+            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mode,
+                    aggregate: DeviationAggregate::Mode,
+                },
+            ),
+            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices,
+                    precision,
+                    low,
+                    high,
+                )
+            }
+            #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
         let upper_band = moving_constant + (deviation * deviation_multiplier);
@@ -322,12 +356,42 @@ pub mod single {
 
         let deviation = match deviation_model {
             DeviationModel::StandardDeviation => standard_deviation(prices),
-            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mean),
-            DeviationModel::MedianAbsoluteDeviation => {
-                absolute_deviation(prices, CentralPoint::Median)
-            }
-            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(prices, CentralPoint::Mode),
+            DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mean,
+                    aggregate: DeviationAggregate::Mean,
+                },
+            ),
+            DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Median,
+                    aggregate: DeviationAggregate::Median,
+                },
+            ),
+            DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
+                prices,
+                AbsDevConfig {
+                    center: CentralPoint::Mode,
+                    aggregate: DeviationAggregate::Mode,
+                },
+            ),
+            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
+                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                    prices,
+                    precision,
+                    low,
+                    high,
+                )
+            }
+            #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
         let upper_band = mcginley_dynamic + (deviation * deviation_multiplier);
@@ -1532,7 +1596,7 @@ mod tests {
     fn test_single_ma_median_ad_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
-            (100.118, 100.354, 100.59),
+            (100.05399999999999, 100.354, 100.65400000000001),
             single::moving_constant_bands(
                 &prices,
                 crate::ConstantModelType::SimpleMovingAverage,
@@ -1546,7 +1610,7 @@ mod tests {
     fn test_single_ma_mode_ad_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
-            (99.646, 100.354, 101.062),
+            (100.354, 100.354, 100.354),
             single::moving_constant_bands(
                 &prices,
                 crate::ConstantModelType::SimpleMovingAverage,
@@ -1646,7 +1710,7 @@ mod tests {
     fn test_single_mcginley_bands_median_ad_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
-            (99.97399999999999, 100.21, 100.446),
+            (99.90999999999998, 100.21, 100.51),
             single::mcginley_dynamic_bands(
                 &prices,
                 crate::DeviationModel::MedianAbsoluteDeviation,
@@ -1660,7 +1724,7 @@ mod tests {
     fn test_single_mcginley_bands_mode_ad_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
-            (99.502, 100.21, 100.91799999999999),
+            (100.21, 100.21, 100.21),
             single::mcginley_dynamic_bands(
                 &prices,
                 crate::DeviationModel::ModeAbsoluteDeviation,
@@ -2416,5 +2480,66 @@ mod tests {
             2.0,
             5_usize,
         );
+    }
+
+    // Tests for new deviation models
+    #[test]
+    fn test_moving_constant_bands_log_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LogStandardDeviation,
+            2.0,
+        );
+        assert_eq!((100.97199217847599, 101.0, 101.02800782152401), result);
+    }
+
+    #[test]
+    fn test_moving_constant_bands_student_t() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StudentT { df: 5.0 },
+            2.0,
+        );
+        assert_eq!((97.34851628329889, 101.0, 104.65148371670111), result);
+    }
+
+    #[test]
+    fn test_moving_constant_bands_laplace_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::LaplaceStdEquivalent,
+            2.0,
+        );
+        assert_eq!((98.17157287525382, 101.0, 103.82842712474618), result);
+    }
+
+    #[test]
+    fn test_moving_constant_bands_cauchy_iqr() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::moving_constant_bands(
+            &prices,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::CauchyIQRScale,
+            2.0,
+        );
+        assert_eq!((98.0, 101.0, 104.0), result);
+    }
+
+    #[test]
+    fn test_mcginley_dynamic_bands_log_std() {
+        let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
+        let result = single::mcginley_dynamic_bands(
+            &prices,
+            crate::DeviationModel::LogStandardDeviation,
+            2.0,
+            100.5,
+        );
+        assert_eq!((100.15339294737205, 100.18140076889607, 100.20940859042008), result);
     }
 }

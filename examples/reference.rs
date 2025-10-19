@@ -7,6 +7,8 @@
 // Output is printed directly for reference and exploration purposes.
 
 use rust_ti;
+use rust_ti::distributions::Distribution;
+use rust_ti::{AbsDevConfig, CentralPoint, DeviationAggregate};
 use std::time::Instant;
 
 fn main() {
@@ -340,21 +342,30 @@ fn main() {
     let mean_ad = rust_ti::basic_indicators::bulk::absolute_deviation(
         &typical_price,
         period,
-        rust_ti::CentralPoint::Mean,
+        AbsDevConfig {
+            center: CentralPoint::Mean,
+            aggregate: DeviationAggregate::Mean,
+        },
     );
     println!("Mean Absolute Deviation: {:?}", mean_ad);
 
     let median_ad = rust_ti::basic_indicators::bulk::absolute_deviation(
         &typical_price,
         period,
-        rust_ti::CentralPoint::Median,
+        AbsDevConfig {
+            center: CentralPoint::Median,
+            aggregate: DeviationAggregate::Median,
+        },
     );
     println!("Median Absolute Deviation: {:?}", median_ad);
 
     let mode_ad = rust_ti::basic_indicators::bulk::absolute_deviation(
         &typical_price,
         period,
-        rust_ti::CentralPoint::Mode,
+        AbsDevConfig {
+            center: CentralPoint::Mode,
+            aggregate: DeviationAggregate::Mode,
+        },
     );
     println!("Mode Absolute Deviation: {:?}", mode_ad);
 
@@ -700,8 +711,7 @@ fn main() {
 
     // Chart trends (truncated, see documentation for argument meaning)
     let trend_break_config = rust_ti::chart_trends::TrendBreakConfig::default();
-    let break_down_trends = rust_ti::chart_trends::break_down_trends(
-        &close, trend_break_config);
+    let break_down_trends = rust_ti::chart_trends::break_down_trends(&close, trend_break_config);
     println!("Broken down trends: {:?}", break_down_trends);
 
     let valleys = rust_ti::chart_trends::valleys(&close, 30, 5);
@@ -710,6 +720,77 @@ fn main() {
     let peaks = rust_ti::chart_trends::peaks(&close, 30, 5);
     println!("Peaks: {:?}", peaks);
 
+    // Distributions
+    println!("\n=== Distributions ===");
+
+    // Normal Distribution
+    let normal = rust_ti::distributions::Normal::new(0.0, 1.0);
+    println!(
+        "Normal (μ=0, σ=1) - Mean: {}, Variance: {}, Std Dev: {}",
+        normal.mean(),
+        normal.variance(),
+        normal.std_dev()
+    );
+    println!("Normal PDF at x=0.0: {:.6}", normal.pdf(0.0));
+    println!("Normal CDF at x=0.0: {:.6}", normal.cdf(0.0));
+
+    let custom_normal = rust_ti::distributions::Normal::new(100.0, 15.0);
+    println!(
+        "Normal (μ=100, σ=15) - Mean: {}, PDF at x=100.0: {:.6}",
+        custom_normal.mean(),
+        custom_normal.pdf(100.0)
+    );
+
+    // Cauchy Distribution
+    let cauchy = rust_ti::distributions::Cauchy::standard();
+    println!(
+        "Cauchy (standard) - Mean: {} (undefined), Variance: {} (undefined)",
+        cauchy.mean(),
+        cauchy.variance()
+    );
+    println!("Cauchy PDF at x=0.0: {:.6}", cauchy.pdf(0.0));
+    println!("Cauchy CDF at x=0.0: {:.6}", cauchy.cdf(0.0));
+
+    // Student's t-Distribution
+    let student_t = rust_ti::distributions::StudentT::new(5.0);
+    println!(
+        "Student-t (df=5) - Mean: {}, Variance: {:.6}",
+        student_t.mean(),
+        student_t.variance()
+    );
+    println!("Student-t PDF at x=0.0: {:.6}", student_t.pdf(0.0));
+    println!("Student-t CDF at x=0.0: {:.6}", student_t.cdf(0.0));
+
+    // Laplace Distribution
+    let laplace = rust_ti::distributions::Laplace::standard();
+    println!(
+        "Laplace (standard) - Mean: {}, Variance: {}",
+        laplace.mean(),
+        laplace.variance()
+    );
+    println!("Laplace PDF at x=0.0: {:.6}", laplace.pdf(0.0));
+    println!("Laplace CDF at x=0.0: {:.6}", laplace.cdf(0.0));
+
+    // Log-Normal Distribution
+    let lognormal = rust_ti::distributions::LogNormal::standard();
+    println!(
+        "LogNormal (standard) - Mean: {:.6}, Variance: {:.6}",
+        lognormal.mean(),
+        lognormal.variance()
+    );
+    println!("LogNormal PDF at x=1.0: {:.6}", lognormal.pdf(1.0));
+    println!("LogNormal CDF at x=1.0: {:.6}", lognormal.cdf(1.0));
+
+    // Tail probability comparison
+    let normal_tail = 1.0 - rust_ti::distributions::Normal::standard().cdf(3.0);
+    let cauchy_tail = 1.0 - rust_ti::distributions::Cauchy::standard().cdf(3.0);
+    let student_t_tail = 1.0 - rust_ti::distributions::StudentT::new(5.0).cdf(3.0);
+    let laplace_tail = 1.0 - rust_ti::distributions::Laplace::standard().cdf(3.0);
+    println!(
+        "Tail probabilities P(X > 3): Normal={:.6}, Cauchy={:.6}, Student-t={:.6}, Laplace={:.6}",
+        normal_tail, cauchy_tail, student_t_tail, laplace_tail
+    );
+
     let elapsed = now.elapsed();
-    println!("Elapsed: {:.2?}", elapsed);
+    println!("\nElapsed: {:.2?}", elapsed);
 }

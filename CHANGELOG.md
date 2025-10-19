@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [Unreleased]
+### Added
+- Added new deviation indicators:
+  - log_standard_deviation
+  - student_t_adjusted_std
+  - laplace_std_equivalent
+  - cauchy_iqr_scale
+- AbsDevConfig and DeviationAggregate to allow caller to specify which aggregate to use for absolute deviation calculations
+
+### Changed
+- Updated DeviationModel to include new deviation types, and CustomAbsoluteDeviation that allows caller to specify which central point and aggregate to use
+- absolute_deviation now uses AbsDevConfig to allow caller to specify which aggregate to use
+
 ## [2.1.5] - 2025-10-07
 ### Added
 - Added new indicator: Price distribution

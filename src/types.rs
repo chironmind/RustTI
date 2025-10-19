@@ -6,6 +6,22 @@ pub enum CentralPoint {
     Mode,
 }
 
+/// How to aggregate a set of absolute deviations.
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum DeviationAggregate {
+    Mean,
+    Median,
+    Mode,
+}
+
+/// Configuration that controls how absolute deviations are computed.
+/// Example: center = Median, aggregate = Median => true MedianAD (median of |x - median|).
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct AbsDevConfig {
+    pub center: CentralPoint,
+    pub aggregate: DeviationAggregate,
+}
+
 /// Type of moving average.
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum MovingAverageType {
@@ -27,13 +43,19 @@ pub enum ConstantModelType {
 }
 
 /// How to measure deviation from a center point.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum DeviationModel {
     StandardDeviation,
     MeanAbsoluteDeviation,
     MedianAbsoluteDeviation,
     ModeAbsoluteDeviation,
+    CustomAbsoluteDeviation { config: AbsDevConfig },
     UlcerIndex,
+    LogStandardDeviation,
+    StudentT { df: f64 },
+    LaplaceStdEquivalent,
+    CauchyIQRScale,
+    EmpiricalQuantileRange { low: f64, high: f64, precision: f64 },
 }
 
 /// Trade position.
