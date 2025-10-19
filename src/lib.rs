@@ -70,7 +70,7 @@ pub mod basic_indicators;
 pub mod candle_indicators;
 pub mod chart_trends;
 pub mod correlation_indicators;
-pub mod distributions;
+// pub mod distributions;
 pub mod momentum_indicators;
 pub mod moving_average;
 pub mod other_indicators;
