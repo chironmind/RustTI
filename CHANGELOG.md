@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [Unreleased]
+### Removed
+- Removed unused `deviation.rs` file
+
 ## [2.2.0] - 2025-10-19
 ### Added
 - Added new deviation indicators:
