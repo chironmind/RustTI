@@ -754,7 +754,7 @@ pub mod single {
                     low,
                     high,
                 )
-            },
+            }
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };

@@ -279,7 +279,7 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation{config} => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),

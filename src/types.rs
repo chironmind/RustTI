@@ -49,7 +49,7 @@ pub enum DeviationModel {
     MeanAbsoluteDeviation,
     MedianAbsoluteDeviation,
     ModeAbsoluteDeviation,
-    CustomAbsoluteDeviation{config: AbsDevConfig},
+    CustomAbsoluteDeviation { config: AbsDevConfig },
     UlcerIndex,
     LogStandardDeviation,
     StudentT { df: f64 },
