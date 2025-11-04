@@ -81,7 +81,8 @@ Simple Moving Average: 100.352
 - [Choosing the right deviation model:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
 - [Choosing the right period:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
 - [How to use the Personalised Moving Average:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
-- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
+- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions
+- [Indicator Documentation Template Guide:](INDICATOR_TEMPLATE_GUIDE.md) Create comprehensive documentation for RustTI indicators for Zola SSG websites 
 
 
 *(Contributions welcome! Submit your favorite how-to guide as a PR.)*
