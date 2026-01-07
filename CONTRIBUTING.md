@@ -1,4 +1,4 @@
-# Contributing to RustTI
+# Contributing to Centaur Technical Indicators
 
 Thank you for considering contributing—every improvement is appreciated, big or small!
 
@@ -8,11 +8,11 @@ Thank you for considering contributing—every improvement is appreciated, big o
 
 1. **Fork and clone the repository**  
 2. **Make your changes**  
-3. **Open a Pull Request (PR)** on [GitHub](https://github.com/ChironMind/RustTI/pulls)
+3. **Open a Pull Request (PR)** on [GitHub](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/pulls)
 4. **Tag @ChironMind** in your PR for a review
-5. **Run benchmarks** from [RustTI-Benchmarks](https://github.com/ChironMind/RustTI-benchmarks)
+5. **Run benchmarks** from [CentaurTechnicalIndicators-benchmarks](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
 
-See [open issues](https://github.com/ChironMind/RustTI/issues) if you want to start with something small.
+See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/issues) if you want to start with something small.
 
 ---
 
@@ -38,7 +38,7 @@ See [open issues](https://github.com/ChironMind/RustTI/issues) if you want to st
 3. **Verify results**  
    - Add a tab to `assets/rust_ti_hand_calcs.ods` with hand calculations to ensure test accuracy
 4. **Add to benchmarks and run**
-   - Add a bench in [RustTI-Benchmarks](https://github.com/ChironMind/RustTI-benchmarks), run it, and document the runtime
+   - Add a bench in [CentaurTechnicalIndicators-benchmarks](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks), run it, and document the runtime
 
 ---
 

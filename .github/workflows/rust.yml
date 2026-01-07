@@ -1,4 +1,4 @@
-name: Rust TI Build and Test
+name: Centaur Technical Indicators Build and Test
 
 on:
   push:

@@ -58,7 +58,7 @@ pub mod single {
     /// let previous = 0.0;
     ///
     /// let accumulation_distribution =
-    ///     rust_ti::strength_indicators::single::accumulation_distribution(
+    ///     centaur_technical_indicators::strength_indicators::single::accumulation_distribution(
     ///         high,
     ///         low,
     ///         close,
@@ -72,7 +72,7 @@ pub mod single {
     /// let close = 100.0;
     /// let volume = 1500.0;
     /// let accumulation_distribution =
-    ///     rust_ti::strength_indicators::single::accumulation_distribution(
+    ///     centaur_technical_indicators::strength_indicators::single::accumulation_distribution(
     ///         high,
     ///         low,
     ///         close,
@@ -108,7 +108,7 @@ pub mod single {
     /// let current_close = 105.0;
     /// let previous_close = 100.0;
     ///
-    /// let volume_index = rust_ti::strength_indicators::single::volume_index(
+    /// let volume_index = centaur_technical_indicators::strength_indicators::single::volume_index(
     ///     current_close,
     ///     previous_close,
     ///     0.0
@@ -117,7 +117,7 @@ pub mod single {
     /// assert_eq!(0.052500000000000005, volume_index);
     ///
     /// let next_close = 103.0;
-    /// let volume_index = rust_ti::strength_indicators::single::volume_index(
+    /// let volume_index = centaur_technical_indicators::strength_indicators::single::volume_index(
     ///     next_close,
     ///     current_close,
     ///     volume_index
@@ -165,12 +165,12 @@ pub mod single {
     /// let close = vec![100.0, 115.0, 115.0, 120.0, 125.0, 110.0, 100.0, 90.0];
     ///
     /// let relative_vigor_index =
-    ///     rust_ti::strength_indicators::single::relative_vigor_index(
+    ///     centaur_technical_indicators::strength_indicators::single::relative_vigor_index(
     ///         &open,
     ///         &high,
     ///         &low,
     ///         &close,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     ///     );
     ///
     /// assert_eq!(0.10185185185185186, relative_vigor_index);
@@ -297,7 +297,7 @@ pub mod bulk {
     /// let previous = 0.0;
     ///
     /// let accumulation_distribution =
-    ///     rust_ti::strength_indicators::bulk::accumulation_distribution(
+    ///     centaur_technical_indicators::strength_indicators::bulk::accumulation_distribution(
     ///         &high,
     ///         &low,
     ///         &close,
@@ -355,7 +355,7 @@ pub mod bulk {
     /// let volume = vec![1000.0, 1200.0, 1300.0, 1100.0, 1100.0];
     ///
     /// let positive_volume_index =
-    ///     rust_ti::strength_indicators::bulk::positive_volume_index(
+    ///     centaur_technical_indicators::strength_indicators::bulk::positive_volume_index(
     ///         &close,
     ///         &volume,
     ///         0.0
@@ -367,7 +367,7 @@ pub mod bulk {
     /// let next_volume = vec![1100.0, 1000.0, 1500.0, 1600.0];
     ///
     /// let positive_volume_index =
-    ///     rust_ti::strength_indicators::bulk::positive_volume_index(
+    ///     centaur_technical_indicators::strength_indicators::bulk::positive_volume_index(
     ///         &next_close,
     ///         &next_volume,
     ///         *positive_volume_index.last().unwrap()
@@ -426,7 +426,7 @@ pub mod bulk {
     /// let volume = vec![1000.0, 1200.0, 1300.0, 1100.0, 1100.0];
     ///
     /// let negative_volume_index =
-    ///     rust_ti::strength_indicators::bulk::negative_volume_index(
+    ///     centaur_technical_indicators::strength_indicators::bulk::negative_volume_index(
     ///         &close,
     ///         &volume,
     ///         0.0
@@ -442,7 +442,7 @@ pub mod bulk {
     /// let next_volume = vec![1100.0, 1000.0, 1500.0, 1600.0];
     ///
     /// let negative_volume_index =
-    ///     rust_ti::strength_indicators::bulk::negative_volume_index(
+    ///     centaur_technical_indicators::strength_indicators::bulk::negative_volume_index(
     ///         &next_close,
     ///         &next_volume,
     ///         *negative_volume_index.last().unwrap()
@@ -511,12 +511,12 @@ pub mod bulk {
     /// let close = vec![100.0, 115.0, 115.0, 120.0, 125.0, 110.0, 100.0, 90.0, 80.0, 110.0];
     /// let period: usize = 8;
     ///
-    /// let relative_vigor_index = rust_ti::strength_indicators::bulk::relative_vigor_index(
+    /// let relative_vigor_index = centaur_technical_indicators::strength_indicators::bulk::relative_vigor_index(
     ///     &open,
     ///     &high,
     ///     &low,
     ///     &close,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     period
     /// );
     ///

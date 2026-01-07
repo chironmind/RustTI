@@ -1,10 +1,10 @@
-//! # RustTI
+//! # Centaur Technical Indicators
 //!
-//! **RustTI** is an comprehensive, highly configurable Technical Indicators library for Rust.
+//! **Centaur Technical Indicators** is a comprehensive, highly configurable Technical Indicators library for Rust.
 //! It empowers you to design, compute, and experiment with a wide variety of
 //! technical indicators for financial data analysis.
 //!
-//! ## Why RustTI?
+//! ## Why Centaur Technical Indicators?
 //! - **Configurable**: Nearly every parameter (from periods to models) is customizable.
 //! - **Modern**: Suitable for stocks, crypto, and any asset with arbitrary trading calendars.
 //! - **Powerful**: Use industry standards or create your own quant-style indicators.
@@ -12,7 +12,7 @@
 //!
 //! ## Philosophy
 //! Prefer customizing your indicators to fit your market and strategy, just like the best quants do.
-//! RustTI gives you the flexibility to do just that.
+//! Centaur Technical Indicators gives you the flexibility to do just that.
 //!
 //! ## Library Structure
 //!
@@ -24,7 +24,7 @@
 //! ## Quick Start
 //!
 //! ```rust
-//! use rust_ti::standard_indicators::bulk::rsi;
+//! use centaur_technical_indicators::standard_indicators::bulk::rsi;
 //! let prices = vec![100.0, 102.0, 103.0, 102.5, 102.8, 103.1, 103.8, 103.9, 104.4, 103.6, 103.1,
 //! 102.9, 103.3, 103.7];
 //! let my_rsi = rsi(&prices);
@@ -56,11 +56,12 @@
 //!
 //! This repository is part of a structured documentation suite:
 //!
-//! - **Tutorials:** [See here](https://github.com/ChironMind/RustTI-tutorials)
-//! - **How-To Guides:** [See here](https://github.com/ChironMind/RustTI-how-to-guides)
-//! - **Benchmarks:** [See here](github.com/ChironMind/RustTI-benchmarks)
+//! - **Tutorials:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials)
+//! - **How-To Guides:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides)
+//! - **Benchmarks:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
 //! - **Explanations:** Coming soon
 //! - **Reference:** You're here!
+//! - **Centaur Labs:** [https://centaurlabs.pages.dev/](https://centaurlabs.pages.dev/)
 //!
 //! ---
 

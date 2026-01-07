@@ -1,12 +1,12 @@
 [package]
-name = "rust_ti"
-version = "2.2.0"
+name = "centaur_technical_indicators"
+version = "1.0.0"
 edition = "2021"
 authors = ["ChironMind"]
-description = "A fully configurable technical indicators library with over 70 unique indicators written in pure Rust"
+description = "Centaur Technical Indicators - A fully configurable technical indicators library with over 70 unique indicators written in pure Rust"
 readme = "README.md"
-repository = "https://github.com/ChironMind/rustTI"
-homepage = "https://github.com/ChironMind/rustTI"
+repository = "https://github.com/ChironMind/CentaurTechnicalIndicators-Rust"
+homepage = "https://centaurlabs.pages.dev/"
 license = "MIT"
 keywords = [
 	"trading", 
@@ -17,11 +17,11 @@ keywords = [
 ]
 categories = ["finance", "mathematics", "science", "algorithms"]
 exclude = ["/assets", "/.git", "/.github"]
-documentation = "https://docs.rs/rust_ti/latest/rust_ti/"
+documentation = "https://docs.rs/centaur_technical_indicators"
 
 [badges]
 docsrs = { status = "true" }
-github-actions = { repository = "ChironMind/RustTI", workflow = "rust.yml", branch = "main" }
+github-actions = { repository = "ChironMind/CentaurTechnicalIndicators-Rust", workflow = "rust.yml", branch = "main" }
 
 [[example]]
 name = "reference"

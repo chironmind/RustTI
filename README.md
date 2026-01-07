@@ -1,13 +1,13 @@
-![RustTI Banner](./assets/rustTI_banner.png)
+![Centaur Technical Indicators Banner](./assets/rustTI_banner.png)
 
-[![Crates.io Version](https://img.shields.io/crates/v/rust_ti.svg)](https://crates.io/crates/rust_ti)
-[![Docs.rs](https://docs.rs/rust_ti/badge.svg)](https://docs.rs/rust_ti/)
-[![CI](https://github.com/ChironMind/RustTI/actions/workflows/rust.yml/badge.svg)](https://github.com/ChironMind/RustTI/actions)
-[![License](https://img.shields.io/github/license/ChironMind/RustTI)](LICENSE-MIT)
+[![Crates.io Version](https://img.shields.io/crates/v/centaur_technical_indicators.svg)](https://crates.io/crates/centaur_technical_indicators)
+[![Docs.rs](https://docs.rs/centaur_technical_indicators/badge.svg)](https://docs.rs/centaur_technical_indicators/)
+[![CI](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/actions/workflows/rust.yml/badge.svg)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/actions)
+[![License](https://img.shields.io/github/license/ChironMind/CentaurTechnicalIndicators-Rust)](LICENSE-MIT)
 
-[![Crates.io Downloads](https://img.shields.io/crates/d/rust_ti.svg)](https://crates.io/crates/rust_ti)
-[![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/RustTI-tutorials)
-[![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/RustTI-benchmarks)
+[![Crates.io Downloads](https://img.shields.io/crates/d/centaur_technical_indicators.svg)](https://crates.io/crates/centaur_technical_indicators)
+[![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials)
+[![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
 
 # 🦀 Meet RustTI
 
@@ -15,44 +15,46 @@ Say hello to RusTI, the clawed crusader of candlesticks and the battle-hardened 
 
 Forged from rusted metal and born in the depths of the financial abyss, RusTI doesn't just ride sideways markets — he lives for them. With a stack of notebooks, a thousand-yard stare, and more indicators on his screen than legs on his body, RusTI is the ultimate trading bro. He reads charts, calculates MACD in his sleep, and isn’t afraid to pinch your code into shape.
 
-Welcome to RustTI — powered by precision, performance, and one extremely serious crustacean.
+Welcome to Centaur Technical Indicators — powered by precision, performance, and one extremely serious crustacean from Centaur Labs.
 
-# RustTI
+# Centaur Technical Indicators
 
 A highly configurable and high-performance technical indicators library written in pure Rust. 
 
 Designed for flexibility, speed, and advanced use cases in quantitative and algorithmic trading.
 
-Looking for the Python bindings? See: [PyTechnicalIndicators](https://github.com/chironmind/PyTechnicalIndicators)
+Part of the Centaur Labs ecosystem — visit [https://centaurlabs.pages.dev/](https://centaurlabs.pages.dev/) for more.
 
-Looking for the WASM bindings? See: [ti-engine](https://github.com/chironmind/ti-engine)
+Looking for the Python bindings? See: [CentaurTechnicalIndicators-Python](https://github.com/chironmind/CentaurTechnicalIndicators-Python)
+
+Looking for the WASM bindings? See: [CentaurTechnicalIndicators-JS](https://github.com/chironmind/CentaurTechnicalIndicators-JS)
 
 ---
 
 ## 🚀 Getting Started (Tutorial)
 
-> The fastest way to get up and running with RustTI.
+> The fastest way to get up and running with Centaur Technical Indicators.
 
-**1. Add RustTI to your project:**
+**1. Add Centaur Technical Indicators to your project:**
 
 ```shell
-cargo add rust_ti
+cargo add centaur_technical_indicators
 ```
 Or, manually in your `Cargo.toml`:
 ```toml
-rust_ti = "2.1.4"
+centaur_technical_indicators = "1.0.0"
 ```
 
 **2. Calculate your first indicator:**
 
 ```rust
-use rust_ti;
+use centaur_technical_indicators;
 
 let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
 
-let ma = rust_ti::moving_average::single::moving_average(
+let ma = centaur_technical_indicators::moving_average::single::moving_average(
     &prices,
-    rust_ti::MovingAverageType::Simple
+    centaur_technical_indicators::MovingAverageType::Simple
 );
 println!("Simple Moving Average: {}", ma);
 ```
@@ -63,11 +65,11 @@ Simple Moving Average: 100.352
 
 **3. Explore more tutorials**
 
-- [Getting started tutorial](https://github.com/ChironMind/RustTI-tutorials/blob/main/getting_started.md)
-- [Choosing the right model](https://github.com/ChironMind/RustTI-tutorials/blob/main/choose_right_model.md)
-- [Building your first strategy](https://github.com/ChironMind/RustTI-tutorials/blob/main/first_strategy.md)
-- [Backtesting tutorial](https://github.com/ChironMind/RustTI-tutorials/blob/main/backtest.md)
-- [Visualization tutorial](https://github.com/ChironMind/RustTI-tutorials/blob/main/visualization.md)
+- [Getting started tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/getting_started.md)
+- [Choosing the right model](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/choose_right_model.md)
+- [Building your first strategy](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/first_strategy.md)
+- [Backtesting tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/backtest.md)
+- [Visualization tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/visualization.md)
 
 ---
 
@@ -75,13 +77,13 @@ Simple Moving Average: 100.352
 
 > Task-oriented guides for common problems and advanced scenarios.
 
-- [Load CSV Price Data:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/load_csv.md) Parse OHLC prices from a file and calculate RSI 
-- [When to use a bulk vs single module:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/bulk_vs_single.md) Understand when to use bulk functions or single functions
-- [Choosing the right constant model type:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_constant_model_type.md) Programatically determine the best `ConstantModelType` 
-- [Choosing the right deviation model:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
-- [Choosing the right period:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
-- [How to use the Personalised Moving Average:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
-- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/RustTI-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
+- [Load CSV Price Data:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/load_csv.md) Parse OHLC prices from a file and calculate RSI 
+- [When to use a bulk vs single module:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/bulk_vs_single.md) Understand when to use bulk functions or single functions
+- [Choosing the right constant model type:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/choose_constant_model_type.md) Programatically determine the best `ConstantModelType` 
+- [Choosing the right deviation model:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
+- [Choosing the right period:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
+- [How to use the Personalised Moving Average:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
+- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
 
 
 *(Contributions welcome! Submit your favorite how-to guide as a PR.)*
@@ -91,13 +93,13 @@ Simple Moving Average: 100.352
 
 ## 📚 Reference
 
-> For complete API details, see [docs.rs/rust_ti](https://docs.rs/rust_ti/).
+> For complete API details, see [docs.rs/centaur_technical_indicators](https://docs.rs/centaur_technical_indicators/).
 
 ### Example
 
 A reference of how to call each function can be found 
 
-- [Reference Example](https://github.com/ChironMind/RustTI/blob/main/examples/reference.rs)
+- [Reference Example](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/blob/main/examples/reference.rs)
 
 Clone and run:
 ```shell
@@ -118,7 +120,7 @@ cargo run --example reference
 
 ## 🧠 Explanation & Design
 
-### Why RustTI?
+### Why Centaur Technical Indicators?
 
 - **Performance:** Pure Rust implementation for maximal speed, safety, and zero dependencies.
 - **Configurability:** Most indicators are highly customizable—tweak calculation methods, periods, or even use medians instead of means.
@@ -171,7 +173,7 @@ Each module has `bulk` (vector output) and `single` (scalar output) submodules.
 
 ## 📊 Performance Benchmarks
 
-Want to know how fast RustTI runs in real-world scenarios?  
+Want to know how fast Centaur Technical Indicators runs in real-world scenarios?  
 We provide detailed, reproducible benchmarks using realistic OHLCV data and a variety of indicators.
 
 ### Momentum Indicators
@@ -289,35 +291,37 @@ We provide detailed, reproducible benchmarks using realistic OHLCV data and a va
 
 *These results are from a Raspberry Pi 5 8GB, your machine will likely be faster!*
 
-👉 [See all benchmarks and how to run your own](https://github.com/ChironMind/RustTI-benchmarks)
+👉 [See all benchmarks and how to run your own](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
 
 ---
 
 ## 🤝 Contributing
 
 Contributions, bug reports, and feature requests are welcome!
-- [Open an issue](https://github.com/ChironMind/RustTI/issues)
-- [Submit a pull request](https://github.com/ChironMind/RustTI/pulls)
+- [Open an issue](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/issues)
+- [Submit a pull request](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/pulls)
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ---
 
 ## 💬 Community & Support
 
-- Start a [discussion](https://github.com/ChironMind/RustTI/discussions)
-- File [issues](https://github.com/ChironMind/RustTI/issues)
-- Add your project to the [Showcase](https://github.com/ChironMind/RustTI/discussions/categories/show-and-tell)
+- Start a [discussion](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/discussions)
+- File [issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/issues)
+- Add your project to the [Showcase](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/discussions/categories/show-and-tell)
 
 ---
 
 ## 📰 Release Notes
 
-**Latest (v2.1.4):**
-- Minor document updates
+**Latest (v1.0.0):**
+- Rebranded from RustTI to Centaur Technical Indicators
+- Part of the Centaur Labs ecosystem
+- All functionality remains the same
 
-[Human friendly changelog →](https://github.com/ChironMind/RustTI/blob/main/CHANGELOG.md)
+[Human friendly changelog →](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/blob/main/CHANGELOG.md)
 
-[Full changelog →](https://github.com/ChironMind/RustTI/releases)
+[Full changelog →](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/releases)
 
 ---
 

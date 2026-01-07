@@ -68,7 +68,7 @@ pub mod single {
     ///
     /// ```rust
     /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0];
-    /// let aroon_up = rust_ti::trend_indicators::single::aroon_up(&highs);
+    /// let aroon_up = centaur_technical_indicators::trend_indicators::single::aroon_up(&highs);
     /// assert_eq!(50.0, aroon_up);
     /// ```
     #[inline]
@@ -97,7 +97,7 @@ pub mod single {
     ///
     /// ```rust
     /// let lows = vec![98.0, 95.0, 101.0, 100.0, 97.0];
-    /// let aroon_down = rust_ti::trend_indicators::single::aroon_down(&lows);
+    /// let aroon_down = centaur_technical_indicators::trend_indicators::single::aroon_down(&lows);
     /// assert_eq!(25.0, aroon_down);
     /// ```
     #[inline]
@@ -125,7 +125,7 @@ pub mod single {
     /// let aroon_up = 50.0;
     /// let aroon_down = 25.0;
     /// let aroon_oscillator =
-    ///     rust_ti::trend_indicators::single::aroon_oscillator(
+    ///     centaur_technical_indicators::trend_indicators::single::aroon_oscillator(
     ///         aroon_up,
     ///         aroon_down
     ///     );
@@ -153,7 +153,7 @@ pub mod single {
     /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0];
     /// let lows = vec![98.0, 95.0, 101.0, 100.0, 97.0];
     /// let aroon_indicator =
-    ///     rust_ti::trend_indicators::single::aroon_indicator(&highs, &lows);
+    ///     centaur_technical_indicators::trend_indicators::single::aroon_indicator(&highs, &lows);
     /// assert_eq!((50.0, 25.0, 25.0), aroon_indicator);
     /// ```
     #[inline]
@@ -190,7 +190,7 @@ pub mod single {
     /// let low = 50.6;
     ///
     /// let parabolic_time_price_system =
-    ///     rust_ti::trend_indicators::single::long_parabolic_time_price_system(
+    ///     centaur_technical_indicators::trend_indicators::single::long_parabolic_time_price_system(
     ///         previous_sar,
     ///         extreme_point,
     ///         acceleration_factor,
@@ -204,7 +204,7 @@ pub mod single {
     /// let low = 52.1;
     ///
     /// let parabolic_time_price_system =
-    ///     rust_ti::trend_indicators::single::long_parabolic_time_price_system(
+    ///     centaur_technical_indicators::trend_indicators::single::long_parabolic_time_price_system(
     ///         previous_sar,
     ///         extreme_point,
     ///         acceleration_factor,
@@ -241,7 +241,7 @@ pub mod single {
     /// let high = 50.6;
     ///
     /// let parabolic_time_price_system =
-    ///     rust_ti::trend_indicators::single::short_parabolic_time_price_system(
+    ///     centaur_technical_indicators::trend_indicators::single::short_parabolic_time_price_system(
     ///         previous_sar,
     ///         extreme_point,
     ///         acceleration_factor,
@@ -255,7 +255,7 @@ pub mod single {
     /// let low = 58.1;
     ///
     /// let parabolic_time_price_system =
-    ///     rust_ti::trend_indicators::single::short_parabolic_time_price_system(
+    ///     centaur_technical_indicators::trend_indicators::single::short_parabolic_time_price_system(
     ///         previous_sar,
     ///         extreme_point,
     ///         acceleration_factor,
@@ -289,7 +289,7 @@ pub mod single {
     /// let current_price = 102.0;
     /// let previous_price = 101.0;
     /// let volume = 1000.0;
-    /// let volume_price_trend = rust_ti::trend_indicators::single::volume_price_trend(
+    /// let volume_price_trend = centaur_technical_indicators::trend_indicators::single::volume_price_trend(
     ///     current_price,
     ///     previous_price,
     ///     volume,
@@ -299,7 +299,7 @@ pub mod single {
     ///
     /// let next_price = 100.0;
     /// let next_volume = 1500.0;
-    /// let volume_price_trend = rust_ti::trend_indicators::single::volume_price_trend(
+    /// let volume_price_trend = centaur_technical_indicators::trend_indicators::single::volume_price_trend(
     ///     next_price,
     ///     current_price,
     ///     next_volume,
@@ -336,11 +336,11 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 115.0, 118.0, 120.0, 125.0, 117.0, 113.0, 115.0];
-    /// let true_strength_index = rust_ti::trend_indicators::single::true_strength_index(
+    /// let true_strength_index = centaur_technical_indicators::trend_indicators::single::true_strength_index(
     ///     &prices,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     5_usize,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     /// );
     ///
     /// assert_eq!(-0.25821030430852665, true_strength_index);
@@ -502,7 +502,7 @@ pub mod bulk {
     /// ```rust
     /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 102.0, 99.0];
     /// let period: usize = 5;
-    /// let aroon_up = rust_ti::trend_indicators::bulk::aroon_up(&highs, period);
+    /// let aroon_up = centaur_technical_indicators::trend_indicators::bulk::aroon_up(&highs, period);
     /// assert_eq!(vec![50.0, 25.0, 0.0], aroon_up);
     /// ```
     #[inline]
@@ -538,7 +538,7 @@ pub mod bulk {
     /// ```rust
     /// let lows = vec![98.0, 95.0, 101.0, 100.0, 97.0, 98.0, 97.0];
     /// let period: usize = 5;
-    /// let aroon_down = rust_ti::trend_indicators::bulk::aroon_down(&lows, period);
+    /// let aroon_down = centaur_technical_indicators::trend_indicators::bulk::aroon_down(&lows, period);
     /// assert_eq!(vec![25.0, 0.0, 100.0], aroon_down);
     /// ```
     #[inline]
@@ -575,7 +575,7 @@ pub mod bulk {
     /// let aroon_up = vec![50.0, 25.0, 0.0];
     /// let aroon_down = vec![25.0, 0.0, 100.0];
     /// let aroon_oscillator =
-    ///     rust_ti::trend_indicators::bulk::aroon_oscillator(
+    ///     centaur_technical_indicators::trend_indicators::bulk::aroon_oscillator(
     ///         &aroon_up,
     ///         &aroon_down
     ///     );
@@ -619,7 +619,7 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let aroon_indicator =
-    ///     rust_ti::trend_indicators::bulk::aroon_indicator(
+    ///     centaur_technical_indicators::trend_indicators::bulk::aroon_indicator(
     ///         &highs,
     ///         &lows,
     ///         period
@@ -688,13 +688,13 @@ pub mod bulk {
     /// let acceleration_factor_step = 0.02;
     ///
     /// let parabolic_time_price_system =
-    ///     rust_ti::trend_indicators::bulk::parabolic_time_price_system(
+    ///     centaur_technical_indicators::trend_indicators::bulk::parabolic_time_price_system(
     ///         &highs,
     ///         &lows,
     ///         acceleration_factor_start,
     ///         acceleration_factor_max,
     ///         acceleration_factor_step,
-    ///         rust_ti::Position::Long,
+    ///         centaur_technical_indicators::Position::Long,
     ///         50.0
     ///     );
     /// assert_eq!(
@@ -723,13 +723,13 @@ pub mod bulk {
     /// ];
     ///
     /// let parabolic_time_price_system =
-    ///     rust_ti::trend_indicators::bulk::parabolic_time_price_system(
+    ///     centaur_technical_indicators::trend_indicators::bulk::parabolic_time_price_system(
     ///         &highs,
     ///         &lows,
     ///         acceleration_factor_start,
     ///         acceleration_factor_max,
     ///         acceleration_factor_step,
-    ///         rust_ti::Position::Short,
+    ///         centaur_technical_indicators::Position::Short,
     ///         0.0
     ///     );
     /// assert_eq!(
@@ -924,12 +924,12 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let directional_movement_system =
-    ///     rust_ti::trend_indicators::bulk::directional_movement_system(
+    ///     centaur_technical_indicators::trend_indicators::bulk::directional_movement_system(
     ///         &high,
     ///         &low,
     ///         &close,
     ///         period,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     /// );
     ///
     /// assert_eq!(
@@ -1088,7 +1088,7 @@ pub mod bulk {
     /// let volumes = [1000.0, 1500.0];
     ///
     /// let volume_price_trend =
-    ///     rust_ti::trend_indicators::bulk::volume_price_trend(
+    ///     centaur_technical_indicators::trend_indicators::bulk::volume_price_trend(
     ///         &prices,
     ///         &volumes,
     ///         0.0
@@ -1102,7 +1102,7 @@ pub mod bulk {
     /// let next_volumes = [2000.0, 800.0];
     ///
     /// let volume_price_trend =
-    ///     rust_ti::trend_indicators::bulk::volume_price_trend(
+    ///     centaur_technical_indicators::trend_indicators::bulk::volume_price_trend(
     ///         &next_prices,
     ///         &next_volumes,
     ///         volume_price_trend[1]
@@ -1168,11 +1168,11 @@ pub mod bulk {
     /// ```rust
     /// let prices =
     ///     vec![100.0, 115.0, 118.0, 120.0, 125.0, 117.0, 113.0, 115.0, 110.0, 107.0];
-    /// let true_strength_index = rust_ti::trend_indicators::bulk::true_strength_index(
+    /// let true_strength_index = centaur_technical_indicators::trend_indicators::bulk::true_strength_index(
     ///     &prices,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     5_usize,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     3_usize
     /// );
     ///

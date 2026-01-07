@@ -1,13 +1,13 @@
-// Reference Example: Bulk Usage of rust_ti API
+// Reference Example: Bulk Usage of centaur_technical_indicators API
 //
-// This file demonstrates the various functions available in the rust_ti crate.
+// This file demonstrates the various functions available in the centaur_technical_indicators crate.
 // Each section shows a direct call of a function or method from the library, with minimal setup and no explanatory narrative.
 //
 // Data is generated up front and reused across calls. Each function is called with representative arguments.
 // Output is printed directly for reference and exploration purposes.
 
-use rust_ti;
-use rust_ti::{AbsDevConfig, CentralPoint, DeviationAggregate};
+use centaur_technical_indicators;
+use centaur_technical_indicators::{AbsDevConfig, CentralPoint, DeviationAggregate};
 use std::time::Instant;
 
 fn main() {
@@ -292,53 +292,59 @@ fn main() {
     let previous_mcginley_dynamic = 0.0;
 
     let available_models = vec![
-        rust_ti::ConstantModelType::SimpleMovingAverage,
-        rust_ti::ConstantModelType::SmoothedMovingAverage,
-        rust_ti::ConstantModelType::ExponentialMovingAverage,
-        rust_ti::ConstantModelType::PersonalisedMovingAverage {
+        centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+        centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage,
+        centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+        centaur_technical_indicators::ConstantModelType::PersonalisedMovingAverage {
             alpha_num: numerator,
             alpha_den: denominator,
         },
-        rust_ti::ConstantModelType::SimpleMovingMedian,
-        rust_ti::ConstantModelType::SimpleMovingMode,
+        centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
+        centaur_technical_indicators::ConstantModelType::SimpleMovingMode,
     ];
     let available_deviations = vec![
-        rust_ti::DeviationModel::StandardDeviation,
-        rust_ti::DeviationModel::MeanAbsoluteDeviation,
-        rust_ti::DeviationModel::MedianAbsoluteDeviation,
-        rust_ti::DeviationModel::ModeAbsoluteDeviation,
-        rust_ti::DeviationModel::UlcerIndex,
+        centaur_technical_indicators::DeviationModel::StandardDeviation,
+        centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
+        centaur_technical_indicators::DeviationModel::MedianAbsoluteDeviation,
+        centaur_technical_indicators::DeviationModel::ModeAbsoluteDeviation,
+        centaur_technical_indicators::DeviationModel::UlcerIndex,
     ];
     let available_moving_averages = vec![
-        rust_ti::MovingAverageType::Simple,
-        rust_ti::MovingAverageType::Smoothed,
-        rust_ti::MovingAverageType::Exponential,
-        rust_ti::MovingAverageType::Personalised {
+        centaur_technical_indicators::MovingAverageType::Simple,
+        centaur_technical_indicators::MovingAverageType::Smoothed,
+        centaur_technical_indicators::MovingAverageType::Exponential,
+        centaur_technical_indicators::MovingAverageType::Personalised {
             alpha_num: numerator,
             alpha_den: denominator,
         },
     ];
 
     // Basic indicators
-    let median = rust_ti::basic_indicators::bulk::median(&typical_price, period);
+    let median =
+        centaur_technical_indicators::basic_indicators::bulk::median(&typical_price, period);
     println!("Median: {:?}", median);
 
-    let mode = rust_ti::basic_indicators::bulk::mode(&typical_price, period);
+    let mode = centaur_technical_indicators::basic_indicators::bulk::mode(&typical_price, period);
     println!("Mode: {:?}", mode);
 
-    let log = rust_ti::basic_indicators::bulk::log(&typical_price);
+    let log = centaur_technical_indicators::basic_indicators::bulk::log(&typical_price);
     println!("Log: {:?}", log);
 
-    let log_diff = rust_ti::basic_indicators::bulk::log_difference(&typical_price);
+    let log_diff =
+        centaur_technical_indicators::basic_indicators::bulk::log_difference(&typical_price);
     println!("Log difference: {:?}", log_diff);
 
-    let variance = rust_ti::basic_indicators::bulk::variance(&typical_price, period);
+    let variance =
+        centaur_technical_indicators::basic_indicators::bulk::variance(&typical_price, period);
     println!("Variance: {:?}", variance);
 
-    let standard_dev = rust_ti::basic_indicators::bulk::standard_deviation(&typical_price, period);
+    let standard_dev = centaur_technical_indicators::basic_indicators::bulk::standard_deviation(
+        &typical_price,
+        period,
+    );
     println!("Standard Deviation: {:?}", standard_dev);
 
-    let mean_ad = rust_ti::basic_indicators::bulk::absolute_deviation(
+    let mean_ad = centaur_technical_indicators::basic_indicators::bulk::absolute_deviation(
         &typical_price,
         period,
         AbsDevConfig {
@@ -348,7 +354,7 @@ fn main() {
     );
     println!("Mean Absolute Deviation: {:?}", mean_ad);
 
-    let median_ad = rust_ti::basic_indicators::bulk::absolute_deviation(
+    let median_ad = centaur_technical_indicators::basic_indicators::bulk::absolute_deviation(
         &typical_price,
         period,
         AbsDevConfig {
@@ -358,7 +364,7 @@ fn main() {
     );
     println!("Median Absolute Deviation: {:?}", median_ad);
 
-    let mode_ad = rust_ti::basic_indicators::bulk::absolute_deviation(
+    let mode_ad = centaur_technical_indicators::basic_indicators::bulk::absolute_deviation(
         &typical_price,
         period,
         AbsDevConfig {
@@ -371,68 +377,76 @@ fn main() {
     // Candle indicators
     let difference = 2.0;
     for model in &available_models {
-        let envelope = rust_ti::candle_indicators::bulk::moving_constant_envelopes(
-            &typical_price,
-            *model,
-            difference,
-            period,
-        );
+        let envelope =
+            centaur_technical_indicators::candle_indicators::bulk::moving_constant_envelopes(
+                &typical_price,
+                *model,
+                difference,
+                period,
+            );
         println!("{:?} Envelope: {:?}", model, envelope);
     }
 
-    let mcginley_envelope = rust_ti::candle_indicators::bulk::mcginley_dynamic_envelopes(
-        &typical_price,
-        difference,
-        previous_mcginley_dynamic,
-        period,
-    );
+    let mcginley_envelope =
+        centaur_technical_indicators::candle_indicators::bulk::mcginley_dynamic_envelopes(
+            &typical_price,
+            difference,
+            previous_mcginley_dynamic,
+            period,
+        );
     println!("McGinley Envelope: {:?}", mcginley_envelope);
 
     let deviation_multiplier = 2.0;
     for model in &available_models {
         for deviation in &available_deviations {
-            let bands = rust_ti::candle_indicators::bulk::moving_constant_bands(
-                &typical_price,
-                *model,
-                *deviation,
-                deviation_multiplier,
-                period,
-            );
+            let bands =
+                centaur_technical_indicators::candle_indicators::bulk::moving_constant_bands(
+                    &typical_price,
+                    *model,
+                    *deviation,
+                    deviation_multiplier,
+                    period,
+                );
             println!("{:?} Band, {:?}: {:?}", model, deviation, bands);
         }
     }
 
     for deviation in &available_deviations {
-        let md_bands = rust_ti::candle_indicators::bulk::mcginley_dynamic_bands(
-            &typical_price,
-            *deviation,
-            deviation_multiplier,
-            previous_mcginley_dynamic,
-            period,
-        );
+        let md_bands =
+            centaur_technical_indicators::candle_indicators::bulk::mcginley_dynamic_bands(
+                &typical_price,
+                *deviation,
+                deviation_multiplier,
+                previous_mcginley_dynamic,
+                period,
+            );
         println!("McGinley Dynamic Band {:?}: {:?}", deviation, md_bands);
     }
 
-    let ichimoku_cloud =
-        rust_ti::candle_indicators::bulk::ichimoku_cloud(&high, &low, &close, 9, 26, 52);
+    let ichimoku_cloud = centaur_technical_indicators::candle_indicators::bulk::ichimoku_cloud(
+        &high, &low, &close, 9, 26, 52,
+    );
     println!("Ichimoku cloud: {:?}", ichimoku_cloud);
 
     let donchian_channels =
-        rust_ti::candle_indicators::bulk::donchian_channels(&high, &low, period);
+        centaur_technical_indicators::candle_indicators::bulk::donchian_channels(
+            &high, &low, period,
+        );
     println!("Donchian Channels: {:?}", donchian_channels);
 
     let multiplier = 2.0;
     for model in &available_models {
         for atr_model in &available_models {
-            let keltner_channel = rust_ti::candle_indicators::bulk::keltner_channel(
-                &high[1..],
-                &low[1..],
-                &close[..length - 1],
-                *model,
-                *atr_model,
-                multiplier,
-                period,
-            );
+            let keltner_channel =
+                centaur_technical_indicators::candle_indicators::bulk::keltner_channel(
+                    &high[1..],
+                    &low[1..],
+                    &close[..length - 1],
+                    *model,
+                    *atr_model,
+                    multiplier,
+                    period,
+                );
             println!(
                 "Keltner Channel {:?} {:?}: {:?}",
                 model, atr_model, keltner_channel
@@ -441,7 +455,7 @@ fn main() {
     }
 
     for model in &available_models {
-        let supertrend = rust_ti::candle_indicators::bulk::supertrend(
+        let supertrend = centaur_technical_indicators::candle_indicators::bulk::supertrend(
             &high, &low, &close, *model, multiplier, period,
         );
         println!("Supertrend {:?}: {:?}", model, supertrend);
@@ -449,7 +463,7 @@ fn main() {
 
     // Momentum indicators
     for model in &available_models {
-        let rsi = rust_ti::momentum_indicators::bulk::relative_strength_index(
+        let rsi = centaur_technical_indicators::momentum_indicators::bulk::relative_strength_index(
             &typical_price,
             *model,
             period,
@@ -458,11 +472,14 @@ fn main() {
     }
 
     let stochastic_oscillator =
-        rust_ti::momentum_indicators::bulk::stochastic_oscillator(&typical_price, period);
+        centaur_technical_indicators::momentum_indicators::bulk::stochastic_oscillator(
+            &typical_price,
+            period,
+        );
     println!("Stochastic Oscillator: {:?}", stochastic_oscillator);
 
     for model in &available_models {
-        let slow_so = rust_ti::momentum_indicators::bulk::slow_stochastic(
+        let slow_so = centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
             &stochastic_oscillator,
             *model,
             period,
@@ -470,23 +487,29 @@ fn main() {
         println!("Slow Stochastic {:?}: {:?}", model, slow_so);
 
         for slowest_model in &available_models {
-            let slowest_so = rust_ti::momentum_indicators::bulk::slowest_stochastic(
-                &slow_so,
-                *slowest_model,
-                period,
-            );
+            let slowest_so =
+                centaur_technical_indicators::momentum_indicators::bulk::slowest_stochastic(
+                    &slow_so,
+                    *slowest_model,
+                    period,
+                );
             println!("Slowest Stochastic {:?}: {:?}", slowest_model, slowest_so);
         }
     }
 
-    let mfi = rust_ti::momentum_indicators::bulk::money_flow_index(&typical_price, &volume, period);
+    let mfi = centaur_technical_indicators::momentum_indicators::bulk::money_flow_index(
+        &typical_price,
+        &volume,
+        period,
+    );
     println!("Money Flow Index: {:?}", mfi);
 
-    let roc = rust_ti::momentum_indicators::bulk::rate_of_change(&typical_price);
+    let roc =
+        centaur_technical_indicators::momentum_indicators::bulk::rate_of_change(&typical_price);
     println!("Rate of Change: {:?}", roc);
 
     let previous_obv = 0.0;
-    let obv = rust_ti::momentum_indicators::bulk::on_balance_volume(
+    let obv = centaur_technical_indicators::momentum_indicators::bulk::on_balance_volume(
         &typical_price,
         &volume,
         previous_obv,
@@ -496,19 +519,20 @@ fn main() {
     let constant_multiplier = 0.015;
     for model in &available_models {
         for deviation_model in &available_deviations {
-            let cci = rust_ti::momentum_indicators::bulk::commodity_channel_index(
-                &typical_price,
-                *model,
-                *deviation_model,
-                constant_multiplier,
-                period,
-            );
+            let cci =
+                centaur_technical_indicators::momentum_indicators::bulk::commodity_channel_index(
+                    &typical_price,
+                    *model,
+                    *deviation_model,
+                    constant_multiplier,
+                    period,
+                );
             println!("CCI {:?} {:?}: {:?}", model, deviation_model, cci);
         }
     }
 
     for deviation_model in &available_deviations {
-        let md_cci = rust_ti::momentum_indicators::bulk::mcginley_dynamic_commodity_channel_index(
+        let md_cci = centaur_technical_indicators::momentum_indicators::bulk::mcginley_dynamic_commodity_channel_index(
             &typical_price,
             previous_mcginley_dynamic,
             *deviation_model,
@@ -520,7 +544,7 @@ fn main() {
 
     for short_model in &available_models {
         for long_model in &available_models {
-            let macd = rust_ti::momentum_indicators::bulk::macd_line(
+            let macd = centaur_technical_indicators::momentum_indicators::bulk::macd_line(
                 &typical_price,
                 period,
                 *short_model,
@@ -530,26 +554,30 @@ fn main() {
             println!("MACD {:?} {:?}: {:?}", short_model, long_model, macd);
 
             for signal_model in &available_models {
-                let signal =
-                    rust_ti::momentum_indicators::bulk::signal_line(&macd, *signal_model, period);
+                let signal = centaur_technical_indicators::momentum_indicators::bulk::signal_line(
+                    &macd,
+                    *signal_model,
+                    period,
+                );
                 println!("Signal line {:?}: {:?}", signal_model, signal);
             }
         }
     }
 
-    let md_macd = rust_ti::momentum_indicators::bulk::mcginley_dynamic_macd_line(
-        &typical_price,
-        period,
-        previous_mcginley_dynamic,
-        long_period,
-        previous_mcginley_dynamic,
-    );
+    let md_macd =
+        centaur_technical_indicators::momentum_indicators::bulk::mcginley_dynamic_macd_line(
+            &typical_price,
+            period,
+            previous_mcginley_dynamic,
+            long_period,
+            previous_mcginley_dynamic,
+        );
     println!("McGinley Dynamic MACD: {:?}", md_macd);
 
     let previous_ad = 0.0;
     for short_model in &available_models {
         for long_model in &available_models {
-            let co = rust_ti::momentum_indicators::bulk::chaikin_oscillator(
+            let co = centaur_technical_indicators::momentum_indicators::bulk::chaikin_oscillator(
                 &high,
                 &low,
                 &close,
@@ -568,51 +596,67 @@ fn main() {
     }
 
     for model in &available_models {
-        let ppo = rust_ti::momentum_indicators::bulk::percentage_price_oscillator(
-            &typical_price,
-            period,
-            long_period,
-            *model,
-        );
+        let ppo =
+            centaur_technical_indicators::momentum_indicators::bulk::percentage_price_oscillator(
+                &typical_price,
+                period,
+                long_period,
+                *model,
+            );
         println!("PPO {:?}: {:?}", model, ppo);
         for moving_average in &available_moving_averages {
-            let signal =
-                rust_ti::moving_average::bulk::moving_average(&ppo, *moving_average, period);
+            let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
+                &ppo,
+                *moving_average,
+                period,
+            );
             println!("{:?} Signal Line: {:?}", moving_average, signal);
         }
     }
 
-    let cmo =
-        rust_ti::momentum_indicators::bulk::chande_momentum_oscillator(&typical_price, period);
+    let cmo = centaur_technical_indicators::momentum_indicators::bulk::chande_momentum_oscillator(
+        &typical_price,
+        period,
+    );
     println!("Chande Momentum Oscillator: {:?}", cmo);
 
     // Moving Averages
     for moving_average in &available_moving_averages {
-        let ma =
-            rust_ti::moving_average::bulk::moving_average(&typical_price, *moving_average, period);
+        let ma = centaur_technical_indicators::moving_average::bulk::moving_average(
+            &typical_price,
+            *moving_average,
+            period,
+        );
         println!("{:?} Moving Average: {:?}", moving_average, ma);
     }
 
-    let mcginley_dynamic =
-        rust_ti::moving_average::bulk::mcginley_dynamic(&typical_price, 0.0, period);
+    let mcginley_dynamic = centaur_technical_indicators::moving_average::bulk::mcginley_dynamic(
+        &typical_price,
+        0.0,
+        period,
+    );
     println!("McGinley Dynamic: {:?}", mcginley_dynamic);
 
     // Other indicators
-    let true_range = rust_ti::other_indicators::bulk::true_range(&close, &high, &low);
+    let true_range =
+        centaur_technical_indicators::other_indicators::bulk::true_range(&close, &high, &low);
     println!("True Range: {:?}", true_range);
 
     for model in &available_models {
-        let average_true_range = rust_ti::other_indicators::bulk::average_true_range(
-            &close, &high, &low, *model, period,
-        );
+        let average_true_range =
+            centaur_technical_indicators::other_indicators::bulk::average_true_range(
+                &close, &high, &low, *model, period,
+            );
         println!("{:?} Average True Range: {:?}", model, average_true_range);
     }
 
-    let ibs = rust_ti::other_indicators::bulk::internal_bar_strength(&high, &low, &close);
+    let ibs = centaur_technical_indicators::other_indicators::bulk::internal_bar_strength(
+        &high, &low, &close,
+    );
     println!("Internal Bar Strength: {:?}", ibs);
 
     for model in &available_models {
-        let pi = rust_ti::other_indicators::bulk::positivity_indicator(
+        let pi = centaur_technical_indicators::other_indicators::bulk::positivity_indicator(
             &open[1..],
             &close[..length - 1],
             period,
@@ -622,57 +666,69 @@ fn main() {
     }
 
     // Strength indicators
-    let ad = rust_ti::strength_indicators::bulk::accumulation_distribution(
+    let ad = centaur_technical_indicators::strength_indicators::bulk::accumulation_distribution(
         &high, &low, &close, &volume, 0.0,
     );
     println!("Accumulation Distribution: {:?}", ad);
 
-    let pvi = rust_ti::strength_indicators::bulk::positive_volume_index(&close, &volume, 0.0);
+    let pvi = centaur_technical_indicators::strength_indicators::bulk::positive_volume_index(
+        &close, &volume, 0.0,
+    );
     println!("Positive Volume Index: {:?}", pvi);
 
-    let nvi = rust_ti::strength_indicators::bulk::negative_volume_index(&close, &volume, 0.0);
+    let nvi = centaur_technical_indicators::strength_indicators::bulk::negative_volume_index(
+        &close, &volume, 0.0,
+    );
     println!("Negative Volume Index: {:?}", nvi);
 
     for model in &available_models {
-        let rvi = rust_ti::strength_indicators::bulk::relative_vigor_index(
+        let rvi = centaur_technical_indicators::strength_indicators::bulk::relative_vigor_index(
             &open, &high, &low, &close, *model, period,
         );
         println!("{:?} Relative Vigor Index: {:?}", model, rvi);
         for signal_model in &available_moving_averages {
-            let signal = rust_ti::moving_average::bulk::moving_average(&rvi, *signal_model, period);
+            let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
+                &rvi,
+                *signal_model,
+                period,
+            );
             println!("{:?} Signal Line: {:?}", signal_model, signal);
         }
     }
 
     // Trend indicators
-    let aroon_indicator = rust_ti::trend_indicators::bulk::aroon_indicator(&high, &low, period);
+    let aroon_indicator =
+        centaur_technical_indicators::trend_indicators::bulk::aroon_indicator(&high, &low, period);
     println!("Aroon Indicator: {:?}", aroon_indicator);
 
-    let ptps = rust_ti::trend_indicators::bulk::parabolic_time_price_system(
+    let ptps = centaur_technical_indicators::trend_indicators::bulk::parabolic_time_price_system(
         &high,
         &low,
         0.02,
         0.2,
         0.02,
-        rust_ti::Position::Long,
+        centaur_technical_indicators::Position::Long,
         0.0,
     );
     println!("Parabolic Time Price System: {:?}", ptps);
 
     for model in &available_models {
-        let dms = rust_ti::trend_indicators::bulk::directional_movement_system(
+        let dms = centaur_technical_indicators::trend_indicators::bulk::directional_movement_system(
             &high, &low, &close, period, *model,
         );
         println!("{:?} Directional Movement System: {:?}", model, dms);
     }
 
-    let vpt =
-        rust_ti::trend_indicators::bulk::volume_price_trend(&typical_price, &volume[1..], 0.0);
+    let vpt = centaur_technical_indicators::trend_indicators::bulk::volume_price_trend(
+        &typical_price,
+        &volume[1..],
+        0.0,
+    );
     println!("Volume Price Trend: {:?}", vpt);
 
     for first_model in &available_models {
         for second_model in &available_models {
-            let tsi = rust_ti::trend_indicators::bulk::true_strength_index(
+            let tsi = centaur_technical_indicators::trend_indicators::bulk::true_strength_index(
                 &typical_price,
                 *first_model,
                 period,
@@ -684,20 +740,26 @@ fn main() {
                 first_model, second_model, tsi
             );
             for signal_model in &available_moving_averages {
-                let signal =
-                    rust_ti::moving_average::bulk::moving_average(&tsi, *signal_model, period);
+                let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
+                    &tsi,
+                    *signal_model,
+                    period,
+                );
                 println!("{:?} Signal Line: {:?}", signal_model, signal);
             }
         }
     }
 
     // Volatility indicators
-    let ulcer_index = rust_ti::volatility_indicators::bulk::ulcer_index(&typical_price, period);
+    let ulcer_index = centaur_technical_indicators::volatility_indicators::bulk::ulcer_index(
+        &typical_price,
+        period,
+    );
     println!("Ulcer Index: {:?}", ulcer_index);
 
     let constant_multiplier = 3.0;
     for model in &available_models {
-        let vs = rust_ti::volatility_indicators::bulk::volatility_system(
+        let vs = centaur_technical_indicators::volatility_indicators::bulk::volatility_system(
             &high,
             &low,
             &close,
@@ -709,14 +771,16 @@ fn main() {
     }
 
     // Chart trends (truncated, see documentation for argument meaning)
-    let trend_break_config = rust_ti::chart_trends::TrendBreakConfig::default();
-    let break_down_trends = rust_ti::chart_trends::break_down_trends(&close, trend_break_config);
+    let trend_break_config =
+        centaur_technical_indicators::chart_trends::TrendBreakConfig::default();
+    let break_down_trends =
+        centaur_technical_indicators::chart_trends::break_down_trends(&close, trend_break_config);
     println!("Broken down trends: {:?}", break_down_trends);
 
-    let valleys = rust_ti::chart_trends::valleys(&close, 30, 5);
+    let valleys = centaur_technical_indicators::chart_trends::valleys(&close, 30, 5);
     println!("Valleys: {:?}", valleys);
 
-    let peaks = rust_ti::chart_trends::peaks(&close, 30, 5);
+    let peaks = centaur_technical_indicators::chart_trends::peaks(&close, 30, 5);
     println!("Peaks: {:?}", peaks);
 
     let elapsed = now.elapsed();

@@ -53,23 +53,23 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     ///
     /// let simple_moving_average =
-    ///     rust_ti::moving_average::single::moving_average(
+    ///     centaur_technical_indicators::moving_average::single::moving_average(
     ///         &prices,
-    ///         rust_ti::MovingAverageType::Simple
+    ///         centaur_technical_indicators::MovingAverageType::Simple
     ///     );
     /// assert_eq!(101.2, simple_moving_average);
     ///
     /// let exponential_moving_average =
-    ///     rust_ti::moving_average::single::moving_average(
+    ///     centaur_technical_indicators::moving_average::single::moving_average(
     ///         &prices,
-    ///         rust_ti::MovingAverageType::Exponential
+    ///         centaur_technical_indicators::MovingAverageType::Exponential
     ///     );
     /// assert_eq!(100.99526066350714, exponential_moving_average);
     ///
     /// let smoothed_moving_average =
-    ///     rust_ti::moving_average::single::moving_average(
+    ///     centaur_technical_indicators::moving_average::single::moving_average(
     ///         &prices,
-    ///         rust_ti::MovingAverageType::Smoothed
+    ///         centaur_technical_indicators::MovingAverageType::Smoothed
     ///     );
     /// assert_eq!(101.11375535459305, smoothed_moving_average);
     /// ```
@@ -142,12 +142,12 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     /// let period:usize = 5;
     /// let mcginley_dynamic =
-    ///     rust_ti::moving_average::single::mcginley_dynamic(100.0, 0.0, period);
+    ///     centaur_technical_indicators::moving_average::single::mcginley_dynamic(100.0, 0.0, period);
     /// assert_eq!(100.0, mcginley_dynamic);
     ///
     /// let next_prices = vec![102.0, 103.0, 101.0, 100.0, 99.0];
     /// let next_mcginley_dynamic =
-    ///     rust_ti::moving_average::single::mcginley_dynamic(99.0, mcginley_dynamic, period);
+    ///     centaur_technical_indicators::moving_average::single::mcginley_dynamic(99.0, mcginley_dynamic, period);
     /// assert_eq!(99.79179592886295, next_mcginley_dynamic);
     /// ```
     #[inline]
@@ -192,9 +192,9 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let simple_moving_average =
-    ///     rust_ti::moving_average::bulk::moving_average(
+    ///     centaur_technical_indicators::moving_average::bulk::moving_average(
     ///         &prices,
-    ///         rust_ti::MovingAverageType::Simple,
+    ///         centaur_technical_indicators::MovingAverageType::Simple,
     ///         period
     ///     );
     /// assert_eq!(
@@ -203,9 +203,9 @@ pub mod bulk {
     /// );
     ///
     /// let exponential_moving_average =
-    ///     rust_ti::moving_average::bulk::moving_average(
+    ///     centaur_technical_indicators::moving_average::bulk::moving_average(
     ///         &prices,
-    ///         rust_ti::MovingAverageType::Exponential,
+    ///         centaur_technical_indicators::MovingAverageType::Exponential,
     ///         period
     ///     );
     /// assert_eq!(
@@ -214,9 +214,9 @@ pub mod bulk {
     /// );
     ///
     /// let smoothed_moving_average =
-    ///     rust_ti::moving_average::bulk::moving_average(
+    ///     centaur_technical_indicators::moving_average::bulk::moving_average(
     ///         &prices,
-    ///         rust_ti::MovingAverageType::Smoothed,
+    ///         centaur_technical_indicators::MovingAverageType::Smoothed,
     ///         period
     ///     );
     /// assert_eq!(
@@ -264,7 +264,7 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let mcginley_dynamic =
-    ///     rust_ti::moving_average::bulk::mcginley_dynamic(
+    ///     centaur_technical_indicators::moving_average::bulk::mcginley_dynamic(
     ///         &prices,
     ///         0.0,
     ///         period
@@ -272,7 +272,7 @@ pub mod bulk {
     /// assert_eq!(vec![103.0, 102.2789387706985, 101.44764169058672], mcginley_dynamic);
     ///
     /// let mcginley_dynamic =
-    ///     rust_ti::moving_average::bulk::mcginley_dynamic(
+    ///     centaur_technical_indicators::moving_average::bulk::mcginley_dynamic(
     ///         &prices[1..],
     ///         103.0,
     ///         period

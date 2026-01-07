@@ -73,17 +73,17 @@ pub mod single {
     /// let difference = 3.0;
     ///
     /// let ema_envelope =
-    ///     rust_ti::candle_indicators::single::moving_constant_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::single::moving_constant_envelopes(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         difference
     ///     );
     /// assert_eq!((97.59303317535547, 100.61137440758296, 103.62971563981044), ema_envelope);
     ///
     /// let median_envelope =
-    ///     rust_ti::candle_indicators::single::moving_constant_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::single::moving_constant_envelopes(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         difference
     ///     );
     /// assert_eq!((97.97, 101.0, 104.03), median_envelope);
@@ -147,7 +147,7 @@ pub mod single {
     /// let difference = 3.0;
     ///
     /// let mcginley_envelope =
-    ///     rust_ti::candle_indicators::single::mcginley_dynamic_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::single::mcginley_dynamic_envelopes(
     ///         &prices,
     ///         difference,
     ///         0.0
@@ -156,7 +156,7 @@ pub mod single {
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
     /// let mcginley_envelope =
-    ///     rust_ti::candle_indicators::single::mcginley_dynamic_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::single::mcginley_dynamic_envelopes(
     ///         &prices,
     ///         difference,
     ///         mcginley_envelope.1
@@ -203,19 +203,19 @@ pub mod single {
     /// let multiplier = 2.0;
     ///
     /// let bollinger_bands =
-    ///     rust_ti::candle_indicators::single::moving_constant_bands(
+    ///     centaur_technical_indicators::candle_indicators::single::moving_constant_bands(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier
     ///     );
     /// assert_eq!((98.17157287525382, 101.0, 103.82842712474618), bollinger_bands);
     ///
     /// let ema_mad_bands =
-    ///     rust_ti::candle_indicators::single::moving_constant_bands(
+    ///     centaur_technical_indicators::candle_indicators::single::moving_constant_bands(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         multiplier
     ///     );
     /// assert_eq!((98.21137440758295, 100.61137440758296, 103.01137440758296), ema_mad_bands);
@@ -279,20 +279,21 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => {
+                absolute_deviation(prices, config)
+            }
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
-            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
-                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
-                    prices,
-                    precision,
-                    low,
-                    high,
-                )
-            }
+            DeviationModel::EmpiricalQuantileRange {
+                low,
+                high,
+                precision,
+            } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                prices, precision, low, high,
+            ),
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -321,9 +322,9 @@ pub mod single {
     /// let multiplier = 2.0;
     ///
     /// let mcginley_bands =
-    ///     rust_ti::candle_indicators::single::mcginley_dynamic_bands(
+    ///     centaur_technical_indicators::candle_indicators::single::mcginley_dynamic_bands(
     ///         &prices,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier,
     ///         0.0
     ///     );
@@ -331,9 +332,9 @@ pub mod single {
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
     /// let mcginley_bands =
-    ///     rust_ti::candle_indicators::single::mcginley_dynamic_bands(
+    ///     centaur_technical_indicators::candle_indicators::single::mcginley_dynamic_bands(
     ///         &prices,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier,
     ///         mcginley_bands.1
     ///     );
@@ -377,20 +378,21 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => {
+                absolute_deviation(prices, config)
+            }
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
-            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
-                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
-                    prices,
-                    precision,
-                    low,
-                    high,
-                )
-            }
+            DeviationModel::EmpiricalQuantileRange {
+                low,
+                high,
+                precision,
+            } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                prices, precision, low, high,
+            ),
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -441,7 +443,7 @@ pub mod single {
     /// let span_b_period: usize = 15;
     ///
     /// let ichimoku_cloud =
-    ///     rust_ti::candle_indicators::single::ichimoku_cloud(
+    ///     centaur_technical_indicators::candle_indicators::single::ichimoku_cloud(
     ///         &high_prices,
     ///         &low_prices,
     ///         &closing_prices,
@@ -512,7 +514,7 @@ pub mod single {
     /// let highs = vec![105.0, 103.0, 107.0, 101.0, 103.0];
     /// let lows = vec![97.0, 99.0, 98.0, 100.0, 95.0];
     ///
-    /// let donchian_channels = rust_ti::candle_indicators::single::donchian_channels(
+    /// let donchian_channels = centaur_technical_indicators::candle_indicators::single::donchian_channels(
     ///     &highs,
     ///     &lows
     /// );
@@ -560,12 +562,12 @@ pub mod single {
     /// let lows = vec![97.0, 99.0, 98.0, 97.0, 95.0];
     /// let close = vec![101.0, 102.0, 100.0, 99.0, 104.0];
     ///
-    /// let keltner_channel = rust_ti::candle_indicators::single::keltner_channel(
+    /// let keltner_channel = centaur_technical_indicators::candle_indicators::single::keltner_channel(
     ///     &highs,
     ///     &lows,
     ///     &close,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     2.0
     /// );
     ///
@@ -648,11 +650,11 @@ pub mod single {
     /// let lows = vec![97.0, 99.0, 98.0, 97.0, 95.0];
     /// let close = vec![101.0, 102.0, 100.0, 99.0, 104.0];
     ///
-    /// let supertrend = rust_ti::candle_indicators::single::supertrend(
+    /// let supertrend = centaur_technical_indicators::candle_indicators::single::supertrend(
     ///     &highs,
     ///     &lows,
     ///     &close,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     2.0
     /// );
     ///
@@ -713,9 +715,9 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let ema_envelope =
-    ///     rust_ti::candle_indicators::bulk::moving_constant_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::bulk::moving_constant_envelopes(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         difference,
     ///         period
     ///     );
@@ -728,9 +730,9 @@ pub mod bulk {
     /// );
     ///
     /// let median_envelope =
-    ///     rust_ti::candle_indicators::bulk::moving_constant_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::bulk::moving_constant_envelopes(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         difference,
     ///         period
     ///     );
@@ -789,7 +791,7 @@ pub mod bulk {
     /// let difference = 3.0;
     ///
     /// let mcginley_envelope =
-    ///     rust_ti::candle_indicators::bulk::mcginley_dynamic_envelopes(
+    ///     centaur_technical_indicators::candle_indicators::bulk::mcginley_dynamic_envelopes(
     ///         &prices,
     ///         difference,
     ///         0.0,
@@ -854,10 +856,10 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let bollinger_bands =
-    ///     rust_ti::candle_indicators::bulk::moving_constant_bands(
+    ///     centaur_technical_indicators::candle_indicators::bulk::moving_constant_bands(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier,
     ///         period
     ///     );
@@ -869,10 +871,10 @@ pub mod bulk {
     ///     ], bollinger_bands);
     ///
     /// let ema_mad_bands =
-    ///     rust_ti::candle_indicators::bulk::moving_constant_bands(
+    ///     centaur_technical_indicators::candle_indicators::bulk::moving_constant_bands(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         multiplier,
     ///         period
     ///     );
@@ -938,9 +940,9 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let mcginley_bands =
-    ///     rust_ti::candle_indicators::bulk::mcginley_dynamic_bands(
+    ///     centaur_technical_indicators::candle_indicators::bulk::mcginley_dynamic_bands(
     ///         &prices,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier,
     ///         0.0,
     ///         period
@@ -1022,7 +1024,7 @@ pub mod bulk {
     /// let span_b_period: usize = 15;
     ///
     /// let ichimoku_cloud =
-    ///     rust_ti::candle_indicators::bulk::ichimoku_cloud(
+    ///     centaur_technical_indicators::candle_indicators::bulk::ichimoku_cloud(
     ///         &high_prices,
     ///         &low_prices,
     ///         &closing_prices,
@@ -1100,7 +1102,7 @@ pub mod bulk {
     /// let lows = vec![97.0, 99.0, 98.0, 100.0, 95.0, 98.0, 99.0, 100.0];
     /// let period: usize = 5;
     ///
-    /// let donchian_channels = rust_ti::candle_indicators::bulk::donchian_channels(
+    /// let donchian_channels = centaur_technical_indicators::candle_indicators::bulk::donchian_channels(
     ///     &highs,
     ///     &lows,
     ///     period
@@ -1168,12 +1170,12 @@ pub mod bulk {
     /// let close = vec![101.0, 102.0, 100.0, 99.0, 104.0, 107.0, 108.0];
     /// let period: usize = 5;
     ///
-    /// let keltner_channel = rust_ti::candle_indicators::bulk::keltner_channel(
+    /// let keltner_channel = centaur_technical_indicators::candle_indicators::bulk::keltner_channel(
     ///     &highs,
     ///     &lows,
     ///     &close,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     2.0,
     ///     period
     /// );
@@ -1256,11 +1258,11 @@ pub mod bulk {
     /// let lows = vec![97.0, 99.0, 98.0, 97.0, 95.0, 102.0, 106.0];
     /// let close = vec![101.0, 102.0, 100.0, 99.0, 104.0, 107.0, 108.0];
     ///
-    /// let supertrend = rust_ti::candle_indicators::bulk::supertrend(
+    /// let supertrend = centaur_technical_indicators::candle_indicators::bulk::supertrend(
     ///     &highs,
     ///     &lows,
     ///     &close,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     2.0,
     ///     5_usize
     /// );
@@ -2540,6 +2542,9 @@ mod tests {
             2.0,
             100.5,
         );
-        assert_eq!((100.15339294737205, 100.18140076889607, 100.20940859042008), result);
+        assert_eq!(
+            (100.15339294737205, 100.18140076889607, 100.20940859042008),
+            result
+        );
     }
 }

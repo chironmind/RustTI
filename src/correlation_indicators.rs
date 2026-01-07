@@ -62,21 +62,21 @@ pub mod single {
     /// let prices_b = vec![200.0, 204.0, 206.0, 202.0, 198.0];
     ///
     /// let correlation =
-    ///     rust_ti::correlation_indicators::single::correlate_asset_prices(
+    ///     centaur_technical_indicators::correlation_indicators::single::correlate_asset_prices(
     ///         &prices_a,
     ///         &prices_b,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::DeviationModel::StandardDeviation
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation
     ///     );
     /// // This should be 1.0 but due to how Rust calculates floats, this is close as we get
     /// assert_eq!(0.9999999999999998, correlation);
     ///
     /// let correlation =
-    ///     rust_ti::correlation_indicators::single::correlate_asset_prices(
+    ///     centaur_technical_indicators::correlation_indicators::single::correlate_asset_prices(
     ///         &prices_a,
     ///         &prices_b,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::DeviationModel::UlcerIndex);
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::UlcerIndex);
     /// assert_eq!(1.1410137845061807, correlation);
     /// ```
     pub fn correlate_asset_prices(
@@ -185,14 +185,16 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_a, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_a),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_a),
-            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
-                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
-                    prices_asset_a,
-                    precision,
-                    low,
-                    high,
-                )
-            }
+            DeviationModel::EmpiricalQuantileRange {
+                low,
+                high,
+                precision,
+            } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                prices_asset_a,
+                precision,
+                low,
+                high,
+            ),
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -228,14 +230,16 @@ pub mod single {
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_b, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_b),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_b),
-            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
-                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
-                    prices_asset_b,
-                    precision,
-                    low,
-                    high,
-                )
-            }
+            DeviationModel::EmpiricalQuantileRange {
+                low,
+                high,
+                precision,
+            } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                prices_asset_b,
+                precision,
+                low,
+                high,
+            ),
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -272,22 +276,22 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let correlation =
-    ///     rust_ti::correlation_indicators::bulk::correlate_asset_prices(
+    ///     centaur_technical_indicators::correlation_indicators::bulk::correlate_asset_prices(
     ///         &prices_a,
     ///         &prices_b,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         period
     ///     );
     /// // The first result  should be 1.0 but due to how Rust calculates floats, this is close as we get
     /// assert_eq!(vec![0.9999999999999998, 0.9340577351598457, 0.34094365457352693], correlation);
     ///
     /// let correlation =
-    ///     rust_ti::correlation_indicators::bulk::correlate_asset_prices(
+    ///     centaur_technical_indicators::correlation_indicators::bulk::correlate_asset_prices(
     ///         &prices_a,
     ///         &prices_b,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::DeviationModel::UlcerIndex,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::UlcerIndex,
     ///         period
     ///     );
     /// assert_eq!(vec![1.1410137845061807, 0.9904422924841779, 0.2785701491571082], correlation);
