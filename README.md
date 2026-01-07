@@ -6,8 +6,8 @@
 [![License](https://img.shields.io/github/license/ChironMind/CentaurTechnicalIndicators-Rust)](LICENSE-MIT)
 
 [![Crates.io Downloads](https://img.shields.io/crates/d/centaur_technical_indicators.svg)](https://crates.io/crates/centaur_technical_indicators)
-[![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials)
-[![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
+[![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials)
+[![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks)
 
 # 🦀 Meet RustTI
 
@@ -65,11 +65,11 @@ Simple Moving Average: 100.352
 
 **3. Explore more tutorials**
 
-- [Getting started tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/getting_started.md)
-- [Choosing the right model](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/choose_right_model.md)
-- [Building your first strategy](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/first_strategy.md)
-- [Backtesting tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/backtest.md)
-- [Visualization tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials/blob/main/visualization.md)
+- [Getting started tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials/blob/main/getting_started.md)
+- [Choosing the right model](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials/blob/main/choose_right_model.md)
+- [Building your first strategy](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials/blob/main/first_strategy.md)
+- [Backtesting tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials/blob/main/backtest.md)
+- [Visualization tutorial](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials/blob/main/visualization.md)
 
 ---
 
@@ -77,13 +77,13 @@ Simple Moving Average: 100.352
 
 > Task-oriented guides for common problems and advanced scenarios.
 
-- [Load CSV Price Data:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/load_csv.md) Parse OHLC prices from a file and calculate RSI 
-- [When to use a bulk vs single module:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/bulk_vs_single.md) Understand when to use bulk functions or single functions
-- [Choosing the right constant model type:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/choose_constant_model_type.md) Programatically determine the best `ConstantModelType` 
-- [Choosing the right deviation model:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
-- [Choosing the right period:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
-- [How to use the Personalised Moving Average:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
-- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
+- [Load CSV Price Data:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/load_csv.md) Parse OHLC prices from a file and calculate RSI 
+- [When to use a bulk vs single module:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/bulk_vs_single.md) Understand when to use bulk functions or single functions
+- [Choosing the right constant model type:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/choose_constant_model_type.md) Programatically determine the best `ConstantModelType` 
+- [Choosing the right deviation model:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/choose_deviation_model.md) Programatically determine the best deviation model 
+- [Choosing the right period:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/choose_period.md) Programatically determine the best period
+- [How to use the Personalised Moving Average:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/personliased_moving_average.md) Programatically determine the alpha of the moving average
+- [How to use the McGinley dynamic variation of functions:](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides/blob/main/mcginley_dynamic.md) Quick guide on how to use the McGinley Dynamic functions 
 
 
 *(Contributions welcome! Submit your favorite how-to guide as a PR.)*
@@ -291,7 +291,7 @@ We provide detailed, reproducible benchmarks using realistic OHLCV data and a va
 
 *These results are from a Raspberry Pi 5 8GB, your machine will likely be faster!*
 
-👉 [See all benchmarks and how to run your own](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
+👉 [See all benchmarks and how to run your own](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks)
 
 ---
 

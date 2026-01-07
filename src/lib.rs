@@ -56,9 +56,9 @@
 //!
 //! This repository is part of a structured documentation suite:
 //!
-//! - **Tutorials:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-tutorials)
-//! - **How-To Guides:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-how-to-guides)
-//! - **Benchmarks:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-benchmarks)
+//! - **Tutorials:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials)
+//! - **How-To Guides:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides)
+//! - **Benchmarks:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks)
 //! - **Explanations:** Coming soon
 //! - **Reference:** You're here!
 //! - **Centaur Labs:** [https://centaurlabs.pages.dev/](https://centaurlabs.pages.dev/)
