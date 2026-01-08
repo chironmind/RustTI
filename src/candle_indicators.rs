@@ -419,7 +419,7 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`h
+    ///     * `high.len()` != `low.len()` != `close.len()`
     ///     * `conversion_period`, `base_period`, `span_b_period` >
     ///         `high.len()`, `low.len()`, `close.len()`
     ///
@@ -1096,7 +1096,7 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `high` - Slice of highs
-    /// * `low` - Slce of lows
+    /// * `low` - Slice of lows
     /// * `period` - Period over which to calculate the Donchian channels
     ///
     /// # Returns
@@ -1777,7 +1777,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn sinlge_mcginley_bands_panic() {
+    fn single_mcginley_bands_panic() {
         let prices = Vec::new();
         single::mcginley_dynamic_bands(&prices, crate::DeviationModel::StandardDeviation, 2.0, 0.0);
     }
@@ -1898,7 +1898,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_ichimoku_clud() {
+    fn bulk_ichimoku_cloud() {
         let highs = vec![
             101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01, 101.11, 100.75,
         ];

@@ -172,8 +172,8 @@ pub mod single {
 
         let aroon_up = aroon_up(high);
         let aroon_down = aroon_down(low);
-        let aroon_oscillaor = aroon_oscillator(aroon_up, aroon_down);
-        (aroon_up, aroon_down, aroon_oscillaor)
+        let aroon_oscillator_value = aroon_oscillator(aroon_up, aroon_down);
+        (aroon_up, aroon_down, aroon_oscillator_value)
     }
 
     /// Calculates the long Stop and Reverse (SaR) point for the Parabolic Time Price System
