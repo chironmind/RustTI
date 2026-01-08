@@ -1343,6 +1343,10 @@ pub mod bulk {
     /// - Quantiles: computed via [`empirical_quantile_from_distribution`] with linear interpolation.
     /// - Result: `q(high) - q(low)` as a width (not a variance-derived standard deviation).
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// Panics:
     /// - If `precision <= 0.0` or NaN.
     /// - If `low`, `high` are not in (0, 1) or `low >= high`.
@@ -1354,10 +1358,6 @@ pub mod bulk {
     /// let iqr = centaur_technical_indicators::basic_indicators::bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
     /// assert_eq!(vec![1.0, 1.0], iqr);
     /// ```
-    /// # Returns
-    ///
-    /// A vector of calculated values
-    ///
     #[inline]
     pub fn empirical_quantile_range_from_distribution(
         prices: &[f64],
