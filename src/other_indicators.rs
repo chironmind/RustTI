@@ -92,6 +92,10 @@ pub mod single {
     /// * `high` - Current period high
     /// * `low` - Current period low
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -232,6 +236,10 @@ pub mod single {
     /// * `low` - Low
     /// * `close` - Close
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -320,6 +328,10 @@ pub mod bulk {
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -369,6 +381,10 @@ pub mod bulk {
     /// * `low` - Slice of lows
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the ATR
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -449,6 +465,10 @@ pub mod bulk {
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     /// * `close` - Slice of closing prices
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

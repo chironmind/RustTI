@@ -57,6 +57,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The mean (average) value of the prices
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -83,6 +87,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// The median value of the prices
     ///
     /// # Panics
     ///
@@ -126,6 +134,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// The mode (most common value) of the prices
     ///
     /// # Panics
     ///
@@ -173,6 +185,10 @@ pub mod single {
     /// * `price_t` - price at t
     /// * `price_t_1` - price at t-1
     ///
+    /// # Returns
+    ///
+    /// The logarithmic difference between the two prices
+    ///
     /// # Panics
     ///
     /// If `price_t` or `price_t_1` is <= 0.0
@@ -203,6 +219,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The variance of the prices
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -232,6 +252,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The standard deviation of the prices
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -254,6 +278,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     /// * `central_point` - Variant of [`CentralPoint`]
+    ///
+    /// # Returns
+    ///
+    /// The absolute deviation value based on the specified configuration
     ///
     /// # Panics
     ///
@@ -315,6 +343,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices (must all be positive)
     ///
+    /// # Returns
+    ///
+    /// The standard deviation of the log-transformed prices
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -354,6 +386,10 @@ pub mod single {
     /// * `prices` - Slice of prices
     /// * `df` - Degrees of freedom (must be > 2)
     ///
+    /// # Returns
+    ///
+    /// The Student's t-adjusted standard deviation
+    ///
     /// # Panics
     ///
     /// Panics if `df` <= 2.0
@@ -382,6 +418,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// The Laplace standard deviation equivalent
     ///
     /// # Panics
     ///
@@ -415,6 +455,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices (must have at least 4 values)
+    ///
+    /// # Returns
+    ///
+    /// The Cauchy IQR-based scale parameter
     ///
     /// # Panics
     ///
@@ -469,6 +513,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The maximum value in the prices slice
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -497,6 +545,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// The minimum value in the prices slice
     ///
     /// # Panics
     ///
@@ -529,6 +581,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     /// * `precision` - Precision to group prices (e.g., 1.0 for whole numbers, 0.1 for one decimal place)
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples containing (value, index)
     ///
     /// # Panics
     ///
@@ -621,6 +677,10 @@ pub mod single {
     /// - Interpolates linearly toward the next bucket center by the within-bucket fraction.
     ///   If no next bucket exists (last bucket), returns the current bucket center.
     ///
+    /// # Returns
+    ///
+    /// The quantile range (difference between high and low quantiles)
+    ///
     /// Panics:
     /// - If `q` is not in (0, 1).
     /// - If `precision <= 0.0` or `precision` is NaN (via `price_distribution`).
@@ -665,6 +725,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the mean
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -705,6 +769,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the median
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -748,6 +816,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the mode
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -786,6 +858,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty.()`
@@ -813,6 +889,10 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -847,6 +927,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the variance
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -890,6 +974,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the standard deviation
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -931,6 +1019,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the standard deviation
     /// * `central_point` - Variant of [`CentralPoint`]
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1004,6 +1096,10 @@ pub mod bulk {
     /// * `precision` - Precision to group prices (e.g., 1.0 for whole numbers, 0.1 for one decimal place)
     /// * `period` - Period over which to calculate the price distribution
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples containing (value, index)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1057,6 +1153,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices (must be positive)
     /// * `period` - Period over which to calculate the log standard deviation
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1101,6 +1201,10 @@ pub mod bulk {
     /// * `period` - Period over which to calculate the standard deviation
     /// * `df` - Degrees of freedom (must be > 2)
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1144,6 +1248,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the Laplace std equivalent
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1185,6 +1293,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the Cauchy scale (must be >= 4)
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1242,6 +1354,10 @@ pub mod bulk {
     /// let iqr = centaur_technical_indicators::basic_indicators::bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
     /// assert_eq!(vec![1.0, 1.0], iqr);
     /// ```
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     #[inline]
     pub fn empirical_quantile_range_from_distribution(
         prices: &[f64],

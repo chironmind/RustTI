@@ -283,6 +283,10 @@ pub mod bulk {
     /// * `volumes` - Slice of volumes
     /// * `previous_accumulation_distribution` - Previous AD (0.0 if none)
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `high.len()` != `low.len()` != `close.len()` != `volumes.len()`
@@ -341,6 +345,10 @@ pub mod bulk {
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of volumes
     /// * `previous_positive_volume_index` - Previous PVI (0.0 if none)
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -412,6 +420,10 @@ pub mod bulk {
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of volumes
     /// * `previous_negative_volume_index` - Previous NVI (0.0 if none)
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -493,6 +505,10 @@ pub mod bulk {
     /// * `close` - Slice of closing prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the RVI
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

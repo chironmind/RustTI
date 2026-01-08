@@ -1259,6 +1259,10 @@ pub mod bulk {
     /// * `multiplier` - Multiplier for the ATR
     /// * `period` - Period over which to calculate the supertrend
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:

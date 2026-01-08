@@ -51,6 +51,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -81,6 +85,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -110,6 +118,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Panics
     ///
@@ -236,6 +248,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.len()` != 14
@@ -269,6 +285,10 @@ pub mod bulk {
     ///
     /// * `prices` - A slice of prices
     /// * `period` - Period over which to calculate the moving average
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -316,6 +336,10 @@ pub mod bulk {
     /// * `prices` - A slice of prices
     /// * `period` - Period over which to calculate the moving average
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -362,6 +386,10 @@ pub mod bulk {
     ///
     /// * `prices` - A slice of prices
     /// * `period` - Period over which to calculate the moving average
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -507,6 +535,10 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

@@ -81,6 +81,10 @@ pub mod single {
     /// * `prices` - Slice of prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -173,6 +177,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -206,6 +214,10 @@ pub mod single {
     ///
     /// * `stochastics` - Slice of stochastics
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Panics
     ///
@@ -349,6 +361,10 @@ pub mod single {
     /// * `low` - Slice of lows
     /// * `close` - Close price for the observed period
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -392,6 +408,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     /// * `volume` - Slice of transaction volumes
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Panics
     ///
@@ -454,6 +474,10 @@ pub mod single {
     ///
     /// * `current_price` - Current price
     /// * `previous_price` - Previous price
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Examples
     ///
@@ -886,6 +910,10 @@ pub mod single {
     /// * `macds` - Slice of MACDs
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `macds.is_empty()`
@@ -1262,6 +1290,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -1332,6 +1364,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the RSI
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1409,6 +1445,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the stochastic oscillator
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if the `period` > `prices.len()`
@@ -1446,6 +1486,10 @@ pub mod bulk {
     /// * `stochastics` - Slice of Stochastic Oscillators
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the slow stochastic
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1512,6 +1556,10 @@ pub mod bulk {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the slowest stochastic oscillator
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `period` > `slow_stochastics.len()`
@@ -1575,6 +1623,10 @@ pub mod bulk {
     /// * `close` - Slice of closing prices
     /// * `period` - Period over which to calculate the Williams %R
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1635,6 +1687,10 @@ pub mod bulk {
     /// * `volume` - Slice of volumes
     /// * `period` - Period over which to calculate the MFI
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1690,6 +1746,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -1720,6 +1780,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `volume` - Slice of volumes
     /// * `previous_on_balance_volume` - Previous OBV (use 0.0 if none)
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1777,6 +1841,10 @@ pub mod bulk {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `constant_multiplier` - Scale factor (normally 0.015)
     /// * `period` - Period over which to calculate the CCI
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1932,6 +2000,10 @@ pub mod bulk {
     /// * `long_period` - The length of the long period
     /// * `long_period_model` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -2010,6 +2082,10 @@ pub mod bulk {
     /// * `macds` - Slice of MACDs
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the signal line
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -2300,6 +2376,10 @@ pub mod bulk {
     /// * `long_period` - Length of long period
     /// * `constant_model_type` Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -2369,6 +2449,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the CMO
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

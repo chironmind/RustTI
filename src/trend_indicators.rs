@@ -60,6 +60,10 @@ pub mod single {
     ///
     /// * `high` - Slice of highs
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `high.is_empty()`
@@ -88,6 +92,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `low` - Slice of lows
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Panics
     ///
@@ -118,6 +126,10 @@ pub mod single {
     ///
     /// * `aroon_up` - Aroon up for the period
     /// * `aroon_down` - Aroon down for the period
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Examples
     ///
@@ -497,6 +509,10 @@ pub mod bulk {
     /// * `high` - Slice of highs
     /// * `period` - Period over which to calculate the Aroon up
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `period` > `high.len()`
@@ -533,6 +549,10 @@ pub mod bulk {
     /// * `low` - Slice of lows
     /// * `period` - Period over which to calculate the Aroon down
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `period` > `low.len()`
@@ -568,6 +588,10 @@ pub mod bulk {
     ///
     /// * `aroon_up` - Slice of Aroon ups
     /// * `aroon_down` - Slice Aroon downs
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

@@ -49,6 +49,10 @@ pub mod single {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `deviation_model` - Variant of [`DeviationModel`]
     ///
+    /// # Returns
+    ///
+    /// The correlation coefficient between the two asset prices
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -261,6 +265,10 @@ pub mod bulk {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `period`: Period over which to calculate the correlation
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
