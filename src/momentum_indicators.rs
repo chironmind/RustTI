@@ -91,23 +91,23 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     ///
     /// let defaut_rsi =
-    ///     rust_ti::momentum_indicators::single::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SmoothedMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage
     ///     );
     /// assert_eq!(39.99999999999999, defaut_rsi);
     ///
     /// let ema_rsi =
-    ///     rust_ti::momentum_indicators::single::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!(38.46153846153846, ema_rsi);
     ///
     /// let moving_median_rsi =
-    ///     rust_ti::momentum_indicators::single::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!(42.857142857142854, moving_median_rsi);
     /// ```
@@ -182,7 +182,7 @@ pub mod single {
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     /// let stochastic_oscillator =
-    ///     rust_ti::momentum_indicators::single::stochastic_oscillator(&prices);
+    ///     centaur_technical_indicators::momentum_indicators::single::stochastic_oscillator(&prices);
     /// assert_eq!(0.0, stochastic_oscillator);
     /// ```
     #[inline]
@@ -217,23 +217,23 @@ pub mod single {
     /// let stochstic_oscillators = [0.0, 50.0, 100.0];
     ///
     /// let simple_ma_slow_stochastic =
-    ///     rust_ti::momentum_indicators::single::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::single::slow_stochastic(
     ///         &stochstic_oscillators,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     ///     );
     /// assert_eq!(50.0, simple_ma_slow_stochastic);
     ///
     /// let sma_slow_stochastic =
-    ///     rust_ti::momentum_indicators::single::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::single::slow_stochastic(
     ///         &stochstic_oscillators,
-    ///         rust_ti::ConstantModelType::SmoothedMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage
     ///     );
     /// assert_eq!(63.15789473684211, sma_slow_stochastic);
     ///
     /// let median_slow_stochastic =
-    ///     rust_ti::momentum_indicators::single::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::single::slow_stochastic(
     ///         &stochstic_oscillators,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!(50.0, median_slow_stochastic);
     /// ```
@@ -286,23 +286,23 @@ pub mod single {
     /// let slow_stochstic = [30.0, 20.0, 10.0];
     ///
     /// let simple_ma_slowest_stochastic =
-    ///     rust_ti::momentum_indicators::single::slowest_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::single::slowest_stochastic(
     ///         &slow_stochstic,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     ///     );
     /// assert_eq!(20.0, simple_ma_slowest_stochastic);
     ///
     /// let sma_slowest_stochastic =
-    ///     rust_ti::momentum_indicators::single::slowest_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::single::slowest_stochastic(
     ///         &slow_stochstic,
-    ///         rust_ti::ConstantModelType::SmoothedMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage
     ///     );
     /// assert_eq!(17.368421052631582, sma_slowest_stochastic);
     ///
     /// let median_slowest_stochastic =
-    ///     rust_ti::momentum_indicators::single::slowest_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::single::slowest_stochastic(
     ///         &slow_stochstic,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!(20.0, median_slowest_stochastic);
     /// ```
@@ -362,7 +362,7 @@ pub mod single {
     /// let low = [175.0, 189.0, 182.0];
     /// let close = 192.0;
     /// let williams_percent_r =
-    ///     rust_ti::momentum_indicators::single::williams_percent_r(
+    ///     centaur_technical_indicators::momentum_indicators::single::williams_percent_r(
     ///         &high,
     ///         &low,
     ///         close
@@ -405,7 +405,7 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     /// let volume = vec![1000.0, 1500.0, 1200.0, 900.0, 1300.0];
     /// let money_flow_index =
-    ///     rust_ti::momentum_indicators::single::money_flow_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::money_flow_index(
     ///         &prices,
     ///         &volume
     ///     );
@@ -461,7 +461,7 @@ pub mod single {
     /// let current_price = 120.0;
     /// let previous_price = 100.0;
     /// let rate_of_change =
-    ///     rust_ti::momentum_indicators::single::rate_of_change(
+    ///     centaur_technical_indicators::momentum_indicators::single::rate_of_change(
     ///         current_price,
     ///         previous_price
     ///     );
@@ -470,7 +470,7 @@ pub mod single {
     /// let current_price = 100.0;
     /// let previous_price = 120.0;
     /// let rate_of_change =
-    ///     rust_ti::momentum_indicators::single::rate_of_change(
+    ///     centaur_technical_indicators::momentum_indicators::single::rate_of_change(
     ///         current_price,
     ///         previous_price
     ///     );
@@ -500,7 +500,7 @@ pub mod single {
     /// let previous_price = 100.0;
     /// let current_volume = 1500.0;
     /// let on_balance_volume =
-    ///     rust_ti::momentum_indicators::single::on_balance_volume(
+    ///     centaur_technical_indicators::momentum_indicators::single::on_balance_volume(
     ///         current_price,
     ///         previous_price,
     ///         current_volume,
@@ -512,7 +512,7 @@ pub mod single {
     /// let previous_price = 120.0;
     /// let current_volume = 1000.0;
     /// let on_balance_volume =
-    ///     rust_ti::momentum_indicators::single::on_balance_volume(
+    ///     centaur_technical_indicators::momentum_indicators::single::on_balance_volume(
     ///         current_price,
     ///         previous_price,
     ///         current_volume,
@@ -555,28 +555,28 @@ pub mod single {
     /// let constant_multiplier = 0.015;
     ///
     /// let default_cci =
-    ///     rust_ti::momentum_indicators::single::commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::commodity_channel_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier
     ///     );
     /// assert_eq!(-111.11111111111111, default_cci);
     ///
     /// let ema_sd_cci =
-    ///     rust_ti::momentum_indicators::single::commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::commodity_channel_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         constant_multiplier
     ///     );
     /// assert_eq!(-75.96091804215764, ema_sd_cci);
     ///
     /// let median_mad_cci =
-    ///     rust_ti::momentum_indicators::single::commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::commodity_channel_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
-    ///         rust_ti::DeviationModel::MedianAbsoluteDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::DeviationModel::MedianAbsoluteDeviation,
     ///         constant_multiplier
     ///     );  
     /// assert_eq!(-133.33333333333334, median_mad_cci);
@@ -640,20 +640,21 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => {
+                absolute_deviation(prices, config)
+            }
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
-            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
-                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
-                    prices,
-                    precision,
-                    low,
-                    high,
-                )
-            }
+            DeviationModel::EmpiricalQuantileRange {
+                low,
+                high,
+                precision,
+            } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                prices, precision, low, high,
+            ),
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -684,20 +685,20 @@ pub mod single {
     /// let constant_multiplier = 0.015;
     ///
     /// let mcginley_cci =
-    ///     rust_ti::momentum_indicators::single::mcginley_dynamic_commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::mcginley_dynamic_commodity_channel_index(
     ///         &prices,
     ///         0.0,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier
     ///     );
     /// assert_eq!((0.0, 99.0), mcginley_cci);
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
     /// let mcginley_cci =
-    ///     rust_ti::momentum_indicators::single::mcginley_dynamic_commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::single::mcginley_dynamic_commodity_channel_index(
     ///         &prices,
     ///         mcginley_cci.1,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier
     ///     );
     /// assert_eq!((146.8770632107927, 99.53246533805869), mcginley_cci);
@@ -741,20 +742,21 @@ pub mod single {
                     aggregate: DeviationAggregate::Mode,
                 },
             ),
-            DeviationModel::CustomAbsoluteDeviation { config } => absolute_deviation(prices, config),
+            DeviationModel::CustomAbsoluteDeviation { config } => {
+                absolute_deviation(prices, config)
+            }
             DeviationModel::UlcerIndex => ulcer_index(prices),
             DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
             DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
             DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
             DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
-            DeviationModel::EmpiricalQuantileRange { low, high, precision } => {
-                crate::basic_indicators::single::empirical_quantile_range_from_distribution(
-                    prices,
-                    precision,
-                    low,
-                    high,
-                )
-            }
+            DeviationModel::EmpiricalQuantileRange {
+                low,
+                high,
+                precision,
+            } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
+                prices, precision, low, high,
+            ),
             #[allow(unreachable_patterns)]
             _ => panic!("Unsupported DeviationModel"),
         };
@@ -789,20 +791,20 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     ///
     /// let macd =
-    ///     rust_ti::momentum_indicators::single::macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::single::macd_line(
     ///         &prices,
     ///         3_usize,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!(-0.46851726472581845, macd);
     ///
     /// let macd =
-    ///     rust_ti::momentum_indicators::single::macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::single::macd_line(
     ///         &prices,
     ///         3_usize,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!(0.0, macd);
     /// ```
@@ -894,16 +896,16 @@ pub mod single {
     /// let macds = vec![-0.0606702775897219, -0.0224170616113781, 0.0057887610020515];
     ///
     /// let ema_signal_line =
-    ///     rust_ti::momentum_indicators::single::signal_line(
+    ///     centaur_technical_indicators::momentum_indicators::single::signal_line(
     ///         &macds,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!(-0.011764193829181728, ema_signal_line);
     ///
     /// let median_signal_line =
-    ///     rust_ti::momentum_indicators::single::signal_line(
+    ///     centaur_technical_indicators::momentum_indicators::single::signal_line(
     ///         &macds,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!(-0.0224170616113781, median_signal_line);
     /// ```
@@ -960,7 +962,7 @@ pub mod single {
     /// let short_period: usize = 3;
     ///
     /// let mcginley_dynamic_macd =
-    ///     rust_ti::momentum_indicators::single::mcginley_dynamic_macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::single::mcginley_dynamic_macd_line(
     ///         &prices,
     ///         short_period,
     ///         0.0,
@@ -970,7 +972,7 @@ pub mod single {
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
     /// let mcginley_dynamic_macd =
-    ///     rust_ti::momentum_indicators::single::mcginley_dynamic_macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::single::mcginley_dynamic_macd_line(
     ///         &prices,
     ///         short_period,
     ///         mcginley_dynamic_macd.1,
@@ -1037,29 +1039,29 @@ pub mod single {
     /// let previous = 0.0;
     ///
     /// let chaikin_oscillator =
-    ///     rust_ti::momentum_indicators::single::chaikin_oscillator(
+    ///     centaur_technical_indicators::momentum_indicators::single::chaikin_oscillator(
     ///         &high,
     ///         &low,
     ///         &close,
     ///         &volume,
     ///         short_period,
     ///         previous,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!((-179.95937711577525, -760.0), chaikin_oscillator);
     ///
     /// let previous = 500.0;
     /// let chaikin_oscillator =
-    ///     rust_ti::momentum_indicators::single::chaikin_oscillator(
+    ///     centaur_technical_indicators::momentum_indicators::single::chaikin_oscillator(
     ///         &high,
     ///         &low,
     ///         &close,
     ///         &volume,
     ///         short_period,
     ///         previous,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!((-333.3333333333333, -260.0), chaikin_oscillator);
     /// ```
@@ -1184,10 +1186,10 @@ pub mod single {
     /// let short_period: usize = 3;
     ///
     /// let percentage_price_oscillator =
-    ///     rust_ti::momentum_indicators::single::percentage_price_oscillator(
+    ///     centaur_technical_indicators::momentum_indicators::single::percentage_price_oscillator(
     ///         &prices,
     ///         short_period,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     ///
     /// assert_eq!(-1.0681349863189704 , percentage_price_oscillator);
@@ -1265,7 +1267,7 @@ pub mod single {
     /// ```rust
     /// let prices = vec![100.0, 103.0, 106.0, 100.0, 97.0];
     /// let chande_momentum_oscillator =
-    ///     rust_ti::momentum_indicators::single::chande_momentum_oscillator(&prices);
+    ///     centaur_technical_indicators::momentum_indicators::single::chande_momentum_oscillator(&prices);
     /// assert_eq!(-20.0, chande_momentum_oscillator)
     /// ```
     #[inline]
@@ -1337,25 +1339,25 @@ pub mod bulk {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     /// let period: usize = 3;
     /// let defaut_rsi =
-    ///     rust_ti::momentum_indicators::bulk::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SmoothedMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage,
     ///         period
     ///     );
     /// assert_eq!(vec![100.0, 33.33333333333333, 0.0], defaut_rsi);
     ///
     /// let ema_rsi =
-    ///     rust_ti::momentum_indicators::bulk::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         period
     ///     );
     /// assert_eq!(vec![100.0, 33.33333333333333, 0.0], ema_rsi);
     ///
     /// let moving_median_rsi =
-    ///     rust_ti::momentum_indicators::bulk::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         period
     ///     );
     /// assert_eq!(vec![100.0, 33.33333333333333, 0.0], moving_median_rsi);
@@ -1364,9 +1366,9 @@ pub mod bulk {
     /// let period: usize = 5;
     ///
     /// let personalised_rsi =
-    ///     rust_ti::momentum_indicators::bulk::relative_strength_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::relative_strength_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::PersonalisedMovingAverage{alpha_num: 5.0, alpha_den:
+    ///         centaur_technical_indicators::ConstantModelType::PersonalisedMovingAverage{alpha_num: 5.0, alpha_den:
     ///         4.0},
     ///         period
     ///     );
@@ -1413,7 +1415,7 @@ pub mod bulk {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     /// let period: usize = 3;
     /// let stochastic_oscillator =
-    ///     rust_ti::momentum_indicators::bulk::stochastic_oscillator(&prices, period);
+    ///     centaur_technical_indicators::momentum_indicators::bulk::stochastic_oscillator(&prices, period);
     /// assert_eq!(vec![100.0, 0.0, 0.0], stochastic_oscillator);
     /// ```
     #[inline]
@@ -1452,17 +1454,17 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let simple_ma_slow_stochastic =
-    ///     rust_ti::momentum_indicators::bulk::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
     ///         &stochstic_oscillators,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         period
     ///     );
     /// assert_eq!(vec![25.0, 36.0, 52.0], simple_ma_slow_stochastic);
     ///
     /// let sma_slow_stochastic =
-    /// rust_ti::momentum_indicators::bulk::slow_stochastic(
+    /// centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
     ///     &stochstic_oscillators,
-    ///     rust_ti::ConstantModelType::SmoothedMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage,
     ///     period
     /// );
     /// assert_eq!(
@@ -1471,9 +1473,9 @@ pub mod bulk {
     /// );
     ///
     /// let median_slow_stochastic =
-    ///     rust_ti::momentum_indicators::bulk::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
     ///         &stochstic_oscillators,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         period
     ///     );
     /// assert_eq!(vec![25.0, 33.0, 50.0], median_slow_stochastic);
@@ -1517,25 +1519,25 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let ma_slowest_stochastic =
-    ///     rust_ti::momentum_indicators::bulk::slowest_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::slowest_stochastic(
     ///         &slow_stochstics,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         period
     ///     );
     /// assert_eq!(vec![69.33333333333333, 63.666666666666664], ma_slowest_stochastic);
     ///
     /// let sma_slowest_stochastic =
-    ///     rust_ti::momentum_indicators::bulk::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
     ///         &slow_stochstics,
-    ///         rust_ti::ConstantModelType::SmoothedMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage,
     ///         period
     ///     );
     /// assert_eq!(vec![69.31578947368422, 63.15789473684211], sma_slowest_stochastic);
     ///
     /// let median_slowest_stochastic =
-    ///     rust_ti::momentum_indicators::bulk::slow_stochastic(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
     ///         &slow_stochstics,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         period
     ///     );
     /// assert_eq!(vec![73.0, 60.0], median_slowest_stochastic);
@@ -1583,7 +1585,7 @@ pub mod bulk {
     /// let close = vec![192.0, 200.0, 201.0, 187.0];
     /// let period: usize = 3;
     /// let williams_percent_r =
-    ///     rust_ti::momentum_indicators::bulk::williams_percent_r(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::williams_percent_r(
     ///         &high,
     ///         &low,
     ///         &close,
@@ -1642,7 +1644,7 @@ pub mod bulk {
     /// let volume = vec![1000.0, 1500.0, 1200.0, 900.0, 1300.0];
     /// let period: usize = 3;
     /// let money_flow_index =
-    ///     rust_ti::momentum_indicators::bulk::money_flow_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::money_flow_index(
     ///         &prices,
     ///         &volume,
     ///         period
@@ -1692,7 +1694,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![100.0, 120.0, 100.0];
-    /// let rate_of_change = rust_ti::momentum_indicators::bulk::rate_of_change(&prices);
+    /// let rate_of_change = centaur_technical_indicators::momentum_indicators::bulk::rate_of_change(&prices);
     /// assert_eq!(vec![20.0, -16.666666666666664], rate_of_change);
     /// ```
     #[inline]
@@ -1727,7 +1729,7 @@ pub mod bulk {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 99.0];
     /// let volume = vec![1000.0, 1500.0, 1200.0, 900.0, 1300.0, 1400.0];
     /// let on_balance_volume =
-    ///     rust_ti::momentum_indicators::bulk::on_balance_volume(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::on_balance_volume(
     ///         &prices,
     ///         &volume,
     ///         0.0
@@ -1784,10 +1786,10 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let default_cci =
-    ///     rust_ti::momentum_indicators::bulk::commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::commodity_channel_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier,
     ///         period
     ///     );
@@ -1797,10 +1799,10 @@ pub mod bulk {
     /// );
     ///
     /// let ema_sd_cci =
-    ///     rust_ti::momentum_indicators::bulk::commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::commodity_channel_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///         rust_ti::DeviationModel::StandardDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         constant_multiplier,
     ///         period
     ///     );
@@ -1810,10 +1812,10 @@ pub mod bulk {
     /// );
     ///
     /// let median_mad_cci =
-    ///     rust_ti::momentum_indicators::bulk::commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::commodity_channel_index(
     ///         &prices,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
-    ///         rust_ti::DeviationModel::MedianAbsoluteDeviation,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::DeviationModel::MedianAbsoluteDeviation,
     ///         constant_multiplier,
     ///         period
     ///     );  
@@ -1871,10 +1873,10 @@ pub mod bulk {
     /// let constant_multiplier = 0.015;
     ///
     /// let mcginley_cci =
-    ///     rust_ti::momentum_indicators::bulk::mcginley_dynamic_commodity_channel_index(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::mcginley_dynamic_commodity_channel_index(
     ///         &prices,
     ///         0.0,
-    ///         rust_ti::DeviationModel::MeanAbsoluteDeviation,
+    ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier,
     ///         5_usize
     ///     );
@@ -1940,12 +1942,12 @@ pub mod bulk {
     /// let long_period: usize = 5;
     ///
     /// let macd =
-    ///     rust_ti::momentum_indicators::bulk::macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::macd_line(
     ///         &prices,
     ///         short_period,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         long_period,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!(
     ///     vec![-0.46851726472581845, -0.7379823967501835, 0.031821259309410266],
@@ -1953,12 +1955,12 @@ pub mod bulk {
     /// );
     ///
     /// let macd =
-    ///     rust_ti::momentum_indicators::bulk::macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::macd_line(
     ///         &prices,
     ///         short_period,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         long_period,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian);
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian);
     /// assert_eq!(vec![0.0, -1.3333333333333286, -1.0], macd);
     /// ```
     #[inline]
@@ -2019,9 +2021,9 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let ema_signal_line =
-    ///     rust_ti::momentum_indicators::bulk::signal_line(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::signal_line(
     ///         &macds,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         period
     ///     );
     /// assert_eq!(
@@ -2030,9 +2032,9 @@ pub mod bulk {
     /// );
     ///
     /// let median_signal_line =
-    ///     rust_ti::momentum_indicators::bulk::signal_line(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::signal_line(
     ///         &macds,
-    ///         rust_ti::ConstantModelType::SimpleMovingMedian,
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         period
     ///     );
     /// assert_eq!(
@@ -2085,7 +2087,7 @@ pub mod bulk {
     /// let short_period: usize = 3;
     /// let long_period: usize = 5;
     /// let mcginley_dynamic_macd =
-    ///     rust_ti::momentum_indicators::bulk::mcginley_dynamic_macd_line(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::mcginley_dynamic_macd_line(
     ///         &prices,
     ///         short_period,
     ///         0.0,
@@ -2181,7 +2183,7 @@ pub mod bulk {
     /// let long_period: usize = 5;
     /// let previous = 0.0;
     ///
-    /// let chaikin_oscillator = rust_ti::momentum_indicators::bulk::chaikin_oscillator(
+    /// let chaikin_oscillator = centaur_technical_indicators::momentum_indicators::bulk::chaikin_oscillator(
     ///     &high,
     ///     &low,
     ///     &close,
@@ -2189,8 +2191,8 @@ pub mod bulk {
     ///     short_period,
     ///     long_period,
     ///     previous,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     /// );
     /// assert_eq!(
     ///     vec![(-179.95937711577525, -760.0), (-339.790115098172, -2770.0), (-203.39139533452362, -3484.5454545454545)],
@@ -2198,7 +2200,7 @@ pub mod bulk {
     /// );
     ///
     /// let previous = 500.0;
-    /// let chaikin_oscillator = rust_ti::momentum_indicators::bulk::chaikin_oscillator(
+    /// let chaikin_oscillator = centaur_technical_indicators::momentum_indicators::bulk::chaikin_oscillator(
     ///     &high,
     ///     &low,
     ///     &close,
@@ -2206,8 +2208,8 @@ pub mod bulk {
     ///     short_period,
     ///     long_period,
     ///     previous,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
-    ///     rust_ti::ConstantModelType::SimpleMovingMedian
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
     ///     );
     /// assert_eq!(
     ///     vec![(-333.3333333333333, -260.0), (-676.6666666666667, -2270.0), (-280.30303030303, -2984.5454545454545)],
@@ -2305,11 +2307,11 @@ pub mod bulk {
     /// let long_period: usize = 5;
     ///
     /// let percentage_price_oscillator =
-    ///     rust_ti::momentum_indicators::bulk::percentage_price_oscillator(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::percentage_price_oscillator(
     ///         &prices,
     ///         short_period,
     ///         long_period,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     ///
     /// assert_eq!(
@@ -2371,7 +2373,7 @@ pub mod bulk {
     /// ```rust
     /// let prices = vec![100.0, 103.0, 106.0, 100.0, 97.0, 105.0, 102.0];
     /// let chande_momentum_oscillator =
-    ///     rust_ti::momentum_indicators::bulk::chande_momentum_oscillator(
+    ///     centaur_technical_indicators::momentum_indicators::bulk::chande_momentum_oscillator(
     ///         &prices,
     ///         5_usize
     ///     );

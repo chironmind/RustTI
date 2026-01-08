@@ -50,28 +50,28 @@ use crate::basic_indicators::single::{max, mean, min};
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0];
 /// let period: usize = 3;
 /// let closest_neighbor: usize = 1;
-/// let peaks = rust_ti::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
 /// assert_eq!(vec![(107.0, 2)], peaks);
 ///
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 109.0];
 /// let period: usize = 3;
-/// let peaks = rust_ti::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
 /// assert_eq!(vec![(107.0, 2), (109.0, 5)], peaks);
 ///
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 109.0];
 /// let period: usize = 6;
-/// let peaks = rust_ti::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
 /// assert_eq!(vec![(109.0, 5)], peaks);
 ///
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 107.0];
 /// let period: usize = 3;
-/// let peaks = rust_ti::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
 /// assert_eq!(vec![(107.0, 2), (107.0, 5)], peaks);
 ///
 /// // If there are 2 peaks it will take the most recent one
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 107.0];
 /// let period: usize = 6;
-/// let peaks = rust_ti::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
 /// assert_eq!(vec![(107.0, 5)], peaks);
 /// ```
 pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64, usize)> {
@@ -140,27 +140,27 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0];
 /// let period: usize = 3;
 /// let closest_neighbor: usize = 1;
-/// let valleys = rust_ti::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
 /// assert_eq!(vec![(95.0, 2)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 93.0];
 /// let period: usize = 3;
-/// let valleys = rust_ti::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
 /// assert_eq!(vec![(95.0, 2), (93.0, 5)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 93.0];
 /// let period: usize = 6;
-/// let valleys = rust_ti::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
 /// assert_eq!(vec![(93.0, 5)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 95.0];
 /// let period: usize = 3;
-/// let valleys = rust_ti::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
 /// assert_eq!(vec![(95.0, 2), (95.0, 5)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 95.0];
 /// let period: usize = 6;
-/// let valleys = rust_ti::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
 /// assert_eq!(vec![(95.0, 5)], valleys);
 /// ```
 pub fn valleys(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64, usize)> {
@@ -238,7 +238,7 @@ fn get_trend_line(p: &[(f64, usize)]) -> (f64, f64) {
 /// ```rust
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 109.0];
 /// let period: usize = 3;
-/// let peak_trend = rust_ti::chart_trends::peak_trend(&highs, period);
+/// let peak_trend = centaur_technical_indicators::chart_trends::peak_trend(&highs, period);
 /// assert_eq!((0.6666666666666666, 105.66666666666667), peak_trend);
 /// ```
 #[inline]
@@ -259,7 +259,7 @@ pub fn peak_trend(prices: &[f64], period: usize) -> (f64, f64) {
 /// ```rust
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 93.0];
 /// let period: usize = 3;
-/// let valley_trend = rust_ti::chart_trends::valley_trend(&lows, period);
+/// let valley_trend = centaur_technical_indicators::chart_trends::valley_trend(&lows, period);
 /// assert_eq!((-0.6666666666666666, 96.33333333333333), valley_trend);
 /// ```
 #[inline]
@@ -278,7 +278,7 @@ pub fn valley_trend(prices: &[f64], period: usize) -> (f64, f64) {
 ///
 /// ```rust
 /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-/// let overall_trend = rust_ti::chart_trends::overall_trend(&prices);
+/// let overall_trend = centaur_technical_indicators::chart_trends::overall_trend(&prices);
 /// assert_eq!((-0.1, 101.4), overall_trend);
 /// ```
 #[inline]
@@ -354,7 +354,7 @@ impl Default for TrendBreakConfig {
 ///     100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0,
 ///     103.0, 106.0, 107.0, 105.0, 104.0, 101.0, 97.0, 100.0
 /// ];
-/// let trend_break_config = rust_ti::chart_trends::TrendBreakConfig {
+/// let trend_break_config = centaur_technical_indicators::chart_trends::TrendBreakConfig {
 ///     max_outliers: 1,
 ///     soft_adj_r_squared_minimum: 0.25,
 ///     hard_adj_r_squared_minimum: 0.05,
@@ -366,7 +366,7 @@ impl Default for TrendBreakConfig {
 ///     hard_durbin_watson_max: 3.5,
 /// };
 ///
-/// let trend_break_down = rust_ti::chart_trends::break_down_trends(
+/// let trend_break_down = centaur_technical_indicators::chart_trends::break_down_trends(
 ///     &prices,
 ///     trend_break_config
 /// );

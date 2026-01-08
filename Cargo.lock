@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "rust_ti"
-version = "2.2.0"
+name = "centaur_technical_indicators"
+version = "1.0.0"

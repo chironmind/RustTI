@@ -46,7 +46,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
-    /// let ulcer_index = rust_ti::volatility_indicators::single::ulcer_index(&prices);
+    /// let ulcer_index = centaur_technical_indicators::volatility_indicators::single::ulcer_index(&prices);
     /// assert_eq!(1.9417475728155338, ulcer_index);
     /// ```
     #[inline]
@@ -90,7 +90,7 @@ pub mod bulk {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0];
     /// let period: usize = 5;
     /// let ulcer_index =
-    ///     rust_ti::volatility_indicators::bulk::ulcer_index(&prices, period);
+    ///     centaur_technical_indicators::volatility_indicators::bulk::ulcer_index(&prices, period);
     /// assert_eq!(
     ///     vec![1.9417475728155338, 2.6051277407764535, 2.641062234705911],
     ///     ulcer_index
@@ -165,13 +165,13 @@ pub mod bulk {
     /// let constant_multiplier = 3.0;
     ///
     /// let volatility_system =
-    ///     rust_ti::volatility_indicators::bulk::volatility_system(
+    ///     centaur_technical_indicators::volatility_indicators::bulk::volatility_system(
     ///         &high,
     ///         &low,
     ///         &close,
     ///         period,
     ///         constant_multiplier,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     ///     );
     ///
     /// assert_eq!(

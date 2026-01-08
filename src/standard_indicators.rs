@@ -61,7 +61,7 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     ///
     /// let simple_moving_average =
-    ///     rust_ti::standard_indicators::single::simple_moving_average(
+    ///     centaur_technical_indicators::standard_indicators::single::simple_moving_average(
     ///         &prices
     ///     );
     /// assert_eq!(101.2, simple_moving_average);
@@ -91,7 +91,7 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     ///
     /// let smoothed_moving_average =
-    ///     rust_ti::standard_indicators::single::smoothed_moving_average(
+    ///     centaur_technical_indicators::standard_indicators::single::smoothed_moving_average(
     ///         &prices
     ///     );
     /// assert_eq!(101.11375535459305, smoothed_moving_average);
@@ -121,7 +121,7 @@ pub mod single {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     ///
     /// let exponential_moving_average =
-    ///     rust_ti::standard_indicators::single::exponential_moving_average(
+    ///     centaur_technical_indicators::standard_indicators::single::exponential_moving_average(
     ///         &prices
     ///     );
     /// assert_eq!(100.99526066350714, exponential_moving_average);
@@ -155,7 +155,7 @@ pub mod single {
     ///     5300.94, 5270.64, 5239.26, 5249.84, 5273.27, 5282.59, 5335.27, 5350.22, 5351.13,
     ///     5352.7, 5359.50
     /// ];
-    /// let bbands = rust_ti::standard_indicators::single::bollinger_bands(&prices);
+    /// let bbands = centaur_technical_indicators::standard_indicators::single::bollinger_bands(&prices);
     /// assert_eq!((5230.115435120723, 5301.039500000001, 5371.963564879278), bbands);
     /// ```
     #[inline]
@@ -202,7 +202,7 @@ pub mod single {
     ///     5352.7, 5359.51,
     /// ];
     ///
-    /// let macd = rust_ti::standard_indicators::single::macd(&prices);
+    /// let macd = centaur_technical_indicators::standard_indicators::single::macd(&prices);
     /// assert_eq!((23.98848088685554, 24.707439348177488, -0.7189584613219466), macd);
     /// ```
     #[inline]
@@ -239,7 +239,7 @@ pub mod single {
     ///     5288.88, 5298.25, 5300.95, 5270.64, 5239.26, 5249.84, 5273.28, 5282.59,
     ///     5335.28, 5350.22, 5351.13, 5352.7, 5359.51, 5425.8
     /// ];
-    /// let rsi = rust_ti::standard_indicators::single::rsi(&prices);
+    /// let rsi = centaur_technical_indicators::standard_indicators::single::rsi(&prices);
     /// assert_eq!(39.44166748365885, rsi);
     /// ```
     #[inline]
@@ -275,7 +275,7 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let simple_moving_average =
-    ///     rust_ti::standard_indicators::bulk::simple_moving_average(
+    ///     centaur_technical_indicators::standard_indicators::bulk::simple_moving_average(
     ///         &prices,
     ///         period
     ///     );
@@ -321,7 +321,7 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let smoothed_moving_average =
-    ///     rust_ti::standard_indicators::bulk::smoothed_moving_average(
+    ///     centaur_technical_indicators::standard_indicators::bulk::smoothed_moving_average(
     ///         &prices,
     ///         period
     ///     );
@@ -368,7 +368,7 @@ pub mod bulk {
     /// let period: usize = 3;
     ///
     /// let exponential_moving_average =
-    ///     rust_ti::standard_indicators::bulk::exponential_moving_average(
+    ///     centaur_technical_indicators::standard_indicators::bulk::exponential_moving_average(
     ///         &prices,
     ///         period
     ///     );
@@ -415,7 +415,7 @@ pub mod bulk {
     ///     5282.59, 5335.27, 5350.22, 5351.13,5352.7, 5359.50
     /// ];
     ///
-    /// let bbands = rust_ti::standard_indicators::bulk::bollinger_bands(&prices);
+    /// let bbands = centaur_technical_indicators::standard_indicators::bulk::bollinger_bands(&prices);
     /// assert_eq!(
     ///     vec![
     ///         (5213.581409805746, 5287.7935, 5362.005590194253),
@@ -462,7 +462,7 @@ pub mod bulk {
     ///     5425.8
     /// ];
     ///
-    /// let macd = rust_ti::standard_indicators::bulk::macd(&prices);
+    /// let macd = centaur_technical_indicators::standard_indicators::bulk::macd(&prices);
     /// assert_eq!(vec![
     ///         (23.732307403474806, 27.84886885937626, -4.116561455901454),
     ///         (23.231108818822577, 25.86755810362568, -2.6364492848031027),
@@ -503,7 +503,7 @@ pub mod bulk {
     ///     5311.95, 5314.53, 5305.4, 5288.88, 5298.25, 5300.95, 5270.64, 5239.26, 5249.84,
     ///     5273.28, 5282.59, 5335.28, 5350.22, 5351.13, 5352.7, 5359.51, 5425.8
     /// ];
-    /// let rsi = rust_ti::standard_indicators::bulk::rsi(&prices);
+    /// let rsi = centaur_technical_indicators::standard_indicators::bulk::rsi(&prices);
     /// assert_eq!(
     ///     vec![38.168621439659084, 35.624517227910545, 31.14286676169411, 39.44166748365885],
     ///     rsi

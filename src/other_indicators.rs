@@ -55,7 +55,7 @@ pub mod single {
     /// let end_price = 110.0;
     /// let initial_investment = 1000.0;
     /// let return_on_investment =
-    ///     rust_ti::other_indicators::single::return_on_investment(
+    ///     centaur_technical_indicators::other_indicators::single::return_on_investment(
     ///         start_price,
     ///         end_price,
     ///         initial_investment
@@ -65,7 +65,7 @@ pub mod single {
     /// // new_price shifts end_price to be the new start price
     /// let new_price = 98.0;
     /// let return_on_investment =
-    ///     rust_ti::other_indicators::single::return_on_investment(
+    ///     centaur_technical_indicators::other_indicators::single::return_on_investment(
     ///         end_price,
     ///         new_price,
     ///         return_on_investment.0
@@ -91,14 +91,14 @@ pub mod single {
     /// # Examples
     ///
     /// ```rust
-    /// let high_low_tr = rust_ti::other_indicators::single::true_range(
+    /// let high_low_tr = centaur_technical_indicators::other_indicators::single::true_range(
     ///     110.0,
     ///     115.0,
     ///     105.0
     /// );
     /// assert_eq!(10.0, high_low_tr);
     ///
-    /// let high_close_tr = rust_ti::other_indicators::single::true_range(
+    /// let high_close_tr = centaur_technical_indicators::other_indicators::single::true_range(
     ///     105.0,
     ///     115.0,
     ///     110.0
@@ -106,7 +106,7 @@ pub mod single {
     /// assert_eq!(10.0, high_close_tr);
     ///
     ///
-    /// let close_low_tr = rust_ti::other_indicators::single::true_range(
+    /// let close_low_tr = centaur_technical_indicators::other_indicators::single::true_range(
     ///     115.0,
     ///     110.0,
     ///     105.0
@@ -150,20 +150,20 @@ pub mod single {
     /// let low = vec![105.0, 110.0, 105.0];
     ///
     /// let average_true_range =
-    ///     rust_ti::other_indicators::single::average_true_range(
+    ///     centaur_technical_indicators::other_indicators::single::average_true_range(
     ///         &close,
     ///         &high,
     ///         &low,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     ///     );
     /// assert_eq!(10.0, average_true_range);
     ///
     /// let exponential_atr =
-    ///     rust_ti::other_indicators::single::average_true_range(
+    ///     centaur_technical_indicators::other_indicators::single::average_true_range(
     ///         &close,
     ///         &high,
     ///         &low,
-    ///         rust_ti::ConstantModelType::ExponentialMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!(10.0, exponential_atr);
     /// ```
@@ -235,7 +235,7 @@ pub mod single {
     /// let low = 90.0;
     /// let close = 100.0;
     ///
-    /// let internal_bar_strength = rust_ti::other_indicators::single::internal_bar_strength(
+    /// let internal_bar_strength = centaur_technical_indicators::other_indicators::single::internal_bar_strength(
     ///     high,
     ///     low,
     ///     close
@@ -274,7 +274,7 @@ pub mod bulk {
     /// let initial_investment = 1000.0;
     ///
     /// let return_on_investment =
-    ///     rust_ti::other_indicators::bulk::return_on_investment(
+    ///     centaur_technical_indicators::other_indicators::bulk::return_on_investment(
     ///         &prices,
     ///         initial_investment
     ///     );
@@ -325,7 +325,7 @@ pub mod bulk {
     /// let high = vec![115.0, 115.0, 110.0];
     /// let low = vec![105.0, 110.0, 105.0];
     ///
-    /// let true_range = rust_ti::other_indicators::bulk::true_range(
+    /// let true_range = centaur_technical_indicators::other_indicators::bulk::true_range(
     ///     &close,
     ///     &high,
     ///     &low
@@ -377,20 +377,20 @@ pub mod bulk {
     /// let low = vec![105.0, 110.0, 105.0, 110.0, 130.0];
     /// let period: usize = 3;
     ///
-    /// let average_true_range = rust_ti::other_indicators::bulk::average_true_range(
+    /// let average_true_range = centaur_technical_indicators::other_indicators::bulk::average_true_range(
     ///     &close,
     ///     &high,
     ///     &low,
-    ///     rust_ti::ConstantModelType::SimpleMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     period
     /// );
     /// assert_eq!(vec![10.0, 13.333333333333334, 13.333333333333334], average_true_range);
     ///
-    /// let exponential_atr = rust_ti::other_indicators::bulk::average_true_range(
+    /// let exponential_atr = centaur_technical_indicators::other_indicators::bulk::average_true_range(
     ///     &close,
     ///     &high,
     ///     &low,
-    ///     rust_ti::ConstantModelType::ExponentialMovingAverage,
+    ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     period
     /// );
     /// assert_eq!(vec![10.0, 15.714285714285714, 12.857142857142858], exponential_atr);
@@ -456,7 +456,7 @@ pub mod bulk {
     /// let close = vec![100.0, 115.0, 115.0, 120.0, 125.0];
     ///
     /// let internal_bar_strength =
-    ///     rust_ti::other_indicators::bulk::internal_bar_strength(
+    ///     centaur_technical_indicators::other_indicators::bulk::internal_bar_strength(
     ///         &high,
     ///         &low,
     ///         &close
@@ -513,11 +513,11 @@ pub mod bulk {
     /// let signal_period: usize = 5;
     ///
     /// let positivity_indicator =
-    ///     rust_ti::other_indicators::bulk::positivity_indicator(
+    ///     centaur_technical_indicators::other_indicators::bulk::positivity_indicator(
     ///         &open,
     ///         &previous_close,
     ///         signal_period,
-    ///         rust_ti::ConstantModelType::SimpleMovingAverage
+    ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     /// );
     ///
     /// assert_eq!(

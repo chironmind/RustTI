@@ -6,7 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [Unreleased]
+## [1.0.0] - 2026-01-07
+### Changed
+- **BREAKING:** Rebranded from RustTI to Centaur Technical Indicators
+  - Package name changed from `rust_ti` to `centaur_technical_indicators`
+  - This is a new package on crates.io with fresh versioning (1.0.0)
+  - All functionality remains the same, only branding has changed
+  - Updated repository and documentation URLs to reflect Centaur Labs branding
+
 ### Removed
 - Removed unused `deviation.rs` file
 

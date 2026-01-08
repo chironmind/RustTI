@@ -65,7 +65,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let mean = rust_ti::basic_indicators::single::mean(&prices);
+    /// let mean = centaur_technical_indicators::basic_indicators::single::mean(&prices);
     /// assert_eq!(101.5, mean);
     /// ```
     #[inline]
@@ -93,12 +93,12 @@ pub mod single {
     /// ```rust
     /// // Odd number of prices
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-    /// let median = rust_ti::basic_indicators::single::median(&prices);
+    /// let median = centaur_technical_indicators::basic_indicators::single::median(&prices);
     /// assert_eq!(101.0, median);
     ///
     /// // Even number of prices
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let median = rust_ti::basic_indicators::single::median(&prices);
+    /// let median = centaur_technical_indicators::basic_indicators::single::median(&prices);
     /// assert_eq!(101.5, median);
     /// ```
     #[inline]
@@ -135,11 +135,11 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 101.0, 101.0, 100.0];
-    /// let mode = rust_ti::basic_indicators::single::mode(&prices);
+    /// let mode = centaur_technical_indicators::basic_indicators::single::mode(&prices);
     /// assert_eq!(100.5, mode); // 100.0 and 101.0 occur equally often, so average is 100.5
     ///
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-    /// let mode = rust_ti::basic_indicators::single::mode(&prices);
+    /// let mode = centaur_technical_indicators::basic_indicators::single::mode(&prices);
     /// assert_eq!(100.0, mode); // 100.0 occurs most often
     /// ```
     #[inline]
@@ -181,7 +181,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let log_difference = rust_ti::basic_indicators::single::log_difference(prices[3], prices[2]);
+    /// let log_difference = centaur_technical_indicators::basic_indicators::single::log_difference(prices[3], prices[2]);
     /// assert_eq!(-0.01960847138837618, log_difference);
     /// ```
     #[inline]
@@ -211,7 +211,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let variance = rust_ti::basic_indicators::single::variance(&prices);
+    /// let variance = centaur_technical_indicators::basic_indicators::single::variance(&prices);
     /// assert_eq!(1.25, variance);
     /// ```
     #[inline]
@@ -240,7 +240,7 @@ pub mod single {
     ///
     /// ```
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let standard_deviation = rust_ti::basic_indicators::single::standard_deviation(&prices);
+    /// let standard_deviation = centaur_technical_indicators::basic_indicators::single::standard_deviation(&prices);
     /// assert_eq!(1.118033988749895, standard_deviation);
     /// ```
     #[inline]
@@ -264,24 +264,24 @@ pub mod single {
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     /// let mean_absolute_deviation =
-    ///     rust_ti::basic_indicators::single::absolute_deviation(
+    ///     centaur_technical_indicators::basic_indicators::single::absolute_deviation(
     ///         &prices,
-    ///         rust_ti::AbsDevConfig{ center: rust_ti::CentralPoint::Mean, aggregate: rust_ti::DeviationAggregate::Mean }
+    ///         centaur_technical_indicators::AbsDevConfig{ center: centaur_technical_indicators::CentralPoint::Mean, aggregate: centaur_technical_indicators::DeviationAggregate::Mean }
     ///     );
     /// // The answer is `1.04` but `f64` implementation we get `1.0400000000000005`
     /// assert_eq!(1.0400000000000005, mean_absolute_deviation);
     ///
     /// let median_absolute_deviation =
-    ///     rust_ti::basic_indicators::single::absolute_deviation(
+    ///     centaur_technical_indicators::basic_indicators::single::absolute_deviation(
     ///         &prices,
-    ///         rust_ti::AbsDevConfig{ center: rust_ti::CentralPoint::Median, aggregate: rust_ti::DeviationAggregate::Median }
+    ///         centaur_technical_indicators::AbsDevConfig{ center: centaur_technical_indicators::CentralPoint::Median, aggregate: centaur_technical_indicators::DeviationAggregate::Median }
     ///    );
     /// assert_eq!(1.0, median_absolute_deviation);
     ///
     /// let mode_absolute_deviation =
-    ///     rust_ti::basic_indicators::single::absolute_deviation(
+    ///     centaur_technical_indicators::basic_indicators::single::absolute_deviation(
     ///         &prices,
-    ///         rust_ti::AbsDevConfig{ center: rust_ti::CentralPoint::Mode, aggregate: rust_ti::DeviationAggregate::Mode }
+    ///         centaur_technical_indicators::AbsDevConfig{ center: centaur_technical_indicators::CentralPoint::Mode, aggregate: centaur_technical_indicators::DeviationAggregate::Mode }
     ///   );
     /// assert_eq!(0.0, mode_absolute_deviation);
     /// ```
@@ -326,7 +326,7 @@ pub mod single {
     /// ```rust
     /// use std::f64::consts::E;
     /// let prices = vec![1.0, E, E.powi(2)];
-    /// let log_std = rust_ti::basic_indicators::single::log_standard_deviation(&prices);
+    /// let log_std = centaur_technical_indicators::basic_indicators::single::log_standard_deviation(&prices);
     /// assert!(log_std > 0.0);
     /// ```
     #[inline]
@@ -362,7 +362,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0];
-    /// let student_std = rust_ti::basic_indicators::single::student_t_adjusted_std(&prices, 5.0);
+    /// let student_std = centaur_technical_indicators::basic_indicators::single::student_t_adjusted_std(&prices, 5.0);
     /// assert!(student_std > 0.0);
     /// ```
     #[inline]
@@ -391,7 +391,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-    /// let laplace_std = rust_ti::basic_indicators::single::laplace_std_equivalent(&prices);
+    /// let laplace_std = centaur_technical_indicators::basic_indicators::single::laplace_std_equivalent(&prices);
     /// assert!(laplace_std > 0.0);
     /// ```
     #[inline]
@@ -424,7 +424,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0, 4.0];
-    /// let cauchy_scale = rust_ti::basic_indicators::single::cauchy_iqr_scale(&prices);
+    /// let cauchy_scale = centaur_technical_indicators::basic_indicators::single::cauchy_iqr_scale(&prices);
     /// assert!(cauchy_scale > 0.0);
     /// ```
     #[inline]
@@ -477,7 +477,7 @@ pub mod single {
     ///
     /// ```
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-    /// let max = rust_ti::basic_indicators::single::max(&prices);
+    /// let max = centaur_technical_indicators::basic_indicators::single::max(&prices);
     /// assert_eq!(103.0, max);
     /// ```
     #[inline]
@@ -506,7 +506,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-    /// let min = rust_ti::basic_indicators::single::min(&prices);
+    /// let min = centaur_technical_indicators::basic_indicators::single::min(&prices);
     /// assert_eq!(100.0, min);
     /// ```
     #[inline]
@@ -538,7 +538,7 @@ pub mod single {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
-    /// let distribution = rust_ti::basic_indicators::single::price_distribution(&prices, 1.0);
+    /// let distribution = centaur_technical_indicators::basic_indicators::single::price_distribution(&prices, 1.0);
     /// assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
     /// ```
     #[inline]
@@ -571,11 +571,7 @@ pub mod single {
     }
 
     #[inline]
-    fn empirical_quantile_from_distribution(
-        prices: &[f64],
-        precision: f64,
-        q: f64,
-    ) -> f64 {
+    fn empirical_quantile_from_distribution(prices: &[f64], precision: f64, q: f64) -> f64 {
         if !(q > 0.0 && q < 1.0) {
             panic!("Quantile ({}) must be in (0,1)", q);
         }
@@ -632,7 +628,7 @@ pub mod single {
     /// Examples
     /// ```
     /// let prices = vec![1.0, 2.0, 3.0, 4.0];
-    /// let q25 = rust_ti::basic_indicators::single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75);
+    /// let q25 = centaur_technical_indicators::basic_indicators::single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75);
     /// assert_eq!(2.0, q25);
     /// ```
     #[inline]
@@ -655,7 +651,6 @@ pub mod single {
         let qh = empirical_quantile_from_distribution(prices, precision, high);
         qh - ql
     }
-
 }
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
@@ -680,7 +675,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 103.0, 101.0];
-    /// let mean = rust_ti::basic_indicators::bulk::mean(&prices, 3);
+    /// let mean = centaur_technical_indicators::basic_indicators::bulk::mean(&prices, 3);
     /// assert_eq!(vec![102.0, 102.0], mean);
     /// ```
     #[inline]
@@ -721,7 +716,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 103.0, 101.0];
-    /// let median = rust_ti::basic_indicators::bulk::median(&prices, 3);
+    /// let median = centaur_technical_indicators::basic_indicators::bulk::median(&prices, 3);
     /// assert_eq!(vec![102.0, 102.0], median);
     /// ```
     #[inline]
@@ -763,7 +758,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 101.0, 102.0];
-    /// let mode = rust_ti::basic_indicators::bulk::mode(&prices, 3);
+    /// let mode = centaur_technical_indicators::basic_indicators::bulk::mode(&prices, 3);
     /// assert_eq!(vec![101.0, 102.0], mode);
     /// ```
     #[inline]
@@ -799,7 +794,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 103.0, 101.0];
-    /// let log = rust_ti::basic_indicators::bulk::log(&prices);
+    /// let log = centaur_technical_indicators::basic_indicators::bulk::log(&prices);
     /// assert_eq!(
     ///     vec![4.61512051684126, 4.624972813284271, 4.634728988229636, 4.61512051684126],
     ///     log
@@ -827,7 +822,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let log_difference = rust_ti::basic_indicators::bulk::log_difference(&prices);
+    /// let log_difference = centaur_technical_indicators::basic_indicators::bulk::log_difference(&prices);
     /// assert_eq!(
     ///     vec![0.019802627296178876, 0.009756174945365181, -0.01960847138837618],
     ///     log_difference
@@ -864,7 +859,7 @@ pub mod bulk {
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
     /// let period: usize = 3;
-    /// let variance = rust_ti::basic_indicators::bulk::variance(&prices, period);
+    /// let variance = centaur_technical_indicators::basic_indicators::bulk::variance(&prices, period);
     /// assert_eq!(vec![1.5555555555555556, 0.6666666666666666], variance);
     /// ```
     #[inline]
@@ -907,7 +902,7 @@ pub mod bulk {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
     /// let period: usize = 3;
     /// let standard_deviation =
-    ///     rust_ti::basic_indicators::bulk::standard_deviation(&prices, period);
+    ///     centaur_technical_indicators::basic_indicators::bulk::standard_deviation(&prices, period);
     /// assert_eq!(vec![1.247219128924647, 0.816496580927726], standard_deviation);
     /// ```
     #[inline]
@@ -946,15 +941,15 @@ pub mod bulk {
     /// # Examples
     ///
     /// ```rust
-    /// use rust_ti::{CentralPoint, DeviationAggregate};
+    /// use centaur_technical_indicators::{CentralPoint, DeviationAggregate};
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
     /// let period: usize = 3;
     ///
     /// let mean_absolute_deviation =
-    ///     rust_ti::basic_indicators::bulk::absolute_deviation(
+    ///     centaur_technical_indicators::basic_indicators::bulk::absolute_deviation(
     ///         &prices,
     ///         period,
-    ///         rust_ti::AbsDevConfig{ center: CentralPoint::Mean, aggregate: DeviationAggregate::Mean }
+    ///         centaur_technical_indicators::AbsDevConfig{ center: CentralPoint::Mean, aggregate: DeviationAggregate::Mean }
     ///     );
     /// assert_eq!(
     ///     vec![1.1111111111111096, 0.6666666666666666, 1.1111111111111096],
@@ -962,18 +957,18 @@ pub mod bulk {
     /// );
     ///
     /// let median_absolute_deviation =
-    ///     rust_ti::basic_indicators::bulk::absolute_deviation(
+    ///     centaur_technical_indicators::basic_indicators::bulk::absolute_deviation(
     ///         &prices,
     ///         period,
-    ///         rust_ti::AbsDevConfig{ center: CentralPoint::Median, aggregate: DeviationAggregate::Median }
+    ///         centaur_technical_indicators::AbsDevConfig{ center: CentralPoint::Median, aggregate: DeviationAggregate::Median }
     ///     );
     /// assert_eq!(vec![1.0, 1.0, 1.0], median_absolute_deviation);
     ///
     /// let mode_absolute_deviation =
-    ///     rust_ti::basic_indicators::bulk::absolute_deviation(
+    ///     centaur_technical_indicators::basic_indicators::bulk::absolute_deviation(
     ///         &prices,
     ///         period,
-    ///         rust_ti::AbsDevConfig{ center: CentralPoint::Mode, aggregate: DeviationAggregate::Mode }
+    ///         centaur_technical_indicators::AbsDevConfig{ center: CentralPoint::Mode, aggregate: DeviationAggregate::Mode }
     ///     );
     /// assert_eq!(
     ///     vec![1.0, 1.0, 1.0],
@@ -1019,7 +1014,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
-    /// let distribution = rust_ti::basic_indicators::bulk::price_distribution(&prices, 3, 1.0);
+    /// let distribution = centaur_technical_indicators::basic_indicators::bulk::price_distribution(&prices, 3, 1.0);
     /// assert_eq!(
     ///     vec![
     ///         vec![(100.0, 2), (102.0, 1)],
@@ -1073,7 +1068,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
-    /// let log_std = rust_ti::basic_indicators::bulk::log_standard_deviation(&prices, 3);
+    /// let log_std = centaur_technical_indicators::basic_indicators::bulk::log_standard_deviation(&prices, 3);
     /// assert_eq!(3, log_std.len());
     /// ```
     #[inline]
@@ -1117,7 +1112,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
-    /// let student_std = rust_ti::basic_indicators::bulk::student_t_adjusted_std(&prices, 3, 5.0);
+    /// let student_std = centaur_technical_indicators::basic_indicators::bulk::student_t_adjusted_std(&prices, 3, 5.0);
     /// assert_eq!(3, student_std.len());
     /// ```
     #[inline]
@@ -1159,7 +1154,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-    /// let laplace_std = rust_ti::basic_indicators::bulk::laplace_std_equivalent(&prices, 3);
+    /// let laplace_std = centaur_technical_indicators::basic_indicators::bulk::laplace_std_equivalent(&prices, 3);
     /// assert_eq!(3, laplace_std.len());
     /// ```
     #[inline]
@@ -1201,7 +1196,7 @@ pub mod bulk {
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
-    /// let cauchy_scale = rust_ti::basic_indicators::bulk::cauchy_iqr_scale(&prices, 4);
+    /// let cauchy_scale = centaur_technical_indicators::basic_indicators::bulk::cauchy_iqr_scale(&prices, 4);
     /// assert_eq!(3, cauchy_scale.len());
     /// ```
     #[inline]
@@ -1244,7 +1239,7 @@ pub mod bulk {
     /// ```
     /// // IQR for [1,2,3,4] at precision 1.0 is 3.25 - 1.75 = 1.5
     /// let prices = vec![1.0, 2.0, 3.0, 4.0];
-    /// let iqr = rust_ti::basic_indicators::bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
+    /// let iqr = centaur_technical_indicators::basic_indicators::bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
     /// assert_eq!(vec![1.0, 1.0], iqr);
     /// ```
     #[inline]
@@ -2034,5 +2029,4 @@ mod tests {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.8, 0.2);
     }
-
 }
