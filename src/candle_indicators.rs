@@ -62,6 +62,10 @@ pub mod single {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `difference` - Percent band width (e.g., 3.0 for +-3%)
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_envelope, middle_line, upper_envelope)
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -136,6 +140,10 @@ pub mod single {
     /// * `difference` -Percent band width (e.g., 3.0 for +-3%)
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_envelope, mcginley_dynamic, upper_envelope)
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -191,6 +199,10 @@ pub mod single {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `deviation_multiplier` - Deviation multiplier (e.g., 3.0 for +-3%)
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -310,6 +322,10 @@ pub mod single {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `deviation_multiplier` - Deviatio multiplier (e.g., 3.0 for +-3%)
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, mcginley_dynamic, upper_band)
     ///
     /// # Panics
     ///
@@ -557,6 +573,10 @@ pub mod single {
     /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_channel, middle_line, upper_channel)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -645,6 +665,10 @@ pub mod single {
     /// * `constant_type_model` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     ///
+    /// # Returns
+    ///
+    /// The calculated supertrend value
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -708,6 +732,10 @@ pub mod bulk {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `difference` -  Percent band width (e.g., 3.0 for +-3%)
     /// * `period` - Period over which to calculate the moving constant envelopes
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_envelope, middle_line, upper_envelope)
     ///
     /// # Panics
     ///
@@ -786,6 +814,10 @@ pub mod bulk {
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     /// * `period` - Period over which to calculate the McGinley dynamic envelopes.
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_envelope, mcginley_dynamic, upper_envelope)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -849,6 +881,10 @@ pub mod bulk {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `deviation_multiplier` - Price deviation multiplier
     /// * `period` - Period over which to calculate the moving constant bands.
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -932,6 +968,10 @@ pub mod bulk {
     /// * `deviation_multiplier` - Price deviation multiplier
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     /// * `period` - Period over which to calculate the McGinley dynamic bands.
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, mcginley_dynamic, upper_band)
     ///
     /// # Panics
     ///
@@ -1169,6 +1209,10 @@ pub mod bulk {
     /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     /// * `period` - Period over which to calculate the Keltner Channel
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_channel, middle_line, upper_channel)
     ///
     /// # Panics
     ///
