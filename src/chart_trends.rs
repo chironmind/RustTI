@@ -38,6 +38,10 @@ use crate::basic_indicators::single::{max, mean, min};
 /// * `period` - Period over which to find the peak
 /// * `closest_neighbor` - Minimum distance between peaks
 ///
+/// # Returns
+///
+/// A vector of tuples, each containing (peak_value, peak_index)
+///
 /// # Panics
 ///
 /// Panics if:
@@ -127,6 +131,10 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
 /// * `prices` - Slice of prices
 /// * `period` - Period over which to find the valley
 /// * `closest_neighbor` - Minimum distance between valleys
+///
+/// # Returns
+///
+/// A vector of tuples, each containing (valley_value, valley_index)
 ///
 /// # Panics
 ///
@@ -233,6 +241,10 @@ fn get_trend_line(p: &[(f64, usize)]) -> (f64, f64) {
 /// * `prices` - Slice of prices
 /// * `period` - Period over which to calculate the peaks
 ///
+/// # Returns
+///
+/// A tuple containing (slope, intercept) of the trend line
+///
 /// # Examples
 ///
 /// ```rust
@@ -254,6 +266,10 @@ pub fn peak_trend(prices: &[f64], period: usize) -> (f64, f64) {
 /// * `prices` - Slice of prices
 /// * `period` - Period over which to calculate the valleys
 ///
+/// # Returns
+///
+/// A tuple containing (slope, intercept) of the trend line
+///
 /// # Examples
 ///
 /// ```rust
@@ -273,6 +289,10 @@ pub fn valley_trend(prices: &[f64], period: usize) -> (f64, f64) {
 /// # Arguments
 ///
 /// * `prices` - Slice of prices
+///
+/// # Returns
+///
+/// A tuple containing (slope, intercept) of the trend line
 ///
 /// # Examples
 ///

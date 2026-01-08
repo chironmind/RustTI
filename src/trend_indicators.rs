@@ -143,6 +143,10 @@ pub mod single {
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     ///
+    /// # Returns
+    ///
+    /// A tuple of (aroon_up, aroon_down, aroon_oscillator)
+    ///
     /// # Panics
     ///
     /// `high.len()` != `low.len()`
@@ -605,6 +609,10 @@ pub mod bulk {
     /// * `low` - Slice of lows
     /// * `period` - Period over which to calculate the Aroon indicator
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (aroon_up, aroon_down, aroon_oscillator)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -886,6 +894,10 @@ pub mod bulk {
     /// * `close` - Slice of closing prices
     /// * `period` - Period over which to calculate the DM
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (+DI, -DI, ADX, ADXR)
     ///
     /// # Panics
     ///

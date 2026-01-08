@@ -48,6 +48,10 @@ pub mod single {
     /// * `end_price` - Final price of the asset
     /// * `investment` - Amount invested at start
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (final_investment_value, percent_return)
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -262,6 +266,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `investment` - Initial investment
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (final_investment_value, percent_return)
     ///
     /// # Panics
     ///

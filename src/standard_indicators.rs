@@ -141,6 +141,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, middle_band, upper_band)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -183,6 +187,10 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (macd_line, signal_line, histogram)
     ///
     /// # Panics
     ///
@@ -400,6 +408,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, middle_band, upper_band)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -446,6 +458,10 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (macd_line, signal_line, histogram)
     ///
     /// # Panics
     ///

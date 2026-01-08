@@ -1022,6 +1022,10 @@ pub mod single {
     /// * `short_period_model` - Variant of [`ConstantModelType`]
     /// * `long_period_model` - Variant of [`ConstantModelType`]  
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (chaikin_oscillator, accumulation_distribution)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -2164,6 +2168,10 @@ pub mod bulk {
     /// * `previous_accumulation_distribution` - Previous AD value (if none use 0.0)
     /// * `short_period_model` - Variant of [`ConstantModelType`]
     /// * `long_period_model` - Variant of [`ConstantModelType`]
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (chaikin_oscillator, accumulation_distribution)
     ///
     /// # Panics
     ///

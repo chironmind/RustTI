@@ -412,6 +412,10 @@ pub mod single {
     /// * `base_period` - Period used to calculate the base line
     /// * `span_b_period` - Period used to calculate the Span B line
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (leading_span_a, leading_span_b, base_line, conversion_line, lagging_span)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -501,6 +505,10 @@ pub mod single {
     ///
     /// * `high` - Slice of highs
     /// * `low` - Slow of lows
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -994,6 +1002,10 @@ pub mod bulk {
     /// * `base_period` - Period used to calculate the base line
     /// * `span_b_period` - Period used to calculate the Span B line
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (leading_span_a, leading_span_b, base_line, conversion_line, lagging_span)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1086,6 +1098,10 @@ pub mod bulk {
     /// * `high` - Slice of highs
     /// * `low` - Slce of lows
     /// * `period` - Period over which to calculate the Donchian channels
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
