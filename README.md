@@ -1,5 +1,3 @@
-![Centaur Technical Indicators Banner](./assets/rustTI_banner.png)
-
 [![Crates.io Version](https://img.shields.io/crates/v/centaur_technical_indicators.svg)](https://crates.io/crates/centaur_technical_indicators)
 [![Docs.rs](https://docs.rs/centaur_technical_indicators/badge.svg)](https://docs.rs/centaur_technical_indicators/)
 [![CI](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/actions/workflows/rust.yml/badge.svg)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/actions)

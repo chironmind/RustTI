@@ -21,7 +21,8 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
 - Remove `test_` prefix from all test functions
 - Some functions use `high`, others use `highs`, need to settle on one
 - Refactor parabolic T/P system: remove single functions; let bulk function determine trend (like `volatility` system)
-- Allow indicators to use non-normal distributions (for variance, standard deviation, etc.)
+- Functions need a documented return
+- Fix bullet points in documentation
 
 ### New Indicator Ideas
 
