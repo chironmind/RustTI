@@ -1013,8 +1013,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of price highs
-    /// * `lows` - Slice of price lows
+    /// * `high` - Slice of price highs
+    /// * `low` - Slice of price lows
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of transction volumes
     /// * `short_period` - Short period for the Accumulation Distribution
@@ -1025,7 +1025,7 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
+    ///     * `high.len()` != `low.len()` != `close.len()` != `volume.len()`
     ///     * If lengths <= `short_period`
     ///
     /// # Examples
@@ -1066,8 +1066,8 @@ pub mod single {
     /// assert_eq!((-333.3333333333333, -260.0), chaikin_oscillator);
     /// ```
     pub fn chaikin_oscillator(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         volume: &[f64],
         short_period: usize,
@@ -1075,12 +1075,12 @@ pub mod single {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> (f64, f64) {
-        let long_period = highs.len();
-        if long_period != lows.len() || long_period != close.len() || long_period != volume.len() {
+        let long_period = high.len();
+        if long_period != low.len() || long_period != close.len() || long_period != volume.len() {
             panic!(
                 "Length of highs ({}), lows ({}), close ({}), and volume ({}) must match",
                 long_period,
-                lows.len(),
+                low.len(),
                 close.len(),
                 volume.len()
             )
@@ -1095,16 +1095,16 @@ pub mod single {
 
         let mut ad = Vec::with_capacity(long_period);
         ad.push(accumulation_distribution(
-            highs[0],
-            lows[0],
+            high[0],
+            low[0],
             close[0],
             volume[0],
             previous_accumulation_distribution,
         ));
         for i in 1..long_period {
             ad.push(accumulation_distribution(
-                highs[i],
-                lows[i],
+                high[i],
+                low[i],
                 close[i],
                 volume[i],
                 ad[i - 1],
@@ -2155,8 +2155,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of highs
-    /// * `lows` - Slice of lows
+    /// * `high` - Slice of highs
+    /// * `low` - Slice of lows
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of volumes
     /// * `short_period` - Short period over which to calculate the AD
@@ -2168,7 +2168,7 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    /// * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
+    /// * `high.len()` != `low.len()` != `close.len()` != `volume.len()`
     /// * `long_period` > lengths
     /// * `short_period` >= `long_period`
     ///
@@ -2218,8 +2218,8 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn chaikin_oscillator(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         volume: &[f64],
         short_period: usize,
@@ -2228,12 +2228,12 @@ pub mod bulk {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> Vec<(f64, f64)> {
-        let length = highs.len();
-        if length != lows.len() || length != close.len() || length != volume.len() {
+        let length = high.len();
+        if length != low.len() || length != close.len() || length != volume.len() {
             panic!(
                 "Lengths of highs ({}), lows ({}), close ({}), and volume ({}) must match",
                 length,
-                lows.len(),
+                low.len(),
                 close.len(),
                 volume.len()
             )
@@ -2256,8 +2256,8 @@ pub mod bulk {
         let loop_max = length - long_period + 1;
         let mut cos = Vec::with_capacity(loop_max);
         let mut co = single::chaikin_oscillator(
-            &highs[..long_period],
-            &lows[..long_period],
+            &high[..long_period],
+            &low[..long_period],
             &close[..long_period],
             &volume[..long_period],
             short_period,
@@ -2269,8 +2269,8 @@ pub mod bulk {
 
         for i in 1..loop_max {
             co = single::chaikin_oscillator(
-                &highs[i..i + long_period],
-                &lows[i..i + long_period],
+                &high[i..i + long_period],
+                &low[i..i + long_period],
                 &close[i..i + long_period],
                 &volume[i..i + long_period],
                 short_period,

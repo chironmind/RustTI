@@ -405,8 +405,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of price highs
-    /// * `lows` - Slice of price lows
+    /// * `high` - Slice of price highs
+    /// * `low` - Slice of price lows
     /// * `close` - Slice of closing prices
     /// * `conversion_period` - Period used to calculate the conversion line
     /// * `base_period` - Period used to calculate the base line
@@ -415,9 +415,9 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`h
+    ///     * `high.len()` != `low.len()` != `close.len()`h
     ///     * `conversion_period`, `base_period`, `span_b_period` >
-    ///         `highs.len()`, `lows.len()`, `close.len()`
+    ///         `high.len()`, `low.len()`, `close.len()`
     ///
     /// # Examples
     ///
@@ -454,19 +454,19 @@ pub mod single {
     /// assert_eq!((102.25, 102.5, 102.5, 102.0, 99.0), ichimoku_cloud);
     /// ```
     pub fn ichimoku_cloud(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
     ) -> (f64, f64, f64, f64, f64) {
-        let length = highs.len();
-        if length != lows.len() || length != close.len() {
+        let length = high.len();
+        if length != low.len() || length != close.len() {
             panic!(
                 "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
                 length,
-                lows.len(),
+                low.len(),
                 close.len()
             )
         };
@@ -478,14 +478,14 @@ pub mod single {
                 length, max_period,
             );
         };
-        let conversion_line = (max(&highs[length - conversion_period..])
-            + min(&lows[length - conversion_period..]))
+        let conversion_line = (max(&high[length - conversion_period..])
+            + min(&low[length - conversion_period..]))
             / 2.0;
         let base_line =
-            (max(&highs[length - base_period..]) + min(&lows[length - base_period..])) / 2.0;
+            (max(&high[length - base_period..]) + min(&low[length - base_period..])) / 2.0;
         let leading_span_a = (conversion_line + base_line) / 2.0;
         let leading_span_b =
-            (max(&highs[length - span_b_period..]) + min(&lows[length - span_b_period..])) / 2.0;
+            (max(&high[length - span_b_period..]) + min(&low[length - span_b_period..])) / 2.0;
         (
             leading_span_a,
             leading_span_b,
@@ -987,8 +987,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of price highs
-    /// * `lows` - Slice of price lows
+    /// * `high` - Slice of price highs
+    /// * `low` - Slice of price lows
     /// * `close` - Slice of closing prices
     /// * `conversion_period` - Period used to calculate the conversion line
     /// * `base_period` - Period used to calculate the base line
@@ -997,8 +997,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `conversion_period`, `base_period`, `span_b_period` > `highs.len()`
+    ///     * `high.len()` != `low.len()` != `close.len()`
+    ///     * `conversion_period`, `base_period`, `span_b_period` > `high.len()`
     ///
     /// # Examples
     ///
@@ -1041,19 +1041,19 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn ichimoku_cloud(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
     ) -> Vec<(f64, f64, f64, f64, f64)> {
-        let length = highs.len();
-        if length != lows.len() || length != close.len() {
+        let length = high.len();
+        if length != low.len() || length != close.len() {
             panic!(
                 "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
                 length,
-                lows.len(),
+                low.len(),
                 close.len()
             )
         };
@@ -1068,8 +1068,8 @@ pub mod bulk {
         (0..=length - max_period)
             .map(|i| {
                 single::ichimoku_cloud(
-                    &highs[i..i + max_period],
-                    &lows[i..i + max_period],
+                    &high[i..i + max_period],
+                    &low[i..i + max_period],
                     &close[i..i + max_period],
                     conversion_period,
                     base_period,
