@@ -1685,40 +1685,40 @@ mod tests {
     }
 
     #[test]
-    fn test_single_max() {
+    fn single_max() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(100.53, single::max(&prices));
     }
 
     #[test]
     #[should_panic]
-    fn test_single_max_panic() {
+    fn single_max_panic() {
         let prices = Vec::new();
         single::max(&prices);
     }
 
     #[test]
-    fn test_single_min() {
+    fn single_min() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(100.19, single::min(&prices));
     }
 
     #[test]
     #[should_panic]
-    fn test_single_min_panic() {
+    fn single_min_panic() {
         let prices = Vec::new();
         single::min(&prices);
     }
 
     #[test]
-    fn test_single_price_distribution() {
+    fn single_price_distribution() {
         let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
         let distribution = single::price_distribution(&prices, 1.0);
         assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
     }
 
     #[test]
-    fn test_single_price_distribution_unique() {
+    fn single_price_distribution_unique() {
         let prices = vec![100.0, 101.0, 102.0, 103.0];
         let distribution = single::price_distribution(&prices, 1.0);
         assert_eq!(
@@ -1728,7 +1728,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_price_distribution_same() {
+    fn single_price_distribution_same() {
         let prices = vec![100.0, 100.0, 100.0];
         let distribution = single::price_distribution(&prices, 1.0);
         assert_eq!(vec![(100.0, 3)], distribution);
@@ -1736,19 +1736,19 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_price_distribution_panic() {
+    fn single_price_distribution_panic() {
         let prices = Vec::new();
         single::price_distribution(&prices, 1.0);
     }
 
     #[test]
     #[should_panic]
-    fn test_single_price_distribution_bad_precision() {
+    fn single_price_distribution_bad_precision() {
         single::price_distribution(&[1.0], 0.0);
     }
 
     #[test]
-    fn test_single_price_distribution_precision_examples() {
+    fn single_price_distribution_precision_examples() {
         let prices = vec![5949.41];
         assert_eq!(
             vec![(6000.0, 1)],
@@ -1767,7 +1767,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_price_distribution_half_precision() {
+    fn single_price_distribution_half_precision() {
         let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
         // precision 1.0
         assert_eq!(
@@ -1782,7 +1782,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_price_distribution_nan_ignored() {
+    fn single_price_distribution_nan_ignored() {
         let prices = vec![100.0, f64::NAN, 100.4, 100.49, 100.51];
         // precision 0.5 -> 100.0, 100.5 buckets
         assert_eq!(
@@ -1792,7 +1792,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_price_distribution() {
+    fn bulk_price_distribution() {
         let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
         let distribution = bulk::price_distribution(&prices, 3, 1.0);
         assert_eq!(
@@ -1806,7 +1806,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_price_distribution_half_precision() {
+    fn bulk_price_distribution_half_precision() {
         let prices = vec![100.2, 100.46, 100.53, 101.08];
         // period 3, precision 0.5
         // windows:
@@ -1821,27 +1821,27 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_price_distribution_period_too_long() {
+    fn bulk_price_distribution_period_too_long() {
         let prices = vec![100.0, 102.0, 100.0];
         bulk::price_distribution(&prices, 5, 1.0);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_price_distribution_zero_period() {
+    fn bulk_price_distribution_zero_period() {
         let prices = vec![100.0, 102.0, 100.0];
         bulk::price_distribution(&prices, 0, 1.0);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_price_distribution_bad_precision() {
+    fn bulk_price_distribution_bad_precision() {
         let prices = vec![100.0, 101.0, 102.0];
         bulk::price_distribution(&prices, 2, -1.0);
     }
 
     #[test]
-    fn test_log_standard_deviation_simple_series() {
+    fn log_standard_deviation_simple_series() {
         // prices = [1, e, e^2] -> logs = [0, 1, 2], sample std = 1
         let prices = vec![1.0, E, E.powi(2)];
         let s = single::log_standard_deviation(&prices);
@@ -1850,13 +1850,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_log_standard_deviation_panics_on_non_positive() {
+    fn log_standard_deviation_panics_on_non_positive() {
         let prices = vec![1.0, 0.0];
         let _ = single::log_standard_deviation(&prices);
     }
 
     #[test]
-    fn test_student_t_adjusted_std_factor_works() {
+    fn student_t_adjusted_std_factor_works() {
         // base series with sample std = 1.0
         let prices = vec![1.0, 2.0, 3.0];
         // df = 5 => adjustment sqrt(df/(df-2)) = sqrt(5/3)
@@ -1867,13 +1867,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_student_t_adjusted_std_panics_on_low_df() {
+    fn student_t_adjusted_std_panics_on_low_df() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::student_t_adjusted_std(&prices, 2.0);
     }
 
     #[test]
-    fn test_laplace_std_equivalent_matches_sqrt2_mad() {
+    fn laplace_std_equivalent_matches_sqrt2_mad() {
         // median = 1, deviations = [1,1,1,0,1,1,1], MAD = 1 => σ_laplace = √2
         let prices = vec![0.0, 0.0, 0.0, 1.0, 2.0, 2.0, 2.0];
         let s = single::laplace_std_equivalent(&prices);
@@ -1887,7 +1887,7 @@ mod tests {
     }
 
     #[test]
-    fn test_cauchy_iqr_scale_basic() {
+    fn cauchy_iqr_scale_basic() {
         // [1,2,3,4], Q1 = 1.5, Q3 = 3.5 => IQR = 2 => gamma = 1
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let s = single::cauchy_iqr_scale(&prices);
@@ -1896,7 +1896,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_cauchy_iqr_scale_panics_on_short_input() {
+    fn cauchy_iqr_scale_panics_on_short_input() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::cauchy_iqr_scale(&prices);
     }
@@ -1904,7 +1904,7 @@ mod tests {
     // Bulk tests for new functions
 
     #[test]
-    fn test_bulk_log_standard_deviation() {
+    fn bulk_log_standard_deviation() {
         let prices = vec![1.0, E, E.powi(2), E.powi(3), E.powi(4)];
         let log_std = bulk::log_standard_deviation(&prices, 3);
         assert_eq!(3, log_std.len());
@@ -1914,27 +1914,27 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_log_standard_deviation_zero_period() {
+    fn bulk_log_standard_deviation_zero_period() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::log_standard_deviation(&prices, 0);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_log_standard_deviation_period_too_long() {
+    fn bulk_log_standard_deviation_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::log_standard_deviation(&prices, 5);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_log_standard_deviation_panics_on_non_positive() {
+    fn bulk_log_standard_deviation_panics_on_non_positive() {
         let prices = vec![1.0, 0.0, 2.0, 3.0];
         let _ = bulk::log_standard_deviation(&prices, 2);
     }
 
     #[test]
-    fn test_bulk_student_t_adjusted_std() {
+    fn bulk_student_t_adjusted_std() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
         let df = 5.0;
         let student_std = bulk::student_t_adjusted_std(&prices, 3, df);
@@ -1945,27 +1945,27 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_student_t_adjusted_std_zero_period() {
+    fn bulk_student_t_adjusted_std_zero_period() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::student_t_adjusted_std(&prices, 0, 5.0);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_student_t_adjusted_std_period_too_long() {
+    fn bulk_student_t_adjusted_std_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::student_t_adjusted_std(&prices, 5, 5.0);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_student_t_adjusted_std_panics_on_low_df() {
+    fn bulk_student_t_adjusted_std_panics_on_low_df() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let _ = bulk::student_t_adjusted_std(&prices, 2, 2.0);
     }
 
     #[test]
-    fn test_bulk_laplace_std_equivalent() {
+    fn bulk_laplace_std_equivalent() {
         let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
         let laplace_std = bulk::laplace_std_equivalent(&prices, 3);
         assert_eq!(3, laplace_std.len());
@@ -1974,20 +1974,20 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_laplace_std_equivalent_zero_period() {
+    fn bulk_laplace_std_equivalent_zero_period() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::laplace_std_equivalent(&prices, 0);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_laplace_std_equivalent_period_too_long() {
+    fn bulk_laplace_std_equivalent_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::laplace_std_equivalent(&prices, 5);
     }
 
     #[test]
-    fn test_bulk_cauchy_iqr_scale() {
+    fn bulk_cauchy_iqr_scale() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
         let cauchy_scale = bulk::cauchy_iqr_scale(&prices, 4);
         assert_eq!(3, cauchy_scale.len());
@@ -1996,19 +1996,19 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_cauchy_iqr_scale_period_less_than_four() {
+    fn bulk_cauchy_iqr_scale_period_less_than_four() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
         let _ = bulk::cauchy_iqr_scale(&prices, 3);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_cauchy_iqr_scale_period_too_long() {
+    fn bulk_cauchy_iqr_scale_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let _ = bulk::cauchy_iqr_scale(&prices, 5);
     }
     #[test]
-    fn test_single_empirical_quantile_range_from_distribution_simple() {
+    fn single_empirical_quantile_range_from_distribution_simple() {
         // For [1,2,3,4] with precision 1.0, q25=1.75, q75=3.25 => IQR=1.5 (linear interpolation)
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let iqr = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75);
@@ -2016,7 +2016,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_empirical_quantile_range_from_distribution() {
+    fn bulk_empirical_quantile_range_from_distribution() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let v = bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
         // windows: [1,2,3] -> IQR=1.0; [2,3,4] -> IQR=1.0
@@ -2025,7 +2025,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_empirical_quantile_invalid_bounds() {
+    fn single_empirical_quantile_invalid_bounds() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.8, 0.2);
     }

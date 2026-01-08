@@ -610,7 +610,7 @@ mod tests {
 
     // Tests for new deviation models
     #[test]
-    fn test_correlate_asset_prices_log_std() {
+    fn correlate_asset_prices_log_std() {
         let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
         let result = single::correlate_asset_prices(
@@ -624,7 +624,7 @@ mod tests {
     }
 
     #[test]
-    fn test_correlate_asset_prices_student_t() {
+    fn correlate_asset_prices_student_t() {
         let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
         let result = single::correlate_asset_prices(
@@ -637,7 +637,7 @@ mod tests {
     }
 
     #[test]
-    fn test_correlate_asset_prices_laplace_std() {
+    fn correlate_asset_prices_laplace_std() {
         let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
         let result = single::correlate_asset_prices(
@@ -650,7 +650,7 @@ mod tests {
     }
 
     #[test]
-    fn test_correlate_asset_prices_cauchy_iqr() {
+    fn correlate_asset_prices_cauchy_iqr() {
         let prices_a = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let prices_b = vec![101.0, 103.0, 104.0, 102.0, 100.0];
         let result = single::correlate_asset_prices(
