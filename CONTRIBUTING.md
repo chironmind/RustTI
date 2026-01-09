@@ -37,7 +37,7 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
 2. **Implement the indicator**  
    - Add documentation and unit tests
 3. **Verify results**  
-   - Add a tab to `assets/rust_ti_hand_calcs.ods` with hand calculations to ensure test accuracy
+   - Add a tab to `assets/centaur_ti_hand_calcs.ods` with hand calculations to ensure test accuracy
 4. **Add to benchmarks and run**
    - Add a bench in [CentaurTechnicalIndicators-Rust-benchmarks](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks), run it, and document the runtime
 

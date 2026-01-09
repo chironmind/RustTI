@@ -1,8 +1,8 @@
-# /!\ We are currently rebranding from RustTI to Centaur Technical Indicators.
-# The functionality remains the same, only the name and branding are changing.
+# 🆕 We have rebranded from RustTI to Centaur Technical Indicators!
+# The functionality remains the same, only the name and branding have changed.
 # Please update any references to RustTI in your projects to Centaur Technical Indicators.
-# This is so that we can align with the Centaur Labs ecosystem (some interesting work here to come!).
-# and have all of our packages under a consistent naming scheme.
+# This change aligns us with the Centaur Labs ecosystem (exciting work coming soon!).
+# All packages now follow a consistent naming scheme.
 
 [![Crates.io Version](https://img.shields.io/crates/v/centaur_technical_indicators.svg)](https://crates.io/crates/centaur_technical_indicators)
 [![Docs.rs](https://docs.rs/centaur_technical_indicators/badge.svg)](https://docs.rs/centaur_technical_indicators/)
@@ -13,11 +13,11 @@
 [![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials)
 [![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks)
 
-# 🦀 Meet RustTI
+# 🦀 Meet the Centaur Technical Indicators Mascot
 
-Say hello to RusTI, the clawed crusader of candlesticks and the battle-hardened cousin of Ferris! 🦀📈
+Say hello to our clawed crusader of candlesticks, the battle-hardened mascot of Centaur Technical Indicators! 🦀📈
 
-Forged from rusted metal and born in the depths of the financial abyss, RusTI doesn't just ride sideways markets — he lives for them. With a stack of notebooks, a thousand-yard stare, and more indicators on his screen than legs on his body, RusTI is the ultimate trading bro. He reads charts, calculates MACD in his sleep, and isn’t afraid to pinch your code into shape.
+Forged from rusted metal and born in the depths of the financial abyss, this crustacean doesn't just ride sideways markets — he lives for them. With a stack of notebooks, a thousand-yard stare, and more indicators on his screen than legs on his body, he's the ultimate trading companion. He reads charts, calculates MACD in his sleep, and isn’t afraid to pinch your code into shape.
 
 Welcome to Centaur Technical Indicators — powered by precision, performance, and one extremely serious crustacean from Centaur Labs.
 
