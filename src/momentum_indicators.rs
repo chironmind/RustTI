@@ -388,11 +388,11 @@ pub mod single {
     #[inline]
     pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> f64 {
         if highs.is_empty() || lows.is_empty() {
-            panic!("high and low cannot be empty")
+            panic!("highs and lows cannot be empty")
         };
         if highs.len() != lows.len() {
             panic!(
-                "Length of high ({}) and low ({}) must match",
+                "Length of highs ({}) and lows ({}) must match",
                 highs.len(),
                 lows.len()
             )
@@ -1659,7 +1659,7 @@ pub mod bulk {
         let length = close.len();
         if length != highs.len() || length != lows.len() {
             panic!(
-                "Length of close ({}) needs to match length of high ({}), and length of close ({})",
+                "Length of close ({}) needs to match length of highs ({}) and lows ({})",
                 length,
                 highs.len(),
                 lows.len()
