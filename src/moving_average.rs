@@ -101,7 +101,7 @@ pub mod single {
     #[inline]
     fn personalised_moving_average(
         prices: &[f64],
-        alpha_nominator: f64,
+        alpha_numerator: f64,
         alpha_denominator: f64,
     ) -> f64 {
         let length = prices.len() as f64;
@@ -116,7 +116,7 @@ pub mod single {
             );
         };
 
-        let alpha: f64 = alpha_nominator / (length + alpha_denominator);
+        let alpha: f64 = alpha_numerator / (length + alpha_denominator);
         let multiplicator = 1.0 - alpha;
         let mut price_sum: f64 = 0.0;
         let mut denominator_sum: f64 = 0.0;
