@@ -1,8 +1,8 @@
-# RustTI Copilot Instructions
+# Centaur Technical Indicators Copilot Instructions
 
 ## Repository Overview
 
-**RustTI** is a comprehensive technical indicators library written in pure Rust for financial data analysis. The library provides over 70 configurable technical indicators across 11 specialized modules, supporting stocks, crypto, and any asset with arbitrary trading calendars.
+**Centaur Technical Indicators** is a comprehensive technical indicators library written in pure Rust for financial data analysis. The library provides over 70 configurable technical indicators across 11 specialized modules, supporting stocks, crypto, and any asset with arbitrary trading calendars.
 
 **Key Characteristics:**
 - **Type**: Library crate (not an application)
@@ -44,7 +44,7 @@ cargo bench --no-run          # Compile benchmarks (optional)
 ### Testing Notes
 - Tests run in ~6 seconds and should always pass
 - Tests include both unit tests and doc tests
-- Hand-calculation verification spreadsheet available at `assets/rust_ti_hand_calcs.ods`
+- Hand-calculation verification spreadsheet available at `assets/centaur_ti_hand_calcs.ods`
 - **Never modify tests to make unrelated code pass** - tests are carefully validated
 
 ## Project Architecture and Layout
@@ -122,7 +122,7 @@ Steps: checkout → setup Rust → cargo build --verbose → cargo test --verbos
 1. Choose appropriate module based on indicator type
 2. Implement both `single` and `bulk` versions
 3. Add comprehensive tests with hand-calculated expected values
-4. Update `assets/rust_ti_hand_calcs.ods` with verification calculations
+4. Update `assets/centaur_ti_hand_calcs.ods` with verification calculations
 5. Add doc tests with usage examples
 
 ### Modifying Existing Indicators
@@ -143,5 +143,5 @@ These instructions are validated against the current codebase state. **Only sear
 For additional context, see:
 - `README.md` - Project overview and getting started guide
 - `CONTRIBUTING.md` - Contribution guidelines and workflow
-- [RustTI Tutorials](https://github.com/ChironMind/RustTI-tutorials) - External tutorial repository
-- [RustTI Benchmarks](https://github.com/ChironMind/RustTI-benchmarks) - Performance testing repository
+- [Centaur Technical Indicators Tutorials](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials) - External tutorial repository
+- [Centaur Technical Indicators Benchmarks](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks) - Performance testing repository
