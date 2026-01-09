@@ -474,19 +474,19 @@ pub mod single {
     /// assert_eq!((102.25, 102.5, 102.5, 102.0, 99.0), ichimoku_cloud);
     /// ```
     pub fn ichimoku_cloud(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
     ) -> (f64, f64, f64, f64, f64) {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
                 "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
@@ -498,14 +498,14 @@ pub mod single {
                 length, max_period,
             );
         };
-        let conversion_line = (max(&high[length - conversion_period..])
-            + min(&low[length - conversion_period..]))
+        let conversion_line = (max(&highs[length - conversion_period..])
+            + min(&lows[length - conversion_period..]))
             / 2.0;
         let base_line =
-            (max(&high[length - base_period..]) + min(&low[length - base_period..])) / 2.0;
+            (max(&highs[length - base_period..]) + min(&lows[length - base_period..])) / 2.0;
         let leading_span_a = (conversion_line + base_line) / 2.0;
         let leading_span_b =
-            (max(&high[length - span_b_period..]) + min(&low[length - span_b_period..])) / 2.0;
+            (max(&highs[length - span_b_period..]) + min(&lows[length - span_b_period..])) / 2.0;
         (
             leading_span_a,
             leading_span_b,
@@ -519,8 +519,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slow of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     ///
     /// # Returns
     ///
@@ -529,8 +529,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()`
-    ///     * `high.is_empty()`
+    ///     * `highs.len()` != `lows.len()`
+    ///     * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -546,19 +546,19 @@ pub mod single {
     /// assert_eq!((95.0, 101.0 ,107.0), donchian_channels);
     /// ```
     #[inline]
-    pub fn donchian_channels(high: &[f64], low: &[f64]) -> (f64, f64, f64) {
-        if high.len() != low.len() {
+    pub fn donchian_channels(highs: &[f64], lows: &[f64]) -> (f64, f64, f64) {
+        if highs.len() != lows.len() {
             panic!(
-                "High ({}) must be of same length as low ({})",
-                high.len(),
-                low.len()
+                "Highs ({}) must be of same length as lows ({})",
+                highs.len(),
+                lows.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty")
         };
-        let max_price = max(high);
-        let min_price = min(low);
+        let max_price = max(highs);
+        let min_price = min(lows);
         (min_price, (max_price + min_price) / 2.0, max_price)
     }
 
@@ -566,8 +566,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of previous closing prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`] for the function
     /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
@@ -580,8 +580,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`
+    ///     * `highs.len()` != `lows.len()` != `close.len()`
+    ///     * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -602,29 +602,29 @@ pub mod single {
     /// assert_eq!((86.76777251184836, 100.76777251184836, 114.76777251184836), keltner_channel);
     /// ```
     pub fn keltner_channel(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         constant_model_type: ConstantModelType,
         atr_constant_model_type: ConstantModelType,
         multiplier: f64,
     ) -> (f64, f64, f64) {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
-                "Length of high ({}), low ({}), and close ({}) must be equal",
+                "Length of highs ({}), lows ({}), and close ({}) must be equal",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty")
         };
 
-        let atr = average_true_range(close, high, low, atr_constant_model_type);
+        let atr = average_true_range(close, highs, lows, atr_constant_model_type);
         let prices: Vec<f64> = (0..length)
-            .map(|i| (high[i] + low[i] + close[i]) / 3.0)
+            .map(|i| (highs[i] + lows[i] + close[i]) / 3.0)
             .collect();
 
         let mc = match constant_model_type {
@@ -693,28 +693,28 @@ pub mod single {
     /// assert_eq!(115.0, supertrend);
     /// ```
     pub fn supertrend(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         constant_model_type: ConstantModelType,
         multiplier: f64,
     ) -> f64 {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
-                "Length of high ({}), low ({}), and close ({}) must be equal",
+                "Length of highs ({}), lows ({}), and close ({}) must be equal",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty")
         };
 
-        let atr = average_true_range(close, high, low, constant_model_type);
-        let max_high = max(high);
-        let min_low = min(low);
+        let atr = average_true_range(close, highs, lows, constant_model_type);
+        let max_high = max(highs);
+        let min_low = min(lows);
         ((max_high + min_low) / 2.0) + (multiplier * atr)
     }
 }
@@ -1093,19 +1093,19 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn ichimoku_cloud(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
     ) -> Vec<(f64, f64, f64, f64, f64)> {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
                 "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
@@ -1120,8 +1120,8 @@ pub mod bulk {
         (0..=length - max_period)
             .map(|i| {
                 single::ichimoku_cloud(
-                    &high[i..i + max_period],
-                    &low[i..i + max_period],
+                    &highs[i..i + max_period],
+                    &lows[i..i + max_period],
                     &close[i..i + max_period],
                     conversion_period,
                     base_period,
@@ -1135,8 +1135,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `period` - Period over which to calculate the Donchian channels
     ///
     /// # Returns
@@ -1147,9 +1147,9 @@ pub mod bulk {
     ///
     /// Panics if:
     ///     * `period` == 0
-    ///     * `period` > `high.len()`
-    ///     * `high.len()` != `low.len()`
-    ///     * `high.is_empty()` or `low.is_empty()`
+    ///     * `period` > `highs.len()`
+    ///     * `highs.len()` != `lows.len()`
+    ///     * `highs.is_empty()` or `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -1169,19 +1169,19 @@ pub mod bulk {
     ///     ], donchian_channels);
     /// ```
     #[inline]
-    pub fn donchian_channels(high: &[f64], low: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
-        if high.is_empty() || low.is_empty() {
+    pub fn donchian_channels(highs: &[f64], lows: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
+        if highs.is_empty() || lows.is_empty() {
             panic!(
-                "Prices cannot be empty: high: ({:?}); low: ({:?})",
-                high, low
+                "Prices cannot be empty: highs: ({:?}); lows: ({:?})",
+                highs, lows
             )
         };
-        let length = high.len();
-        if length != low.len() {
+        let length = highs.len();
+        if length != lows.len() {
             panic!(
-                "High ({}) must be of same length as low ({})",
+                "Highs ({}) must be of same length as lows ({})",
                 length,
-                low.len()
+                lows.len()
             )
         };
         if period == 0 {
@@ -1194,7 +1194,7 @@ pub mod bulk {
             )
         };
         (0..=length - period)
-            .map(|i| single::donchian_channels(&high[i..i + period], &low[i..i + period]))
+            .map(|i| single::donchian_channels(&highs[i..i + period], &lows[i..i + period]))
             .collect()
     }
 
@@ -1202,8 +1202,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of previous closing prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`] for the function
     /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
@@ -1217,10 +1217,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`, `low.is_empty()`, or `close.is_empty()`
+    ///     * `highs.len()` != `lows.len()` != `close.len()`
+    ///     * `highs.is_empty()`, `lows.is_empty()`, or `close.is_empty()`
     ///     * `period` == 0
-    ///     * `period` > `high.len()`
+    ///     * `period` > `highs.len()`
     ///
     /// # Examples
     ///
@@ -1249,24 +1249,24 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn keltner_channel(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         constant_model_type: ConstantModelType,
         atr_constant_model_type: ConstantModelType,
         multiplier: f64,
         period: usize,
     ) -> Vec<(f64, f64, f64)> {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
-                "Length of high ({}), low ({}), and close ({}) must be equal",
+                "Length of highs ({}), lows ({}), and close ({}) must be equal",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty")
         };
         if period == 0 {
@@ -1281,8 +1281,8 @@ pub mod bulk {
         (0..=length - period)
             .map(|i| {
                 single::keltner_channel(
-                    &high[i..i + period],
-                    &low[i..i + period],
+                    &highs[i..i + period],
+                    &lows[i..i + period],
                     &close[i..i + period],
                     constant_model_type,
                     atr_constant_model_type,
@@ -1335,23 +1335,23 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn supertrend(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         constant_model_type: ConstantModelType,
         multiplier: f64,
         period: usize,
     ) -> Vec<f64> {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
-                "Length of high ({}), low ({}), and close ({}) must be equal",
+                "Length of highs ({}), lows ({}), and close ({}) must be equal",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty")
         };
         if period == 0 {
@@ -1367,8 +1367,8 @@ pub mod bulk {
         (0..=length - period)
             .map(|i| {
                 single::supertrend(
-                    &high[i..i + period],
-                    &low[i..i + period],
+                    &highs[i..i + period],
+                    &lows[i..i + period],
                     &close[i..i + period],
                     constant_model_type,
                     multiplier,

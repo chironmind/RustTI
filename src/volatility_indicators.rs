@@ -125,8 +125,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of closing prices
     /// * `period` - Period over which to calculate the volatility system
     /// * `constant_multiplier` - Mulitplier for ATR
@@ -139,14 +139,14 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `high.len()` != `low.len()`
+    ///     * `close.len()` != `highs.len()` != `lows.len()`
     ///     * `close.is_empty()`
     ///     * lengths < `period`
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = vec![
+    /// let highs = vec![
     ///     4383.33, 4393.57, 4364.2, 4339.54, 4276.56, 4255.84,
     ///     4259.38, 4232.42, 4183.6, 4156.7, 4177.47, 4195.55,
     ///     4245.64, 4319.72, 4373.62, 4372.21, 4386.26, 4391.2,
@@ -155,7 +155,7 @@ pub mod bulk {
     ///     4568.14
     /// ];
     ///
-    /// let low = vec![
+    /// let lows = vec![
     ///     4342.37, 4337.54, 4303.84, 4269.69, 4223.03, 4189.22,
     ///     4219.43, 4181.42, 4127.9, 4103.78, 4132.94, 4153.12,
     ///     4197.74, 4268.26, 4334.23, 4347.53, 4355.41, 4359.76,
@@ -178,8 +178,8 @@ pub mod bulk {
     ///
     /// let volatility_system =
     ///     centaur_technical_indicators::volatility_indicators::bulk::volatility_system(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         &close,
     ///         period,
     ///         constant_multiplier,
@@ -198,20 +198,20 @@ pub mod bulk {
     /// );
     /// ```
     pub fn volatility_system(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         period: usize,
         constant_multiplier: f64,
         constant_model_type: ConstantModelType,
     ) -> Vec<f64> {
         let length = close.len();
-        if length != high.len() || length != low.len() {
+        if length != highs.len() || length != lows.len() {
             panic!(
                 "Lengths of close ({}), high ({}), and low ({}) must be equal",
                 length,
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             )
         };
         if close.is_empty() {
@@ -225,7 +225,7 @@ pub mod bulk {
         };
 
         let typical_price: Vec<f64> = (0..length)
-            .map(|i| (high[i] + low[i] + close[i]) / 3.0)
+            .map(|i| (highs[i] + lows[i] + close[i]) / 3.0)
             .collect();
 
         let mut sars = Vec::with_capacity(length - period + 1);
@@ -234,7 +234,7 @@ pub mod bulk {
         let mut previous_period = period;
 
         let trend = overall_trend(&typical_price[..previous_period]);
-        let atr = average_true_range(close, high, low, constant_model_type, period);
+        let atr = average_true_range(close, highs, lows, constant_model_type, period);
         let arc: Vec<f64> = atr.iter().map(|x| x * constant_multiplier).collect();
 
         if trend.0 < 0.0 {

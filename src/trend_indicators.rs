@@ -58,7 +58,7 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
+    /// * `highs` - Slice of highs
     ///
     /// # Returns
     ///
@@ -66,7 +66,7 @@ pub mod single {
     ///
     /// # Panics
     ///
-    /// Panics if `high.is_empty()`
+    /// Panics if `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -76,14 +76,14 @@ pub mod single {
     /// assert_eq!(50.0, aroon_up);
     /// ```
     #[inline]
-    pub fn aroon_up(high: &[f64]) -> f64 {
-        if high.is_empty() {
+    pub fn aroon_up(highs: &[f64]) -> f64 {
+        if highs.is_empty() {
             panic!("Highs cannot be empty")
         };
 
-        let period = high.len() - 1; // current period should be excluded from length
-        let period_max = max(high);
-        let periods_since_max = period - high.iter().rposition(|&x| x == period_max).unwrap();
+        let period = highs.len() - 1; // current period should be excluded from length
+        let period_max = max(highs);
+        let periods_since_max = period - highs.iter().rposition(|&x| x == period_max).unwrap();
         100.0 * ((period as f64 - periods_since_max as f64) / period as f64)
     }
 
@@ -91,7 +91,7 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `low` - Slice of lows
+    /// * `lows` - Slice of lows
     ///
     /// # Returns
     ///
@@ -99,7 +99,7 @@ pub mod single {
     ///
     /// # Panics
     ///
-    /// Panics if `low.is_empty()`
+    /// Panics if `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -109,14 +109,14 @@ pub mod single {
     /// assert_eq!(25.0, aroon_down);
     /// ```
     #[inline]
-    pub fn aroon_down(low: &[f64]) -> f64 {
-        if low.is_empty() {
+    pub fn aroon_down(lows: &[f64]) -> f64 {
+        if lows.is_empty() {
             panic!("Lows cannot be empty")
         };
 
-        let period = low.len() - 1; // current period should be excluded from length
-        let period_min = min(low);
-        let periods_since_min = period - low.iter().rposition(|&x| x == period_min).unwrap();
+        let period = lows.len() - 1; // current period should be excluded from length
+        let period_min = min(lows);
+        let periods_since_min = period - lows.iter().rposition(|&x| x == period_min).unwrap();
         100.0 * ((period as f64 - periods_since_min as f64) / period as f64)
     }
 
@@ -152,8 +152,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     ///
     /// # Returns
     ///
@@ -161,7 +161,7 @@ pub mod single {
     ///
     /// # Panics
     ///
-    /// `high.len()` != `low.len()`
+    /// `highs.len()` != `lows.len()`
     ///
     /// # Examples
     ///
@@ -173,17 +173,17 @@ pub mod single {
     /// assert_eq!((50.0, 25.0, 25.0), aroon_indicator);
     /// ```
     #[inline]
-    pub fn aroon_indicator(high: &[f64], low: &[f64]) -> (f64, f64, f64) {
-        if high.len() != low.len() {
+    pub fn aroon_indicator(highs: &[f64], lows: &[f64]) -> (f64, f64, f64) {
+        if highs.len() != lows.len() {
             panic!(
                 "Length of highs ({}) must match length of lows ({})",
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             )
         };
 
-        let aroon_up = aroon_up(high);
-        let aroon_down = aroon_down(low);
+        let aroon_up = aroon_up(highs);
+        let aroon_down = aroon_down(lows);
         let aroon_oscillator_value = aroon_oscillator(aroon_up, aroon_down);
         (aroon_up, aroon_down, aroon_oscillator_value)
     }
@@ -506,7 +506,7 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
+    /// * `highs` - Slice of highs
     /// * `period` - Period over which to calculate the Aroon up
     ///
     /// # Returns
@@ -515,7 +515,7 @@ pub mod bulk {
     ///
     /// # Panics
     ///
-    /// Panics if `period` > `high.len()`
+    /// Panics if `period` > `highs.len()`
     ///
     /// # Examples
     ///
@@ -526,8 +526,8 @@ pub mod bulk {
     /// assert_eq!(vec![50.0, 25.0, 0.0], aroon_up);
     /// ```
     #[inline]
-    pub fn aroon_up(high: &[f64], period: usize) -> Vec<f64> {
-        let length = high.len();
+    pub fn aroon_up(highs: &[f64], period: usize) -> Vec<f64> {
+        let length = highs.len();
         if length < period {
             panic!(
                 "Period ({}) cannot be longer than length of highs ({})",
@@ -536,7 +536,7 @@ pub mod bulk {
         };
 
         let mut aroon_ups = Vec::with_capacity(length - period + 1);
-        for window in high.windows(period) {
+        for window in highs.windows(period) {
             aroon_ups.push(single::aroon_up(window));
         }
         aroon_ups
@@ -546,7 +546,7 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `low` - Slice of lows
+    /// * `lows` - Slice of lows
     /// * `period` - Period over which to calculate the Aroon down
     ///
     /// # Returns
@@ -555,7 +555,7 @@ pub mod bulk {
     ///
     /// # Panics
     ///
-    /// Panics if `period` > `low.len()`
+    /// Panics if `period` > `lows.len()`
     ///
     /// # Examples
     ///
@@ -566,8 +566,8 @@ pub mod bulk {
     /// assert_eq!(vec![25.0, 0.0, 100.0], aroon_down);
     /// ```
     #[inline]
-    pub fn aroon_down(low: &[f64], period: usize) -> Vec<f64> {
-        let length = low.len();
+    pub fn aroon_down(lows: &[f64], period: usize) -> Vec<f64> {
+        let length = lows.len();
         if length < period {
             panic!(
                 "Period ({}) cannot be longer than length of lows ({})",
@@ -576,7 +576,7 @@ pub mod bulk {
         };
 
         let mut aroon_downs = Vec::with_capacity(length - period + 1);
-        for window in low.windows(period) {
+        for window in lows.windows(period) {
             aroon_downs.push(single::aroon_down(window));
         }
         aroon_downs
@@ -629,8 +629,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `period` - Period over which to calculate the Aroon indicator
     ///
     /// # Returns
@@ -640,7 +640,7 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    /// * `high.len()` != `low.len()`
+    /// * `highs.len()` != `lows.len()`
     /// * lengths < `period`
     ///
     /// # Examples
@@ -662,13 +662,13 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn aroon_indicator(high: &[f64], low: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
-        let length = high.len();
-        if length != low.len() {
+    pub fn aroon_indicator(highs: &[f64], lows: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
+        let length = highs.len();
+        if length != lows.len() {
             panic!(
                 "Length of highs ({}) must match length of lows ({})",
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             )
         };
         if length < period {
@@ -680,7 +680,7 @@ pub mod bulk {
 
         let loop_max = length - period + 1;
         (0..loop_max)
-            .map(|i| single::aroon_indicator(&high[i..i + period], &low[i..i + period]))
+            .map(|i| single::aroon_indicator(&highs[i..i + period], &lows[i..i + period]))
             .collect()
     }
 
@@ -688,8 +688,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs.
-    /// * `low` - Slice of lows.
+    /// * `highs` - Slice of highs.
+    /// * `lows` - Slice of lows.
     /// * `acceleration_factor_start` - Initial acceleration factor
     /// * `acceleration_factor_max` - Maximum acceleration factor
     /// * `acceleration_factor_step` - Acceleration increment
@@ -699,8 +699,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()`
-    ///     * `high.is_empty()` or `low.is_empty()`
+    ///     * `highs.len()` != `lows.len()`
+    ///     * `highs.is_empty()` or `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -779,23 +779,23 @@ pub mod bulk {
     ///     parabolic_time_price_system);
     /// ```
     pub fn parabolic_time_price_system(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         acceleration_factor_start: f64,
         acceleration_factor_max: f64,
         acceleration_factor_step: f64,
         start_position: Position,
         previous_sar: f64,
     ) -> Vec<f64> {
-        if high.is_empty() || low.is_empty() {
+        if highs.is_empty() || lows.is_empty() {
             panic!("Highs or lows cannot be empty")
         };
-        let length = high.len();
-        if length != low.len() {
+        let length = highs.len();
+        if length != lows.len() {
             panic!(
                 "Highs ({}) and lows ({}) must be the same length",
                 length,
-                low.len()
+                lows.len()
             )
         };
 
@@ -815,45 +815,45 @@ pub mod bulk {
         if position == Position::Long {
             if previous_sar == 0.0 {
                 sars.push(single::long_parabolic_time_price_system(
-                    low[0],
-                    high[0],
+                    lows[0],
+                    highs[0],
                     acceleration_factor,
-                    low[0],
+                    lows[0],
                 ));
             } else {
                 sars.push(single::long_parabolic_time_price_system(
                     previous_sar,
-                    high[0],
+                    highs[0],
                     acceleration_factor,
-                    low[0],
+                    lows[0],
                 ));
             }
         } else if position == Position::Short {
             if previous_sar == 0.0 {
                 sars.push(single::short_parabolic_time_price_system(
-                    high[0],
-                    low[0],
+                    highs[0],
+                    lows[0],
                     acceleration_factor,
-                    high[0],
+                    highs[0],
                 ));
             } else {
                 sars.push(single::short_parabolic_time_price_system(
                     previous_sar,
-                    low[0],
+                    lows[0],
                     acceleration_factor,
-                    high[0],
+                    highs[0],
                 ));
             }
         };
 
         for i in 1..length {
             let previous_sar = sars[i - 1];
-            if position == Position::Short && high[i] > previous_sar {
+            if position == Position::Short && highs[i] > previous_sar {
                 position = Position::Long;
-                let period_max = high[i];
-                let previous_min = min(&low[i - 1..=i]);
+                let period_max = highs[i];
+                let previous_min = min(&lows[i - 1..=i]);
                 acceleration_factor = acceleration_factor_start;
-                let pivoted_sar = min(&low[position_start..i]);
+                let pivoted_sar = min(&lows[position_start..i]);
                 position_start = i;
                 sars.push(single::long_parabolic_time_price_system(
                     pivoted_sar,
@@ -862,26 +862,26 @@ pub mod bulk {
                     previous_min,
                 ));
             } else if position == Position::Short {
-                let mut period_min = min(&low[position_start..i]);
-                if period_min > low[i] {
-                    period_min = low[i];
+                let mut period_min = min(&lows[position_start..i]);
+                if period_min > lows[i] {
+                    period_min = lows[i];
                     if acceleration_factor <= acceleration_factor_max {
                         acceleration_factor += acceleration_factor_step;
                     };
                 };
-                let previous_max = max(&high[i - 1..i + 1]);
+                let previous_max = max(&highs[i - 1..i + 1]);
                 sars.push(single::short_parabolic_time_price_system(
                     previous_sar,
                     period_min,
                     acceleration_factor,
                     previous_max,
                 ));
-            } else if position == Position::Long && low[i] < previous_sar {
+            } else if position == Position::Long && lows[i] < previous_sar {
                 position = Position::Short;
-                let period_min = low[i];
+                let period_min = lows[i];
                 acceleration_factor = acceleration_factor_start;
-                let previous_max = max(&high[i - 1..=i]);
-                let pivoted_sar = max(&high[position_start..i]);
+                let previous_max = max(&highs[i - 1..=i]);
+                let pivoted_sar = max(&highs[position_start..i]);
                 position_start = i;
                 sars.push(single::short_parabolic_time_price_system(
                     pivoted_sar,
@@ -890,14 +890,14 @@ pub mod bulk {
                     previous_max,
                 ));
             } else if position == Position::Long {
-                let mut period_max = max(&high[position_start..i]);
-                if period_max < high[i] {
-                    period_max = high[i];
+                let mut period_max = max(&highs[position_start..i]);
+                if period_max < highs[i] {
+                    period_max = highs[i];
                     if acceleration_factor <= acceleration_factor_max {
                         acceleration_factor += acceleration_factor_step;
                     };
                 };
-                let previous_min = min(&low[i - 1..i + 1]);
+                let previous_min = min(&lows[i - 1..i + 1]);
                 sars.push(single::long_parabolic_time_price_system(
                     previous_sar,
                     period_max,
@@ -913,8 +913,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of closing prices
     /// * `period` - Period over which to calculate the DM
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
@@ -926,14 +926,14 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`
+    ///     * `highs.len()` != `lows.len()` != `close.len()`
+    ///     * `highs.is_empty()`
     ///     * `period` > lengths
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = vec![
+    /// let highs = vec![
     ///     4383.33, 4393.57, 4364.2, 4339.54, 4276.56, 4255.84, 4259.38,
     ///     4232.42, 4183.6, 4156.7, 4177.47, 4195.55, 4245.64, 4319.72,
     ///     4373.62, 4372.21, 4386.26, 4391.2, 4393.4, 4418.03, 4421.76,
@@ -941,7 +941,7 @@ pub mod bulk {
     ///     4560.31, 4560.52, 4568.14
     /// ];
     ///
-    /// let low = vec![
+    /// let lows = vec![
     ///     4342.37, 4337.54, 4303.84, 4269.69, 4223.03, 4189.22, 4219.43,
     ///     4181.42, 4127.9, 4103.78, 4132.94, 4153.12, 4197.74, 4268.26,
     ///     4334.23, 4347.53, 4355.41, 4359.76, 4343.94, 4353.34, 4393.82,
@@ -961,8 +961,8 @@ pub mod bulk {
     ///
     /// let directional_movement_system =
     ///     centaur_technical_indicators::trend_indicators::bulk::directional_movement_system(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         &close,
     ///         period,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
@@ -991,22 +991,22 @@ pub mod bulk {
     ///     ], directional_movement_system);
     /// ```
     pub fn directional_movement_system(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         period: usize,
         constant_model_type: ConstantModelType,
     ) -> Vec<(f64, f64, f64, f64)> {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
-                "Length of high ({}), low ({}), and close ({}) need to be equal",
+                "Length of highs ({}), lows ({}), and close ({}) need to be equal",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty")
         };
         let length_min = 3 * period;
@@ -1021,8 +1021,8 @@ pub mod bulk {
         let mut negative_dm = Vec::with_capacity(length - 1);
 
         for i in 1..length {
-            let high_diff = high[i] - high[i - 1];
-            let low_diff = low[i - 1] - low[i];
+            let high_diff = highs[i] - highs[i - 1];
+            let low_diff = lows[i - 1] - lows[i];
 
             if high_diff > 0.0 && high_diff > low_diff {
                 positive_dm.push(high_diff);
@@ -1036,7 +1036,7 @@ pub mod bulk {
             };
         }
 
-        let tr = true_range(&close[1..], &high[1..], &low[1..]);
+        let tr = true_range(&close[1..], &highs[1..], &lows[1..]);
 
         let mut positive_di: Vec<f64> = Vec::with_capacity(length - period);
         let mut negative_di: Vec<f64> = Vec::with_capacity(length - period);

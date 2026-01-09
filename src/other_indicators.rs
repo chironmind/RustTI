@@ -140,28 +140,28 @@ pub mod single {
     /// # Arguments
     ///
     /// * `close` - Slice of previous closes prices.
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `high.len()` !=  `low.len()`
+    ///     * `close.len()` != `highs.len()` !=  `lows.len()`
     ///     * `close.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let close = vec![110.0, 105.0, 115.0];
-    /// let high = vec![115.0, 115.0, 110.0];
-    /// let low = vec![105.0, 110.0, 105.0];
+    /// let highs = vec![115.0, 115.0, 110.0];
+    /// let lows = vec![105.0, 110.0, 105.0];
     ///
     /// let average_true_range =
     ///     centaur_technical_indicators::other_indicators::single::average_true_range(
     ///         &close,
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
     ///     );
     /// assert_eq!(10.0, average_true_range);
@@ -169,8 +169,8 @@ pub mod single {
     /// let exponential_atr =
     ///     centaur_technical_indicators::other_indicators::single::average_true_range(
     ///         &close,
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
     ///     );
     /// assert_eq!(10.0, exponential_atr);
@@ -178,17 +178,17 @@ pub mod single {
     #[inline]
     pub fn average_true_range(
         close: &[f64],
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         constant_model_type: ConstantModelType,
     ) -> f64 {
         let length = close.len();
-        if length != high.len() || length != low.len() {
+        if length != highs.len() || length != lows.len() {
             panic!(
-                "Length of close ({}), high ({}), and low ({}) must match",
+                "Length of close ({}), highs ({}), and lows ({}) must match",
                 length,
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             )
         };
         if close.is_empty() {
@@ -197,8 +197,8 @@ pub mod single {
 
         let trs: Vec<f64> = close
             .iter()
-            .zip(high.iter())
-            .zip(low.iter())
+            .zip(highs.iter())
+            .zip(lows.iter())
             .map(|((c, h), l)| true_range(*c, *h, *l))
             .collect();
 
@@ -325,8 +325,8 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `close` - Slice of previous closes
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     ///
     /// # Returns
     ///
@@ -335,32 +335,32 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `high.len()` != `low.len()`
+    ///     * `close.len()` != `highs.len()` != `lows.len()`
     ///     * `close.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let close = vec![110.0, 105.0, 115.0];
-    /// let high = vec![115.0, 115.0, 110.0];
-    /// let low = vec![105.0, 110.0, 105.0];
+    /// let highs = vec![115.0, 115.0, 110.0];
+    /// let lows = vec![105.0, 110.0, 105.0];
     ///
     /// let true_range = centaur_technical_indicators::other_indicators::bulk::true_range(
     ///     &close,
-    ///     &high,
-    ///     &low
+    ///     &highs,
+    ///     &lows
     /// );
     /// assert_eq!(vec![10.0, 10.0, 10.0], true_range);
     /// ```
     #[inline]
-    pub fn true_range(close: &[f64], high: &[f64], low: &[f64]) -> Vec<f64> {
+    pub fn true_range(close: &[f64], highs: &[f64], lows: &[f64]) -> Vec<f64> {
         let length = close.len();
-        if length != high.len() || length != low.len() {
+        if length != highs.len() || length != lows.len() {
             panic!(
-                "Length of close ({}), high ({}), and low ({}) must match",
+                "Length of close ({}), highs ({}), and lows ({}) must match",
                 length,
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             )
         };
         if close.is_empty() {
@@ -368,7 +368,7 @@ pub mod bulk {
         };
 
         (0..length)
-            .map(|i| single::true_range(close[i], high[i], low[i]))
+            .map(|i| single::true_range(close[i], highs[i], lows[i]))
             .collect()
     }
 
@@ -377,8 +377,8 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `close` - Slice of previous closes
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the ATR
     ///
@@ -389,7 +389,7 @@ pub mod bulk {
     /// # Panics
     ///
     /// `average_true_range` will panic if:
-    ///     * `close.len()` != `high.len()` != `low.len()`
+    ///     * `close.len()` != `highs.len()` != `lows.len()`
     ///     * `close.is_empty()`
     ///     * `period.len()` > lengths
     ///
@@ -397,14 +397,14 @@ pub mod bulk {
     ///
     /// ```rust
     /// let close = vec![110.0, 105.0, 115.0, 120.0, 125.0];
-    /// let high = vec![115.0, 115.0, 110.0, 130.0, 135.0];
-    /// let low = vec![105.0, 110.0, 105.0, 110.0, 130.0];
+    /// let highs = vec![115.0, 115.0, 110.0, 130.0, 135.0];
+    /// let lows = vec![105.0, 110.0, 105.0, 110.0, 130.0];
     /// let period: usize = 3;
     ///
     /// let average_true_range = centaur_technical_indicators::other_indicators::bulk::average_true_range(
     ///     &close,
-    ///     &high,
-    ///     &low,
+    ///     &highs,
+    ///     &lows,
     ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     period
     /// );
@@ -412,8 +412,8 @@ pub mod bulk {
     ///
     /// let exponential_atr = centaur_technical_indicators::other_indicators::bulk::average_true_range(
     ///     &close,
-    ///     &high,
-    ///     &low,
+    ///     &highs,
+    ///     &lows,
     ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     period
     /// );
@@ -422,8 +422,8 @@ pub mod bulk {
     #[inline]
     pub fn average_true_range(
         close: &[f64],
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         constant_model_type: ConstantModelType,
         period: usize,
     ) -> Vec<f64> {
@@ -434,12 +434,12 @@ pub mod bulk {
                 period, length
             )
         };
-        if length != high.len() || length != low.len() {
+        if length != highs.len() || length != lows.len() {
             panic!(
-                "Length of close ({}), high ({}), and low ({}) must match",
+                "Length of close ({}), highs ({}), and lows ({}) must match",
                 length,
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             )
         };
         if close.is_empty() {
@@ -450,8 +450,8 @@ pub mod bulk {
             .map(|i| {
                 single::average_true_range(
                     &close[i..i + period],
-                    &high[i..i + period],
-                    &low[i..i + period],
+                    &highs[i..i + period],
+                    &lows[i..i + period],
                     constant_model_type,
                 )
             })
@@ -462,8 +462,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of closing prices
     ///
     /// # Returns
@@ -473,20 +473,20 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * high.is_empty()`
+    ///     * `highs.len()` != `lows.len()` != `close.len()`
+    ///     * `highs.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = vec![110.0, 115.0, 120.0, 130.0, 135.0];
-    /// let low = vec![90.0, 110.0, 105.0, 110.0, 120.0];
+    /// let highs = vec![110.0, 115.0, 120.0, 130.0, 135.0];
+    /// let lows = vec![90.0, 110.0, 105.0, 110.0, 120.0];
     /// let close = vec![100.0, 115.0, 115.0, 120.0, 125.0];
     ///
     /// let internal_bar_strength =
     ///     centaur_technical_indicators::other_indicators::bulk::internal_bar_strength(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         &close
     ///     );
     ///
@@ -496,22 +496,22 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn internal_bar_strength(high: &[f64], low: &[f64], close: &[f64]) -> Vec<f64> {
-        let length = high.len();
-        if length != low.len() || length != close.len() {
+    pub fn internal_bar_strength(highs: &[f64], lows: &[f64], close: &[f64]) -> Vec<f64> {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() {
             panic!(
-                "Lengths of high ({}), low ({}), and close ({}) must be equal",
+                "Lengths of highs ({}), lows ({}), and close ({}) must be equal",
                 length,
-                low.len(),
+                lows.len(),
                 close.len()
             )
         };
-        if high.is_empty() {
+        if highs.is_empty() {
             panic!("Prices cannot be empty");
         };
 
         (0..length)
-            .map(|i| single::internal_bar_strength(high[i], low[i], close[i]))
+            .map(|i| single::internal_bar_strength(highs[i], lows[i], close[i]))
             .collect()
     }
 

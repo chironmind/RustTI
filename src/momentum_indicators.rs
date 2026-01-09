@@ -357,8 +357,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Close price for the observed period
     ///
     /// # Returns
@@ -368,37 +368,37 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.is_empty()` or `low.is_empty()`
-    ///     * `high.len()` != `low.len()`
+    ///     * `highs.is_empty()` or `lows.is_empty()`
+    ///     * `highs.len()` != `lows.len()`
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = [200.0, 215.0, 206.0];
-    /// let low = [175.0, 189.0, 182.0];
+    /// let highs = [200.0, 215.0, 206.0];
+    /// let lows = [175.0, 189.0, 182.0];
     /// let close = 192.0;
     /// let williams_percent_r =
     ///     centaur_technical_indicators::momentum_indicators::single::williams_percent_r(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         close
     ///     );
     /// assert_eq!(-57.49999999999999, williams_percent_r);
     /// ```
     #[inline]
-    pub fn williams_percent_r(high: &[f64], low: &[f64], close: f64) -> f64 {
-        if high.is_empty() || low.is_empty() {
-            panic!("high and low cannot be empty")
+    pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> f64 {
+        if highs.is_empty() || lows.is_empty() {
+            panic!("highs and lows cannot be empty")
         };
-        if high.len() != low.len() {
+        if highs.len() != lows.len() {
             panic!(
-                "Length of high ({}) and low ({}) must match",
-                high.len(),
-                low.len()
+                "Length of highs ({}) and lows ({}) must match",
+                highs.len(),
+                lows.len()
             )
         };
-        let max_high = max(high);
-        let min_low = min(low);
+        let max_high = max(highs);
+        let min_low = min(lows);
         -100.0_f64 * ((max_high - close) / (max_high - min_low))
     }
 
@@ -1057,14 +1057,14 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()` != `volume.len()`
+    ///     * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
     ///     * If lengths <= `short_period`
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = vec![103.0, 102.0, 105.0, 109.0, 106.0];
-    /// let low = vec![99.0, 99.0, 100.0, 103.0, 98.0];
+    /// let highs = vec![103.0, 102.0, 105.0, 109.0, 106.0];
+    /// let lows = vec![99.0, 99.0, 100.0, 103.0, 98.0];
     /// let close = vec![102.0, 100.0, 103.0, 106.0, 100.0];
     /// let volume = vec![1000.0, 1500.0, 1200.0, 1500.0, 2000.0];
     /// let short_period: usize = 3;
@@ -1072,8 +1072,8 @@ pub mod single {
     ///
     /// let chaikin_oscillator =
     ///     centaur_technical_indicators::momentum_indicators::single::chaikin_oscillator(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         &close,
     ///         &volume,
     ///         short_period,
@@ -1086,8 +1086,8 @@ pub mod single {
     /// let previous = 500.0;
     /// let chaikin_oscillator =
     ///     centaur_technical_indicators::momentum_indicators::single::chaikin_oscillator(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         &close,
     ///         &volume,
     ///         short_period,
@@ -1098,8 +1098,8 @@ pub mod single {
     /// assert_eq!((-333.3333333333333, -260.0), chaikin_oscillator);
     /// ```
     pub fn chaikin_oscillator(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         volume: &[f64],
         short_period: usize,
@@ -1107,12 +1107,12 @@ pub mod single {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> (f64, f64) {
-        let long_period = high.len();
-        if long_period != low.len() || long_period != close.len() || long_period != volume.len() {
+        let long_period = highs.len();
+        if long_period != lows.len() || long_period != close.len() || long_period != volume.len() {
             panic!(
                 "Length of highs ({}), lows ({}), close ({}), and volume ({}) must match",
                 long_period,
-                low.len(),
+                lows.len(),
                 close.len(),
                 volume.len()
             )
@@ -1127,16 +1127,16 @@ pub mod single {
 
         let mut ad = Vec::with_capacity(long_period);
         ad.push(accumulation_distribution(
-            high[0],
-            low[0],
+            highs[0],
+            lows[0],
             close[0],
             volume[0],
             previous_accumulation_distribution,
         ));
         for i in 1..long_period {
             ad.push(accumulation_distribution(
-                high[i],
-                low[i],
+                highs[i],
+                lows[i],
                 close[i],
                 volume[i],
                 ad[i - 1],
@@ -1618,8 +1618,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of closing prices
     /// * `period` - Period over which to calculate the Williams %R
     ///
@@ -1630,34 +1630,39 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
+    ///     * `highs.len()` != `lows.len()` != `close.len()`
     ///     * `period` > lengths
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = vec![200.0, 210.0, 205.0, 190.0];
-    /// let low = vec![175.0, 192.0, 200.0, 174.0];
+    /// let highs = vec![200.0, 210.0, 205.0, 190.0];
+    /// let lows = vec![175.0, 192.0, 200.0, 174.0];
     /// let close = vec![192.0, 200.0, 201.0, 187.0];
     /// let period: usize = 3;
     /// let williams_percent_r =
     ///     centaur_technical_indicators::momentum_indicators::bulk::williams_percent_r(
-    ///         &high,
-    ///         &low,
+    ///         &highs,
+    ///         &lows,
     ///         &close,
     ///         period
     ///     );
     /// assert_eq!(vec![-25.71428571428571, -63.888888888888886], williams_percent_r);
     /// ```
     #[inline]
-    pub fn williams_percent_r(high: &[f64], low: &[f64], close: &[f64], period: usize) -> Vec<f64> {
+    pub fn williams_percent_r(
+        highs: &[f64],
+        lows: &[f64],
+        close: &[f64],
+        period: usize,
+    ) -> Vec<f64> {
         let length = close.len();
-        if length != high.len() || length != low.len() {
+        if length != highs.len() || length != lows.len() {
             panic!(
-                "Length of close ({}) needs to match length of high ({}), and length of close ({})",
+                "Length of close ({}) needs to match length of highs ({}) and lows ({})",
                 length,
-                high.len(),
-                low.len()
+                highs.len(),
+                lows.len()
             );
         };
         if period > length {
@@ -1671,8 +1676,8 @@ pub mod bulk {
         let mut wprs = Vec::with_capacity(loop_max);
         for i in 0..loop_max {
             wprs.push(single::williams_percent_r(
-                &high[i..i + period],
-                &low[i..i + period],
+                &highs[i..i + period],
+                &lows[i..i + period],
                 close[i + period - 1],
             ));
         }
@@ -2235,8 +2240,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `high` - Slice of highs
-    /// * `low` - Slice of lows
+    /// * `highs` - Slice of highs
+    /// * `lows` - Slice of lows
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of volumes
     /// * `short_period` - Short period over which to calculate the AD
@@ -2252,15 +2257,15 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    /// * `high.len()` != `low.len()` != `close.len()` != `volume.len()`
+    /// * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
     /// * `long_period` > lengths
     /// * `short_period` >= `long_period`
     ///
     /// # Examples
     ///
     /// ```rust
-    /// let high = vec![103.0, 102.0, 105.0, 109.0, 106.0, 102.0, 107.0];
-    /// let low = vec![99.0, 99.0, 100.0, 103.0, 98.0, 94.0, 96.0];
+    /// let highs = vec![103.0, 102.0, 105.0, 109.0, 106.0, 102.0, 107.0];
+    /// let lows = vec![99.0, 99.0, 100.0, 103.0, 98.0, 94.0, 96.0];
     /// let close = vec![102.0, 100.0, 103.0, 106.0, 100.0, 97.0, 105.0];
     /// let volume = vec![1000.0, 1500.0, 1200.0, 1500.0, 2000.0, 3000.0, 1250.0];
     /// let short_period: usize = 3;
@@ -2268,8 +2273,8 @@ pub mod bulk {
     /// let previous = 0.0;
     ///
     /// let chaikin_oscillator = centaur_technical_indicators::momentum_indicators::bulk::chaikin_oscillator(
-    ///     &high,
-    ///     &low,
+    ///     &highs,
+    ///     &lows,
     ///     &close,
     ///     &volume,
     ///     short_period,
@@ -2285,8 +2290,8 @@ pub mod bulk {
     ///
     /// let previous = 500.0;
     /// let chaikin_oscillator = centaur_technical_indicators::momentum_indicators::bulk::chaikin_oscillator(
-    ///     &high,
-    ///     &low,
+    ///     &highs,
+    ///     &lows,
     ///     &close,
     ///     &volume,
     ///     short_period,
@@ -2302,8 +2307,8 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn chaikin_oscillator(
-        high: &[f64],
-        low: &[f64],
+        highs: &[f64],
+        lows: &[f64],
         close: &[f64],
         volume: &[f64],
         short_period: usize,
@@ -2312,12 +2317,12 @@ pub mod bulk {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> Vec<(f64, f64)> {
-        let length = high.len();
-        if length != low.len() || length != close.len() || length != volume.len() {
+        let length = highs.len();
+        if length != lows.len() || length != close.len() || length != volume.len() {
             panic!(
                 "Lengths of highs ({}), lows ({}), close ({}), and volume ({}) must match",
                 length,
-                low.len(),
+                lows.len(),
                 close.len(),
                 volume.len()
             )
@@ -2340,8 +2345,8 @@ pub mod bulk {
         let loop_max = length - long_period + 1;
         let mut cos = Vec::with_capacity(loop_max);
         let mut co = single::chaikin_oscillator(
-            &high[..long_period],
-            &low[..long_period],
+            &highs[..long_period],
+            &lows[..long_period],
             &close[..long_period],
             &volume[..long_period],
             short_period,
@@ -2353,8 +2358,8 @@ pub mod bulk {
 
         for i in 1..loop_max {
             co = single::chaikin_oscillator(
-                &high[i..i + long_period],
-                &low[i..i + long_period],
+                &highs[i..i + long_period],
+                &lows[i..i + long_period],
                 &close[i..i + long_period],
                 &volume[i..i + long_period],
                 short_period,
@@ -3140,60 +3145,60 @@ mod tests {
 
     #[test]
     fn single_williams_percent_r() {
-        let high = [100.93, 101.58, 101.25];
-        let low = [100.37, 100.57, 100.94];
+        let highs = [100.93, 101.58, 101.25];
+        let lows = [100.37, 100.57, 100.94];
         let close = 101.13;
         assert_eq!(
             -37.190082644628525,
-            single::williams_percent_r(&high, &low, close)
+            single::williams_percent_r(&highs, &lows, close)
         );
     }
 
     #[test]
     fn bulk_williams_percent_r() {
-        let high = vec![100.93, 101.58, 101.25, 101.72];
-        let low = vec![100.37, 100.57, 100.94, 100.89];
+        let highs = vec![100.93, 101.58, 101.25, 101.72];
+        let lows = vec![100.37, 100.57, 100.94, 100.89];
         let close = vec![100.49, 101.06, 101.13, 100.95];
         assert_eq!(
             vec![-37.190082644628525, -66.95652173912976],
-            bulk::williams_percent_r(&high, &low, &close, 3_usize)
+            bulk::williams_percent_r(&highs, &lows, &close, 3_usize)
         );
     }
 
     #[test]
     #[should_panic]
     fn bulk_williams_percent_r_high_panic() {
-        let high = vec![101.58, 101.25];
-        let low = vec![100.37, 100.57, 100.94];
+        let highs = vec![101.58, 101.25];
+        let lows = vec![100.37, 100.57, 100.94];
         let close = vec![100.49, 101.06, 101.13];
-        bulk::williams_percent_r(&high, &low, &close, 3_usize);
+        bulk::williams_percent_r(&highs, &lows, &close, 3_usize);
     }
 
     #[test]
     #[should_panic]
     fn bulk_williams_percent_r_low_panic() {
-        let high = vec![100.93, 101.58, 101.25];
-        let low = vec![100.37, 100.57, 100.94, 100.59];
+        let highs = vec![100.93, 101.58, 101.25];
+        let lows = vec![100.37, 100.57, 100.94, 100.59];
         let close = vec![100.49, 101.06, 101.13];
-        bulk::williams_percent_r(&high, &low, &close, 3_usize);
+        bulk::williams_percent_r(&highs, &lows, &close, 3_usize);
     }
 
     #[test]
     #[should_panic]
     fn bulk_williams_percent_r_close_panic() {
-        let high = vec![100.93, 101.58, 101.25];
-        let low = vec![100.57, 100.94, 100.59];
+        let highs = vec![100.93, 101.58, 101.25];
+        let lows = vec![100.57, 100.94, 100.59];
         let close = vec![101.06, 101.13];
-        bulk::williams_percent_r(&high, &low, &close, 3_usize);
+        bulk::williams_percent_r(&highs, &lows, &close, 3_usize);
     }
 
     #[test]
     #[should_panic]
     fn bulk_williams_percent_r_period_panic() {
-        let high = vec![101.58, 101.25, 100.93];
-        let low = vec![100.37, 100.57, 100.94];
+        let highs = vec![101.58, 101.25, 100.93];
+        let lows = vec![100.37, 100.57, 100.94];
         let close = vec![100.49, 101.06, 101.13];
-        bulk::williams_percent_r(&high, &low, &close, 30_usize);
+        bulk::williams_percent_r(&highs, &lows, &close, 30_usize);
     }
 
     #[test]
