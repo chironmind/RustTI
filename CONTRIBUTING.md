@@ -28,8 +28,6 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
   assert_same_len([("high", high), ("low", low), ...])
   assert_period(period, len)
   Use them everywhere so error messages and edge-case behavior are uniform.
-- remove standard indicators file and references, we can add defaults to each indicator later
-- there are still some singular uses of high/low, Rename & Cleanup: Fix typos (e.g., alpha_nominator -> alpha_numerator) and inconsistencies in parameter naming (high vs highs) in src/types.rs and other modules.
 
 ### New Indicator Ideas
 
