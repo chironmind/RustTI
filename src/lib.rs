@@ -24,15 +24,15 @@
 //! ## Quick Start
 //!
 //! ```rust
-//! use centaur_technical_indicators::standard_indicators::bulk::rsi;
+//! use centaur_technical_indicators::momentum_indicators::bulk::relative_strength_index;
+//! use centaur_technical_indicators::ConstantModelType;
 //! let prices = vec![100.0, 102.0, 103.0, 102.5, 102.8, 103.1, 103.8, 103.9, 104.4, 103.6, 103.1,
 //! 102.9, 103.3, 103.7];
-//! let my_rsi = rsi(&prices);
+//! let my_rsi = relative_strength_index(&prices, ConstantModelType::SmoothedMovingAverage, 14);
 //! println!("Your RSI: {:?}", my_rsi);
 //! ```
 //!
 //! ## Modules
-//! - [`standard_indicators`] - Industry-standard indicators (RSI, MACD, Bollinger, etc.)
 //! - [`basic_indicators`] - Fundamental stats (mean, median, std, etc.)
 //! - [`candle_indicators`] - Candle chart tools (Ichimoku, bands, envelopes, etc.)
 //! - [`chart_trends`] - Trend and peak/valley analysis
