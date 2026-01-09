@@ -37,7 +37,6 @@
 //! - [`candle_indicators`] - Candle chart tools (Ichimoku, bands, envelopes, etc.)
 //! - [`chart_trends`] - Trend and peak/valley analysis
 //! - [`correlation_indicators`] - Asset correlation metrics
-//! - [`distributions`] - Probability distributions (Normal, Cauchy, Student-t, Laplace, Log-normal)
 //! - [`momentum_indicators`] - Momentum and oscillator indicators
 //! - [`moving_average`] - Moving averages: simple, smoothed, exponential, McGinley, etc.
 //! - [`other_indicators`] - ROI, true range, internal bar strength, etc.
@@ -59,9 +58,8 @@
 //! - **Tutorials:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials)
 //! - **How-To Guides:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-how-to-guides)
 //! - **Benchmarks:** [See here](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks)
-//! - **Explanations:** Coming soon
+//! - **Explanations:** [Centaur Labs](https://centaurlabs.pages.dev/)
 //! - **Reference:** You're here!
-//! - **Centaur Labs:** [https://centaurlabs.pages.dev/](https://centaurlabs.pages.dev/)
 //!
 //! ---
 

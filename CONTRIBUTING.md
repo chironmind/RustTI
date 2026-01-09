@@ -18,11 +18,18 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
 
 ## 🛠️ What to Work On?
 
-- Remove `test_` prefix from all test functions
-- Some functions use `high`, others use `highs`, need to settle on one
 - Refactor parabolic T/P system: remove single functions; let bulk function determine trend (like `volatility` system)
-- Functions need a documented return
-- Fix bullet points in documentation
+- No more panics, use `Result` types instead, and centralize validation and error messages
+  There are lots of repeated checks: empty slices, mismatched lengths, period > len, etc. Also error strings vary (“Prices is empty”, “Prices cannot be empty”, etc.).
+  You currently rely on panics by design; that’s okay for a low-level math crate, but consistency matters.
+  Refactor suggestion:
+  Add internal helpers (private module) like:
+  assert_non_empty(name, slice)
+  assert_same_len([("high", high), ("low", low), ...])
+  assert_period(period, len)
+  Use them everywhere so error messages and edge-case behavior are uniform.
+- remove standard indicators file and references, we can add defaults to each indicator later
+- there are still some singular uses of high/low, Rename & Cleanup: Fix typos (e.g., alpha_nominator -> alpha_numerator) and inconsistencies in parameter naming (high vs highs) in src/types.rs and other modules.
 
 ### New Indicator Ideas
 
