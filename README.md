@@ -1,3 +1,9 @@
+# /!\ We are currently rebranding from RustTI to Centaur Technical Indicators.
+# The functionality remains the same, only the name and branding are changing.
+# Please update any references to RustTI in your projects to Centaur Technical Indicators.
+# This is so that we can align with the Centaur Labs ecosystem (some interesting work here to come!).
+# and have all of our packages under a consistent naming scheme.
+
 [![Crates.io Version](https://img.shields.io/crates/v/centaur_technical_indicators.svg)](https://crates.io/crates/centaur_technical_indicators)
 [![Docs.rs](https://docs.rs/centaur_technical_indicators/badge.svg)](https://docs.rs/centaur_technical_indicators/)
 [![CI](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/actions/workflows/rust.yml/badge.svg)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/actions)

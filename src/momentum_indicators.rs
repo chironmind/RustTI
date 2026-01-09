@@ -81,6 +81,10 @@ pub mod single {
     /// * `prices` - Slice of prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -173,6 +177,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -206,6 +214,10 @@ pub mod single {
     ///
     /// * `stochastics` - Slice of stochastics
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Panics
     ///
@@ -349,6 +361,10 @@ pub mod single {
     /// * `low` - Slice of lows
     /// * `close` - Close price for the observed period
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -392,6 +408,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     /// * `volume` - Slice of transaction volumes
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Panics
     ///
@@ -454,6 +474,10 @@ pub mod single {
     ///
     /// * `current_price` - Current price
     /// * `previous_price` - Previous price
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Examples
     ///
@@ -886,6 +910,10 @@ pub mod single {
     /// * `macds` - Slice of MACDs
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `macds.is_empty()`
@@ -1013,8 +1041,8 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of price highs
-    /// * `lows` - Slice of price lows
+    /// * `high` - Slice of price highs
+    /// * `low` - Slice of price lows
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of transction volumes
     /// * `short_period` - Short period for the Accumulation Distribution
@@ -1022,10 +1050,14 @@ pub mod single {
     /// * `short_period_model` - Variant of [`ConstantModelType`]
     /// * `long_period_model` - Variant of [`ConstantModelType`]  
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (chaikin_oscillator, accumulation_distribution)
+    ///
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
+    ///     * `high.len()` != `low.len()` != `close.len()` != `volume.len()`
     ///     * If lengths <= `short_period`
     ///
     /// # Examples
@@ -1066,8 +1098,8 @@ pub mod single {
     /// assert_eq!((-333.3333333333333, -260.0), chaikin_oscillator);
     /// ```
     pub fn chaikin_oscillator(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         volume: &[f64],
         short_period: usize,
@@ -1075,12 +1107,12 @@ pub mod single {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> (f64, f64) {
-        let long_period = highs.len();
-        if long_period != lows.len() || long_period != close.len() || long_period != volume.len() {
+        let long_period = high.len();
+        if long_period != low.len() || long_period != close.len() || long_period != volume.len() {
             panic!(
                 "Length of highs ({}), lows ({}), close ({}), and volume ({}) must match",
                 long_period,
-                lows.len(),
+                low.len(),
                 close.len(),
                 volume.len()
             )
@@ -1095,16 +1127,16 @@ pub mod single {
 
         let mut ad = Vec::with_capacity(long_period);
         ad.push(accumulation_distribution(
-            highs[0],
-            lows[0],
+            high[0],
+            low[0],
             close[0],
             volume[0],
             previous_accumulation_distribution,
         ));
         for i in 1..long_period {
             ad.push(accumulation_distribution(
-                highs[i],
-                lows[i],
+                high[i],
+                low[i],
                 close[i],
                 volume[i],
                 ad[i - 1],
@@ -1258,6 +1290,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -1328,6 +1364,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the RSI
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1405,6 +1445,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the stochastic oscillator
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if the `period` > `prices.len()`
@@ -1442,6 +1486,10 @@ pub mod bulk {
     /// * `stochastics` - Slice of Stochastic Oscillators
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the slow stochastic
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1508,6 +1556,10 @@ pub mod bulk {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the slowest stochastic oscillator
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `period` > `slow_stochastics.len()`
@@ -1571,6 +1623,10 @@ pub mod bulk {
     /// * `close` - Slice of closing prices
     /// * `period` - Period over which to calculate the Williams %R
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1631,6 +1687,10 @@ pub mod bulk {
     /// * `volume` - Slice of volumes
     /// * `period` - Period over which to calculate the MFI
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1686,6 +1746,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -1716,6 +1780,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `volume` - Slice of volumes
     /// * `previous_on_balance_volume` - Previous OBV (use 0.0 if none)
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1773,6 +1841,10 @@ pub mod bulk {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `constant_multiplier` - Scale factor (normally 0.015)
     /// * `period` - Period over which to calculate the CCI
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -1928,6 +2000,10 @@ pub mod bulk {
     /// * `long_period` - The length of the long period
     /// * `long_period_model` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -2006,6 +2082,10 @@ pub mod bulk {
     /// * `macds` - Slice of MACDs
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the signal line
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -2155,8 +2235,8 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of highs
-    /// * `lows` - Slice of lows
+    /// * `high` - Slice of highs
+    /// * `low` - Slice of lows
     /// * `close` - Slice of closing prices
     /// * `volume` - Slice of volumes
     /// * `short_period` - Short period over which to calculate the AD
@@ -2165,10 +2245,14 @@ pub mod bulk {
     /// * `short_period_model` - Variant of [`ConstantModelType`]
     /// * `long_period_model` - Variant of [`ConstantModelType`]
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (chaikin_oscillator, accumulation_distribution)
+    ///
     /// # Panics
     ///
     /// Panics if:
-    /// * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
+    /// * `high.len()` != `low.len()` != `close.len()` != `volume.len()`
     /// * `long_period` > lengths
     /// * `short_period` >= `long_period`
     ///
@@ -2218,8 +2302,8 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn chaikin_oscillator(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         volume: &[f64],
         short_period: usize,
@@ -2228,12 +2312,12 @@ pub mod bulk {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> Vec<(f64, f64)> {
-        let length = highs.len();
-        if length != lows.len() || length != close.len() || length != volume.len() {
+        let length = high.len();
+        if length != low.len() || length != close.len() || length != volume.len() {
             panic!(
                 "Lengths of highs ({}), lows ({}), close ({}), and volume ({}) must match",
                 length,
-                lows.len(),
+                low.len(),
                 close.len(),
                 volume.len()
             )
@@ -2256,8 +2340,8 @@ pub mod bulk {
         let loop_max = length - long_period + 1;
         let mut cos = Vec::with_capacity(loop_max);
         let mut co = single::chaikin_oscillator(
-            &highs[..long_period],
-            &lows[..long_period],
+            &high[..long_period],
+            &low[..long_period],
             &close[..long_period],
             &volume[..long_period],
             short_period,
@@ -2269,8 +2353,8 @@ pub mod bulk {
 
         for i in 1..loop_max {
             co = single::chaikin_oscillator(
-                &highs[i..i + long_period],
-                &lows[i..i + long_period],
+                &high[i..i + long_period],
+                &low[i..i + long_period],
                 &close[i..i + long_period],
                 &volume[i..i + long_period],
                 short_period,
@@ -2291,6 +2375,10 @@ pub mod bulk {
     /// * `short_period` - Length of short period.
     /// * `long_period` - Length of long period
     /// * `constant_model_type` Variant of [`ConstantModelType`]
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -2362,6 +2450,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the CMO
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -2405,7 +2497,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_single_ma_rsi() {
+    fn single_ma_rsi() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(
             49.2537313432832,
@@ -2414,7 +2506,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_short_median_rsi() {
+    fn single_short_median_rsi() {
         // Because there are too few values, ends up being the means
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(
@@ -2424,7 +2516,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_long_median_rsi() {
+    fn single_long_median_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2435,7 +2527,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_small_mode_rsi() {
+    fn single_small_mode_rsi() {
         // Mode rounds the values, the difference being so small all rounds down to 0.0
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(
@@ -2445,7 +2537,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_large_mode_rsi() {
+    fn single_large_mode_rsi() {
         let prices = vec![100.0, 103.0, 106.0, 107.0, 108.0, 105.0, 102.0];
         assert_eq!(
             39.99999999999999,
@@ -2454,7 +2546,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_smoothed_rsi() {
+    fn single_smoothed_rsi() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(
             43.01075268817234,
@@ -2466,7 +2558,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_exponential_rsi() {
+    fn single_exponential_rsi() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(
             39.495798319328436,
@@ -2478,7 +2570,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_personalised_rsi() {
+    fn single_personalised_rsi() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(
             35.6725146198842,
@@ -2493,7 +2585,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_only_price_rise_rsi() {
+    fn single_only_price_rise_rsi() {
         let prices = vec![100.0, 101.0, 102.0, 103.0];
         assert_eq!(
             100.0,
@@ -2502,7 +2594,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_only_price_fall_rsi() {
+    fn single_only_price_fall_rsi() {
         let prices = vec![103.0, 102.0, 101.0, 100.0];
         assert_eq!(
             0.0,
@@ -2512,13 +2604,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_rsi_panic() {
+    fn single_rsi_panic() {
         let prices = Vec::new();
         single::relative_strength_index(&prices, crate::ConstantModelType::SimpleMovingAverage);
     }
 
     #[test]
-    fn test_bulk_simple_ma_rsi() {
+    fn bulk_simple_ma_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2539,7 +2631,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_smoothed_ma_rsi() {
+    fn bulk_smoothed_ma_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2560,7 +2652,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_exponential_ma_rsi() {
+    fn bulk_exponential_ma_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2581,7 +2673,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_personalised_ma_rsi() {
+    fn bulk_personalised_ma_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2605,7 +2697,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_simple_median_rsi() {
+    fn bulk_simple_median_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2626,7 +2718,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_simple_mode_rsi() {
+    fn bulk_simple_mode_rsi() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2643,7 +2735,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_rsi_panic() {
+    fn bulk_rsi_panic() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2656,32 +2748,32 @@ mod tests {
     }
 
     #[test]
-    fn test_single_stochastic_oscillator_min() {
+    fn single_stochastic_oscillator_min() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         assert_eq!(0.0, single::stochastic_oscillator(&prices));
     }
 
     #[test]
-    fn test_single_stochastic_oscillator_max() {
+    fn single_stochastic_oscillator_max() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.66];
         assert_eq!(100.0, single::stochastic_oscillator(&prices));
     }
 
     #[test]
-    fn test_single_stochastic_oscillator() {
+    fn single_stochastic_oscillator() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.34];
         assert_eq!(42.42424242424281, single::stochastic_oscillator(&prices));
     }
 
     #[test]
     #[should_panic]
-    fn test_single_stochastic_oscillator_panic() {
+    fn single_stochastic_oscillator_panic() {
         let prices = Vec::new();
         single::stochastic_oscillator(&prices);
     }
 
     #[test]
-    fn test_bulk_stochastic_oscillator() {
+    fn bulk_stochastic_oscillator() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2694,7 +2786,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_stochastic_oscillator_bulk() {
+    fn bulk_stochastic_oscillator_bulk() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -2703,7 +2795,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_slow_stochastic() {
+    fn single_ma_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             22.871517027863632,
@@ -2712,7 +2804,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_slow_stochastic() {
+    fn single_sma_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             29.02078726227347,
@@ -2724,7 +2816,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_slow_stochastic() {
+    fn single_ema_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             33.284579311601206,
@@ -2736,7 +2828,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_slow_stochastic() {
+    fn single_pma_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             39.872151259403616,
@@ -2751,7 +2843,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_slow_stochastic() {
+    fn single_median_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             22.05882352941029,
@@ -2760,7 +2852,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_slow_stochastic() {
+    fn single_mode_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             22.75,
@@ -2770,13 +2862,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_slow_stochastic_panic() {
+    fn single_slow_stochastic_panic() {
         let stochastics = Vec::new();
         single::slow_stochastic(&stochastics, crate::ConstantModelType::SimpleMovingMode);
     }
 
     #[test]
-    fn test_bulk_ma_slow_stochastic() {
+    fn bulk_ma_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2790,7 +2882,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_sma_slow_stochastic() {
+    fn bulk_sma_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2804,7 +2896,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_ema_slow_stochastic() {
+    fn bulk_ema_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2818,7 +2910,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_pma_slow_stochastic() {
+    fn bulk_pma_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2835,7 +2927,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_median_slow_stochastic() {
+    fn bulk_median_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2849,7 +2941,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mode_slow_stochastic() {
+    fn bulk_mode_slow_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2864,7 +2956,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_slow_stochastic_panic() {
+    fn bulk_slow_stochastic_panic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 30;
         bulk::slow_stochastic(
@@ -2875,7 +2967,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_slowest_stochastic() {
+    fn single_ma_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             22.871517027863632,
@@ -2884,7 +2976,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_slowest_stochastic() {
+    fn single_sma_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             29.02078726227347,
@@ -2896,7 +2988,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_slowest_stochastic() {
+    fn single_ema_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             33.284579311601206,
@@ -2908,7 +3000,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_slowest_stochastic() {
+    fn single_pma_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             39.872151259403616,
@@ -2923,7 +3015,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_slowest_stochastic() {
+    fn single_median_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             22.05882352941029,
@@ -2932,7 +3024,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_slowest_stochastic() {
+    fn single_mode_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         assert_eq!(
             22.75,
@@ -2942,13 +3034,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_slowest_stochastic_panic() {
+    fn single_slowest_stochastic_panic() {
         let stochastics = Vec::new();
         single::slowest_stochastic(&stochastics, crate::ConstantModelType::SimpleMovingMode);
     }
 
     #[test]
-    fn test_bulk_ma_slowest_stochastic() {
+    fn bulk_ma_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2962,7 +3054,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_sma_slowest_stochastic() {
+    fn bulk_sma_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2976,7 +3068,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_ema_slowest_stochastic() {
+    fn bulk_ema_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -2990,7 +3082,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_pma_slowest_stochastic() {
+    fn bulk_pma_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -3007,7 +3099,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_median_slowest_stochastic() {
+    fn bulk_median_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -3021,7 +3113,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mode_slowest_stochastic() {
+    fn bulk_mode_slowest_stochastic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 3;
         assert_eq!(
@@ -3036,7 +3128,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_slowest_stochastic_panic() {
+    fn bulk_slowest_stochastic_panic() {
         let stochastics = vec![0.0, 5.882352941175241, 38.23529411764534, 47.36842105263394];
         let period: usize = 30;
         bulk::slowest_stochastic(
@@ -3047,7 +3139,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_williams_percent_r() {
+    fn single_williams_percent_r() {
         let high = [100.93, 101.58, 101.25];
         let low = [100.37, 100.57, 100.94];
         let close = 101.13;
@@ -3058,7 +3150,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_williams_percent_r() {
+    fn bulk_williams_percent_r() {
         let high = vec![100.93, 101.58, 101.25, 101.72];
         let low = vec![100.37, 100.57, 100.94, 100.89];
         let close = vec![100.49, 101.06, 101.13, 100.95];
@@ -3070,7 +3162,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_williams_percent_r_high_panic() {
+    fn bulk_williams_percent_r_high_panic() {
         let high = vec![101.58, 101.25];
         let low = vec![100.37, 100.57, 100.94];
         let close = vec![100.49, 101.06, 101.13];
@@ -3079,7 +3171,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_williams_percent_r_low_panic() {
+    fn bulk_williams_percent_r_low_panic() {
         let high = vec![100.93, 101.58, 101.25];
         let low = vec![100.37, 100.57, 100.94, 100.59];
         let close = vec![100.49, 101.06, 101.13];
@@ -3088,7 +3180,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_williams_percent_r_close_panic() {
+    fn bulk_williams_percent_r_close_panic() {
         let high = vec![100.93, 101.58, 101.25];
         let low = vec![100.57, 100.94, 100.59];
         let close = vec![101.06, 101.13];
@@ -3097,7 +3189,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_williams_percent_r_period_panic() {
+    fn bulk_williams_percent_r_period_panic() {
         let high = vec![101.58, 101.25, 100.93];
         let low = vec![100.37, 100.57, 100.94];
         let close = vec![100.49, 101.06, 101.13];
@@ -3105,7 +3197,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_money_flow_index() {
+    fn single_money_flow_index() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -3117,14 +3209,14 @@ mod tests {
     }
 
     #[test]
-    fn test_single_money_flow_index_only_negative() {
+    fn single_money_flow_index_only_negative() {
         let prices = vec![100.38, 100.19, 100.12];
         let volume = vec![1100.0, 900.0, 875.0];
         assert_eq!(0.0, single::money_flow_index(&prices, &volume));
     }
 
     #[test]
-    fn test_single_money_flow_index_only_positive() {
+    fn single_money_flow_index_only_positive() {
         let prices = vec![100.2, 100.46, 100.53];
         let volume = vec![1200.0, 1400.0, 1450.0];
         assert_eq!(100.0, single::money_flow_index(&prices, &volume));
@@ -3132,7 +3224,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_money_flow_index_panic() {
+    fn single_money_flow_index_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let volume = vec![1200.0, 1400.0, 1450.0, 1100.0, 900.0, 875.0, 1025.0, 1100.0];
         single::money_flow_index(&prices, &volume);
@@ -3140,7 +3232,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_money_flow_index_empty_price_panic() {
+    fn single_money_flow_index_empty_price_panic() {
         let prices = Vec::new();
         let volume = vec![1200.0, 1400.0, 1450.0, 1100.0, 900.0, 875.0, 1025.0, 1100.0];
         single::money_flow_index(&prices, &volume);
@@ -3148,14 +3240,14 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_money_flow_index_empty_volume_panic() {
+    fn single_money_flow_index_empty_volume_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let volume = Vec::new();
         single::money_flow_index(&prices, &volume);
     }
 
     #[test]
-    fn test_bulk_money_flow_index() {
+    fn bulk_money_flow_index() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -3174,7 +3266,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_money_flow_index_length_panic() {
+    fn bulk_money_flow_index_length_panic() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -3185,7 +3277,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_money_flow_index_period_panic() {
+    fn bulk_money_flow_index_period_panic() {
         let prices = vec![
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
@@ -3195,7 +3287,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_rate_of_change_positive() {
+    fn single_rate_of_change_positive() {
         let current_price = 100.46;
         let previous_price = 100.2;
         assert_eq!(
@@ -3205,7 +3297,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_rate_of_change_negative() {
+    fn single_rate_of_change_negative() {
         let current_price = 100.19;
         let previous_price = 100.38;
         assert_eq!(
@@ -3215,14 +3307,14 @@ mod tests {
     }
 
     #[test]
-    fn test_single_rate_of_change_equal() {
+    fn single_rate_of_change_equal() {
         let current_price = 100.32;
         let previous_price = 100.32;
         assert_eq!(0.0, single::rate_of_change(current_price, previous_price));
     }
 
     #[test]
-    fn test_bulk_rate_of_change() {
+    fn bulk_rate_of_change() {
         let prices = vec![100.2, 100.46, 100.38, 100.19, 100.32, 100.32];
         assert_eq!(
             vec![
@@ -3238,13 +3330,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_rate_of_change_panic() {
+    fn bulk_rate_of_change_panic() {
         let prices = Vec::new();
         bulk::rate_of_change(&prices);
     }
 
     #[test]
-    fn test_single_on_balance_volume_positive_no_previous() {
+    fn single_on_balance_volume_positive_no_previous() {
         let current_price = 100.46;
         let previous_price = 100.2;
         let volume = 1500.0;
@@ -3256,7 +3348,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_on_balance_volume_positive_previous() {
+    fn single_on_balance_volume_positive_previous() {
         let current_price = 100.46;
         let previous_price = 100.2;
         let volume = 1500.0;
@@ -3268,7 +3360,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_on_balance_volume_negative_no_previous() {
+    fn single_on_balance_volume_negative_no_previous() {
         let current_price = 100.19;
         let previous_price = 100.32;
         let volume = 1500.0;
@@ -3280,7 +3372,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_on_balance_volume_negative_previous() {
+    fn single_on_balance_volume_negative_previous() {
         let current_price = 100.19;
         let previous_price = 100.38;
         let volume = 1500.0;
@@ -3292,7 +3384,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_on_balance_volume_equal_no_previous() {
+    fn single_on_balance_volume_equal_no_previous() {
         let current_price = 100.32;
         let previous_price = 100.32;
         let volume = 1500.0;
@@ -3304,7 +3396,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_on_balance_volume_equal_previous() {
+    fn single_on_balance_volume_equal_previous() {
         let current_price = 100.32;
         let previous_price = 100.32;
         let volume = 1500.0;
@@ -3316,7 +3408,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_on_balance_volume_no_previous() {
+    fn bulk_on_balance_volume_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let volume = vec![1400.0, 1450.0, 1100.0, 900.0, 875.0];
         assert_eq!(
@@ -3326,7 +3418,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_on_balance_volume_previous() {
+    fn bulk_on_balance_volume_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21];
         let volume = vec![1450.0, 1100.0, 900.0, 875.0];
         assert_eq!(
@@ -3337,7 +3429,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_on_balance_volume_no_price_panic() {
+    fn bulk_on_balance_volume_no_price_panic() {
         let prices = Vec::new();
         let volume = vec![1400.0, 1450.0, 1100.0, 900.0, 875.0];
         bulk::on_balance_volume(&prices, &volume, 0.0);
@@ -3345,7 +3437,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_on_balance_volume_no_volume_panic() {
+    fn bulk_on_balance_volume_no_volume_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let volume = Vec::new();
         bulk::on_balance_volume(&prices, &volume, 0.0);
@@ -3353,7 +3445,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_commodity_channel_index_panic() {
+    fn single_commodity_channel_index_panic() {
         let prices = Vec::new();
         single::commodity_channel_index(
             &prices,
@@ -3364,7 +3456,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_mean_ad_commodity_channel_index() {
+    fn single_ma_mean_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -77.92207792208092,
@@ -3378,7 +3470,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_median_ad_commodity_channel_index() {
+    fn single_ma_median_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -64.0,
@@ -3392,7 +3484,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_mode_ad_commodity_channel_index() {
+    fn single_ma_mode_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             0.0,
@@ -3406,7 +3498,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_std_dev_commodity_channel_index() {
+    fn single_ma_std_dev_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -71.3483546791537,
@@ -3420,7 +3512,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_ulcer_index_commodity_channel_index() {
+    fn single_ma_ulcer_index_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -44.00422507932252,
@@ -3433,7 +3525,7 @@ mod tests {
         );
     }
     #[test]
-    fn test_single_sma_mean_ad_commodity_channel_index() {
+    fn single_sma_mean_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -57.79560753382917,
@@ -3447,7 +3539,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_mean_ad_commodity_channel_index() {
+    fn single_ema_mean_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -42.87971112616663,
@@ -3461,7 +3553,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_mean_ad_commodity_channel_index() {
+    fn single_pma_mean_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -19.132669714320674,
@@ -3478,7 +3570,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_mean_ad_commodity_channel_index() {
+    fn single_median_mean_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -91.99134199134296,
@@ -3492,7 +3584,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_mean_ad_commodity_channel_index() {
+    fn single_mode_mean_ad_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             113.63636363636031,
@@ -3506,7 +3598,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_commodity_channel_index() {
+    fn bulk_commodity_channel_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             vec![-100.0, -100.00000000000804, -41.66666666666519],
@@ -3522,7 +3614,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_commodity_channel_index_panic() {
+    fn bulk_commodity_channel_index_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             vec![-100.0, -100.00000000000804, -41.66666666666519],
@@ -3537,7 +3629,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_cci_no_previous() {
+    fn single_mcginley_cci_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (0.0, 100.21),
@@ -3551,7 +3643,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_cci_previous_mean_absolute_deviation() {
+    fn single_mcginley_cci_previous_mean_absolute_deviation() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (56.90977560811997, 100.23190366735862),
@@ -3565,7 +3657,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_cci_previous_median_absolute_deviation() {
+    fn single_mcginley_cci_previous_median_absolute_deviation() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (53.39171675234611, 100.23190366735862),
@@ -3579,7 +3671,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_cci_previous_mode_absolute_deviation() {
+    fn single_mcginley_cci_previous_mode_absolute_deviation() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (0.0, 100.23190366735862),
@@ -3593,7 +3685,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_cci_previous_standard_deviation() {
+    fn single_mcginley_cci_previous_standard_deviation() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (47.47490364820863, 100.23190366735862),
@@ -3607,7 +3699,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_cci_previous_ulcer_index() {
+    fn single_mcginley_cci_previous_ulcer_index() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (24.747413068246022, 100.23190366735862),
@@ -3622,7 +3714,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_mcginley_cci_panic() {
+    fn single_mcginley_cci_panic() {
         let prices = Vec::new();
         single::mcginley_dynamic_commodity_channel_index(
             &prices,
@@ -3633,7 +3725,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mcginley_cci_no_previous() {
+    fn bulk_mcginley_cci_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -3652,7 +3744,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mcginley_cci_previous() {
+    fn bulk_mcginley_cci_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -3671,7 +3763,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_mcginley_cci_panic() {
+    fn bulk_mcginley_cci_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::mcginley_dynamic_commodity_channel_index(
             &prices,
@@ -3683,7 +3775,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_macd() {
+    fn single_ema_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -0.06067027758972188,
@@ -3697,7 +3789,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_macd() {
+    fn single_sma_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -0.07733259851198682,
@@ -3711,7 +3803,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_macd() {
+    fn single_pma_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -0.02938702437832319,
@@ -3731,7 +3823,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_macd() {
+    fn single_ma_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -0.0940000000000083,
@@ -3745,7 +3837,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_macd() {
+    fn single_median_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             -0.1700000000000017,
@@ -3759,7 +3851,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_macd() {
+    fn single_mode_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             0.0,
@@ -3774,7 +3866,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_macd_panic() {
+    fn single_macd_panic() {
         let prices = Vec::new();
         single::macd_line(
             &prices,
@@ -3786,7 +3878,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_macd_panic_period() {
+    fn single_macd_panic_period() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         single::macd_line(
             &prices,
@@ -3797,7 +3889,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_macd() {
+    fn bulk_macd() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -3817,7 +3909,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_macd_short_period_panic() {
+    fn bulk_macd_short_period_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::macd_line(
             &prices,
@@ -3830,7 +3922,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_macd_long_period_panic() {
+    fn bulk_macd_long_period_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::macd_line(
             &prices,
@@ -3842,7 +3934,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_signal() {
+    fn single_ema_signal() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3855,7 +3947,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_signal() {
+    fn single_sma_signal() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3868,7 +3960,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_signal() {
+    fn single_pma_signal() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3887,7 +3979,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_signal() {
+    fn single_ma_signal() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3900,7 +3992,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_signal() {
+    fn single_median_signal() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3913,7 +4005,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_signal() {
+    fn single_mode_signal() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3927,14 +4019,14 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_signal_panic() {
+    fn single_signal_panic() {
         let macds = Vec::new();
         single::signal_line(&macds, crate::ConstantModelType::ExponentialMovingAverage);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_signal_panic() {
+    fn bulk_signal_panic() {
         let macds = vec![
             -0.06067027758972188,
             -0.022417061611406552,
@@ -3948,7 +4040,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_macd_no_previous() {
+    fn single_mcginley_macd_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (0.0, 100.21, 100.21),
@@ -3957,7 +4049,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_macd_previous() {
+    fn single_mcginley_macd_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (0.014602444905747802, 100.24650611226437, 100.23190366735862),
@@ -3967,20 +4059,20 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_mcginley_macd_panic_short_period() {
+    fn single_mcginley_macd_panic_short_period() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         single::mcginley_dynamic_macd_line(&prices, 30_usize, 0.0, 0.0);
     }
 
     #[test]
     #[should_panic]
-    fn test_single_mcginley_macd_panic_no_prices() {
+    fn single_mcginley_macd_panic_no_prices() {
         let prices = Vec::new();
         single::mcginley_dynamic_macd_line(&prices, 3_usize, 0.0, 0.0);
     }
 
     #[test]
-    fn test_bulk_mcginley_macd_no_previous() {
+    fn bulk_mcginley_macd_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -3993,7 +4085,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mcginley_macd_previous() {
+    fn bulk_mcginley_macd_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -4006,21 +4098,21 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_mcginley_macd_panic_long_period() {
+    fn bulk_mcginley_macd_panic_long_period() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::mcginley_dynamic_macd_line(&prices, 3_usize, 100.21, 50_usize, 100.21);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_mcginley_macd_panic_short_period() {
+    fn bulk_mcginley_macd_panic_short_period() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::mcginley_dynamic_macd_line(&prices, 30_usize, 100.21, 5_usize, 100.21);
     }
 
     #[test]
     #[should_panic]
-    fn test_bulk_mcginley_macd_panic_no_prices() {
+    fn bulk_mcginley_macd_panic_no_prices() {
         let prices = Vec::new();
         bulk::mcginley_dynamic_macd_line(&prices, 3_usize, 100.21, 5_usize, 100.21);
     }
@@ -4668,7 +4760,7 @@ mod tests {
 
     // Tests for new deviation models
     #[test]
-    fn test_commodity_channel_index_log_std() {
+    fn commodity_channel_index_log_std() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
         let result = single::commodity_channel_index(
             &prices,
@@ -4680,7 +4772,7 @@ mod tests {
     }
 
     #[test]
-    fn test_commodity_channel_index_student_t() {
+    fn commodity_channel_index_student_t() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
         let result = single::commodity_channel_index(
             &prices,
@@ -4692,7 +4784,7 @@ mod tests {
     }
 
     #[test]
-    fn test_commodity_channel_index_laplace_std() {
+    fn commodity_channel_index_laplace_std() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
         let result = single::commodity_channel_index(
             &prices,
@@ -4704,7 +4796,7 @@ mod tests {
     }
 
     #[test]
-    fn test_commodity_channel_index_cauchy_iqr() {
+    fn commodity_channel_index_cauchy_iqr() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
         let result = single::commodity_channel_index(
             &prices,
@@ -4716,7 +4808,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mcginley_dynamic_cci_log_std() {
+    fn mcginley_dynamic_cci_log_std() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 98.0, 100.0];
         let result = single::mcginley_dynamic_commodity_channel_index(
             &prices,
@@ -4728,7 +4820,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_cci_with_empirical_iqr() {
+    fn single_sma_cci_with_empirical_iqr() {
         // prices [1,2,3,4], SMA = 2.5, last=4 => numerator=1.5
         // IQR (0.25,0.75) with precision=1.0 => 1.5 (from basic test)
         // CCI = 1.5 / (0.015 * 1.5) = 66.666...

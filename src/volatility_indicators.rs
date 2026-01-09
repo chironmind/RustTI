@@ -38,6 +38,10 @@ pub mod single {
     ///
     /// * `prices` - Slice of prices
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// `ulcer_index` will panic if `prices` is empty
@@ -79,6 +83,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the Ulcer index
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -123,6 +131,10 @@ pub mod bulk {
     /// * `period` - Period over which to calculate the volatility system
     /// * `constant_multiplier` - Mulitplier for ATR
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

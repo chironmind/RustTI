@@ -48,6 +48,10 @@ pub mod single {
     /// * `end_price` - Final price of the asset
     /// * `investment` - Amount invested at start
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (final_investment_value, percent_return)
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -87,6 +91,10 @@ pub mod single {
     /// * `previous_close` - Previous period close
     /// * `high` - Current period high
     /// * `low` - Current period low
+    ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
     ///
     /// # Examples
     ///
@@ -228,6 +236,10 @@ pub mod single {
     /// * `low` - Low
     /// * `close` - Close
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -262,6 +274,10 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `investment` - Initial investment
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (final_investment_value, percent_return)
     ///
     /// # Panics
     ///
@@ -312,6 +328,10 @@ pub mod bulk {
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -361,6 +381,10 @@ pub mod bulk {
     /// * `low` - Slice of lows
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `period` - Period over which to calculate the ATR
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -441,6 +465,10 @@ pub mod bulk {
     /// * `high` - Slice of highs
     /// * `low` - Slice of lows
     /// * `close` - Slice of closing prices
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///

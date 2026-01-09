@@ -62,6 +62,10 @@ pub mod single {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `difference` - Percent band width (e.g., 3.0 for +-3%)
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_envelope, middle_line, upper_envelope)
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -136,6 +140,10 @@ pub mod single {
     /// * `difference` -Percent band width (e.g., 3.0 for +-3%)
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_envelope, mcginley_dynamic, upper_envelope)
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -191,6 +199,10 @@ pub mod single {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `deviation_multiplier` - Deviation multiplier (e.g., 3.0 for +-3%)
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -311,6 +323,10 @@ pub mod single {
     /// * `deviation_multiplier` - Deviatio multiplier (e.g., 3.0 for +-3%)
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, mcginley_dynamic, upper_band)
+    ///
     /// # Panics
     ///
     /// Panics if `prices.is_empty()`
@@ -405,38 +421,42 @@ pub mod single {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of price highs
-    /// * `lows` - Slice of price lows
+    /// * `high` - Slice of price highs
+    /// * `low` - Slice of price lows
     /// * `close` - Slice of closing prices
     /// * `conversion_period` - Period used to calculate the conversion line
     /// * `base_period` - Period used to calculate the base line
     /// * `span_b_period` - Period used to calculate the Span B line
     ///
+    /// # Returns
+    ///
+    /// A tuple containing (leading_span_a, leading_span_b, base_line, conversion_line, lagging_span)
+    ///
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`h
+    ///     * `high.len()` != `low.len()` != `close.len()`
     ///     * `conversion_period`, `base_period`, `span_b_period` >
-    ///         `highs.len()`, `lows.len()`, `close.len()`
+    ///         `high.len()`, `low.len()`, `close.len()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let high_prices =
     ///     vec![
-    ///             105.0, 103.0, 107.0, 101.0, 103.0, 100.0, 109.0, 105.0,
-    ///             110.0, 112.0, 111.0, 105.0, 106.0, 100.0, 103.0
-    ///         ];
+    ///         105.0, 103.0, 107.0, 101.0, 103.0, 100.0, 109.0, 105.0,
+    ///         110.0, 112.0, 111.0, 105.0, 106.0, 100.0, 103.0
+    ///     ];
     /// let low_prices =
     ///     vec![
-    ///             97.0, 99.0, 98.0, 100.0, 95.0, 98.0, 99.0, 100.0, 102.0,
-    ///             106.0, 99.0, 101.0, 98.0, 93.0, 98.0
-    ///         ];
+    ///         97.0, 99.0, 98.0, 100.0, 95.0, 98.0, 99.0, 100.0, 102.0,
+    ///         106.0, 99.0, 101.0, 98.0, 93.0, 98.0
+    ///     ];
     /// let closing_prices =
     ///     vec![
-    ///             100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0, 103.0,
-    ///             106.0, 107.0, 105.0, 104.0, 101.0, 97.0, 100.0
-    ///         ];
+    ///         100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0, 103.0,
+    ///         106.0, 107.0, 105.0, 104.0, 101.0, 97.0, 100.0
+    ///     ];
     ///
     /// let conversion_period: usize = 5;
     /// let base_period: usize = 10;
@@ -454,19 +474,19 @@ pub mod single {
     /// assert_eq!((102.25, 102.5, 102.5, 102.0, 99.0), ichimoku_cloud);
     /// ```
     pub fn ichimoku_cloud(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
     ) -> (f64, f64, f64, f64, f64) {
-        let length = highs.len();
-        if length != lows.len() || length != close.len() {
+        let length = high.len();
+        if length != low.len() || length != close.len() {
             panic!(
                 "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
                 length,
-                lows.len(),
+                low.len(),
                 close.len()
             )
         };
@@ -478,14 +498,14 @@ pub mod single {
                 length, max_period,
             );
         };
-        let conversion_line = (max(&highs[length - conversion_period..])
-            + min(&lows[length - conversion_period..]))
+        let conversion_line = (max(&high[length - conversion_period..])
+            + min(&low[length - conversion_period..]))
             / 2.0;
         let base_line =
-            (max(&highs[length - base_period..]) + min(&lows[length - base_period..])) / 2.0;
+            (max(&high[length - base_period..]) + min(&low[length - base_period..])) / 2.0;
         let leading_span_a = (conversion_line + base_line) / 2.0;
         let leading_span_b =
-            (max(&highs[length - span_b_period..]) + min(&lows[length - span_b_period..])) / 2.0;
+            (max(&high[length - span_b_period..]) + min(&low[length - span_b_period..])) / 2.0;
         (
             leading_span_a,
             leading_span_b,
@@ -501,6 +521,10 @@ pub mod single {
     ///
     /// * `high` - Slice of highs
     /// * `low` - Slow of lows
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -548,6 +572,10 @@ pub mod single {
     /// * `constant_model_type` - Variant of [`ConstantModelType`] for the function
     /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
+    ///
+    /// # Returns
+    ///
+    /// A tuple containing (lower_channel, middle_line, upper_channel)
     ///
     /// # Panics
     ///
@@ -637,6 +665,10 @@ pub mod single {
     /// * `constant_type_model` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     ///
+    /// # Returns
+    ///
+    /// The calculated supertrend value
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -700,6 +732,10 @@ pub mod bulk {
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     /// * `difference` -  Percent band width (e.g., 3.0 for +-3%)
     /// * `period` - Period over which to calculate the moving constant envelopes
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_envelope, middle_line, upper_envelope)
     ///
     /// # Panics
     ///
@@ -778,6 +814,10 @@ pub mod bulk {
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     /// * `period` - Period over which to calculate the McGinley dynamic envelopes.
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_envelope, mcginley_dynamic, upper_envelope)
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -841,6 +881,10 @@ pub mod bulk {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `deviation_multiplier` - Price deviation multiplier
     /// * `period` - Period over which to calculate the moving constant bands.
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -925,6 +969,10 @@ pub mod bulk {
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (0.0 if none)
     /// * `period` - Period over which to calculate the McGinley dynamic bands.
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, mcginley_dynamic, upper_band)
+    ///
     /// # Panics
     ///
     ///
@@ -987,18 +1035,22 @@ pub mod bulk {
     ///
     /// # Arguments
     ///
-    /// * `highs` - Slice of price highs
-    /// * `lows` - Slice of price lows
+    /// * `high` - Slice of price highs
+    /// * `low` - Slice of price lows
     /// * `close` - Slice of closing prices
     /// * `conversion_period` - Period used to calculate the conversion line
     /// * `base_period` - Period used to calculate the base line
     /// * `span_b_period` - Period used to calculate the Span B line
     ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (leading_span_a, leading_span_b, base_line, conversion_line, lagging_span)
+    ///
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `conversion_period`, `base_period`, `span_b_period` > `highs.len()`
+    ///     * `high.len()` != `low.len()` != `close.len()`
+    ///     * `conversion_period`, `base_period`, `span_b_period` > `high.len()`
     ///
     /// # Examples
     ///
@@ -1041,19 +1093,19 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn ichimoku_cloud(
-        highs: &[f64],
-        lows: &[f64],
+        high: &[f64],
+        low: &[f64],
         close: &[f64],
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
     ) -> Vec<(f64, f64, f64, f64, f64)> {
-        let length = highs.len();
-        if length != lows.len() || length != close.len() {
+        let length = high.len();
+        if length != low.len() || length != close.len() {
             panic!(
                 "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
                 length,
-                lows.len(),
+                low.len(),
                 close.len()
             )
         };
@@ -1068,8 +1120,8 @@ pub mod bulk {
         (0..=length - max_period)
             .map(|i| {
                 single::ichimoku_cloud(
-                    &highs[i..i + max_period],
-                    &lows[i..i + max_period],
+                    &high[i..i + max_period],
+                    &low[i..i + max_period],
                     &close[i..i + max_period],
                     conversion_period,
                     base_period,
@@ -1084,8 +1136,12 @@ pub mod bulk {
     /// # Arguments
     ///
     /// * `high` - Slice of highs
-    /// * `low` - Slce of lows
+    /// * `low` - Slice of lows
     /// * `period` - Period over which to calculate the Donchian channels
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_band, middle_band, upper_band)
     ///
     /// # Panics
     ///
@@ -1153,6 +1209,10 @@ pub mod bulk {
     /// * `atr_constant_model_type` - Variant of [`ConstantModelType`] for the ATR
     /// * `multiplier` - Multiplier for the ATR
     /// * `period` - Period over which to calculate the Keltner Channel
+    ///
+    /// # Returns
+    ///
+    /// A vector of tuples, each containing (lower_channel, middle_line, upper_channel)
     ///
     /// # Panics
     ///
@@ -1243,6 +1303,10 @@ pub mod bulk {
     /// * `multiplier` - Multiplier for the ATR
     /// * `period` - Period over which to calculate the supertrend
     ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
+    ///
     /// # Panics
     ///
     /// Panics if:
@@ -1319,7 +1383,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_single_ma_moving_constant_envelope() {
+    fn single_ma_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.34338, 100.354, 103.36462),
@@ -1332,7 +1396,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_moving_constant_envelope() {
+    fn single_sma_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.30730209424084, 100.31680628272251, 103.32631047120418),
@@ -1345,7 +1409,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_moving_constant_envelope() {
+    fn single_ema_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.28056445497631, 100.28924170616115, 103.29791895734598),
@@ -1358,7 +1422,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_moving_constant_envelope() {
+    fn single_pma_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.2379964584231, 100.24535717363206, 103.25271788884102),
@@ -1374,7 +1438,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_moving_constant_envelope() {
+    fn single_median_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.36859999999999, 100.38, 103.3914),
@@ -1387,7 +1451,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_moving_constant_envelope() {
+    fn single_mode_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.0, 100.0, 103.0),
@@ -1401,13 +1465,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_moving_constant_envelope_panic() {
+    fn single_moving_constant_envelope_panic() {
         let prices = Vec::new();
         single::moving_constant_envelopes(&prices, crate::ConstantModelType::SimpleMovingMode, 3.0);
     }
 
     #[test]
-    fn test_bulk_moving_constant_envelope() {
+    fn bulk_moving_constant_envelope() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -1426,7 +1490,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_moving_constant_envelope_panic() {
+    fn bulk_moving_constant_envelope_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::moving_constant_envelopes(
             &prices,
@@ -1437,7 +1501,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_envelope_no_previous() {
+    fn single_mcginley_envelope_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (97.2037, 100.21, 103.21629999999999),
@@ -1446,7 +1510,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_envelope_previous() {
+    fn single_mcginley_envelope_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (97.22494655733786, 100.23190366735862, 103.23886077737939),
@@ -1456,13 +1520,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_mcginley_envelope_panic() {
+    fn single_mcginley_envelope_panic() {
         let prices = Vec::new();
         single::mcginley_dynamic_envelopes(&prices, 3.0, 0.0);
     }
 
     #[test]
-    fn test_bulk_mcginley_envelope_no_previous() {
+    fn bulk_mcginley_envelope_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -1475,7 +1539,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mcginley_envelope_previous() {
+    fn bulk_mcginley_envelope_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -1488,13 +1552,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_mcginley_envelope_panic() {
+    fn bulk_mcginley_envelope_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::mcginley_dynamic_envelopes(&prices, 3.0, 0.0, 50_usize);
     }
 
     #[test]
-    fn test_single_ma_stddev_constant_bands() {
+    fn single_ma_stddev_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.08489778893514, 100.354, 100.62310221106486),
@@ -1508,7 +1572,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_sma_stddev_constant_bands() {
+    fn single_sma_stddev_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.04770407165765, 100.31680628272251, 100.58590849378737),
@@ -1522,7 +1586,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ema_stddev_constant_bands() {
+    fn single_ema_stddev_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.02013949509629, 100.28924170616115, 100.55834391722601),
@@ -1536,7 +1600,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_pma_stddev_constant_bands() {
+    fn single_pma_stddev_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.9762549625672, 100.24535717363206, 100.51445938469692),
@@ -1553,7 +1617,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_median_stddev_constant_bands() {
+    fn single_median_stddev_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.11089778893513, 100.38, 100.64910221106486),
@@ -1567,7 +1631,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mode_stddev_constant_bands() {
+    fn single_mode_stddev_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.73089778893514, 100.0, 100.26910221106486),
@@ -1581,7 +1645,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_mean_ad_constant_bands() {
+    fn single_ma_mean_ad_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.1076, 100.354, 100.6004),
@@ -1595,7 +1659,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_median_ad_constant_bands() {
+    fn single_ma_median_ad_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.05399999999999, 100.354, 100.65400000000001),
@@ -1609,7 +1673,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_mode_ad_constant_bands() {
+    fn single_ma_mode_ad_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.354, 100.354, 100.354),
@@ -1623,7 +1687,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ma_ulcer_index_constant_bands() {
+    fn single_ma_ulcer_index_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.91767826122627, 100.354, 100.79032173877373),
@@ -1638,7 +1702,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_constant_bands_panic() {
+    fn single_constant_bands_panic() {
         let prices = Vec::new();
         single::moving_constant_bands(
             &prices,
@@ -1649,7 +1713,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_constant_bands() {
+    fn bulk_constant_bands() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -1669,7 +1733,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_constant_bands_panic() {
+    fn bulk_constant_bands_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::moving_constant_bands(
             &prices,
@@ -1681,7 +1745,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_bands_std_dev_no_previous() {
+    fn single_mcginley_bands_std_dev_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.94089778893513, 100.21, 100.47910221106486),
@@ -1695,7 +1759,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_bands_mean_ad_no_previous() {
+    fn single_mcginley_bands_mean_ad_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.9636, 100.21, 100.45639999999999),
@@ -1709,7 +1773,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_bands_median_ad_no_previous() {
+    fn single_mcginley_bands_median_ad_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.90999999999998, 100.21, 100.51),
@@ -1723,7 +1787,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_bands_mode_ad_no_previous() {
+    fn single_mcginley_bands_mode_ad_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (100.21, 100.21, 100.21),
@@ -1737,7 +1801,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_bands_ulcer_index_no_previous() {
+    fn single_mcginley_bands_ulcer_index_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.77367826122627, 100.21, 100.64632173877372),
@@ -1746,7 +1810,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_mcginley_bands_std_dev_previous() {
+    fn single_mcginley_bands_std_dev_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32];
         assert_eq!(
             (99.98448499385155, 100.23190366735862, 100.47932234086569),
@@ -1761,13 +1825,13 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_sinlge_mcginley_bands_panic() {
+    fn single_mcginley_bands_panic() {
         let prices = Vec::new();
         single::mcginley_dynamic_bands(&prices, crate::DeviationModel::StandardDeviation, 2.0, 0.0);
     }
 
     #[test]
-    fn test_bulk_mcginley_bands_no_previous() {
+    fn bulk_mcginley_bands_no_previous() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -1786,7 +1850,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_mcginley_bands_previous() {
+    fn bulk_mcginley_bands_previous() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![
@@ -1805,7 +1869,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_mcginley_bands_panic() {
+    fn bulk_mcginley_bands_panic() {
         let prices = vec![100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         bulk::mcginley_dynamic_bands(
             &prices,
@@ -1817,7 +1881,7 @@ mod tests {
     }
 
     #[test]
-    fn test_single_ichimoku_cloud() {
+    fn single_ichimoku_cloud() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1829,7 +1893,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_ichimoku_high_size_panic() {
+    fn single_ichimoku_high_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1838,7 +1902,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_ichimoku_low_size_panic() {
+    fn single_ichimoku_low_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1847,7 +1911,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_ichimoku_close_size_panic() {
+    fn single_ichimoku_close_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32];
@@ -1856,7 +1920,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_ichimoku_conversion_panic() {
+    fn single_ichimoku_conversion_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1865,7 +1929,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_ichimoku_base_panic() {
+    fn single_ichimoku_base_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1874,7 +1938,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_single_ichimoku_span_b_panic() {
+    fn single_ichimoku_span_b_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1882,7 +1946,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bulk_ichimoku_clud() {
+    fn bulk_ichimoku_cloud() {
         let highs = vec![
             101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01, 101.11, 100.75,
         ];
@@ -1910,7 +1974,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_ichimoku_high_size_panic() {
+    fn bulk_ichimoku_high_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1919,7 +1983,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_ichimoku_low_size_panic() {
+    fn bulk_ichimoku_low_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1928,7 +1992,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_ichimoku_close_size_panic() {
+    fn bulk_ichimoku_close_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32];
@@ -1937,7 +2001,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_ichimoku_conversion_panic() {
+    fn bulk_ichimoku_conversion_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -1955,7 +2019,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn test_bulk_ichimoku_span_b_panic() {
+    fn bulk_ichimoku_span_b_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
@@ -2486,7 +2550,7 @@ mod tests {
 
     // Tests for new deviation models
     #[test]
-    fn test_moving_constant_bands_log_std() {
+    fn moving_constant_bands_log_std() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let result = single::moving_constant_bands(
             &prices,
@@ -2498,7 +2562,7 @@ mod tests {
     }
 
     #[test]
-    fn test_moving_constant_bands_student_t() {
+    fn moving_constant_bands_student_t() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let result = single::moving_constant_bands(
             &prices,
@@ -2510,7 +2574,7 @@ mod tests {
     }
 
     #[test]
-    fn test_moving_constant_bands_laplace_std() {
+    fn moving_constant_bands_laplace_std() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let result = single::moving_constant_bands(
             &prices,
@@ -2522,7 +2586,7 @@ mod tests {
     }
 
     #[test]
-    fn test_moving_constant_bands_cauchy_iqr() {
+    fn moving_constant_bands_cauchy_iqr() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let result = single::moving_constant_bands(
             &prices,
@@ -2534,7 +2598,7 @@ mod tests {
     }
 
     #[test]
-    fn test_mcginley_dynamic_bands_log_std() {
+    fn mcginley_dynamic_bands_log_std() {
         let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
         let result = single::mcginley_dynamic_bands(
             &prices,

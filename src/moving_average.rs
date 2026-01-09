@@ -43,6 +43,10 @@ pub mod single {
     /// * `prices` - Slice of prices
     /// * `moving_average_type` - Variant of [`MovingAverageType`]
     ///
+    /// # Returns
+    ///
+    /// The calculated indicator value
+    ///
     /// # Panics
     ///
     /// Panic if `prices.is_empty()`
@@ -132,6 +136,10 @@ pub mod single {
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (if none 0.0)
     /// * `period` - Length of the observed period
     ///
+    /// # Returns
+    ///
+    /// The calculated McGinley dynamic value
+    ///
     /// # Panics
     ///
     /// Panics if `period` <= 0
@@ -180,6 +188,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `moving_average_type` - Variant of [`MovingAverageType`]
     /// * `period` - Period over which to calculate the moving average
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
@@ -252,6 +264,10 @@ pub mod bulk {
     /// * `prices` - Slice of prices
     /// * `previous_mcginley_dynamic` - Previous McGinley dynamic (if none 0.0)
     /// * `period` - Period over which to calculate the McGinley dynamic
+    ///
+    /// # Returns
+    ///
+    /// A vector of calculated values
     ///
     /// # Panics
     ///
