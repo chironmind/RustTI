@@ -36,6 +36,7 @@
 
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
     use crate::{ConstantModelType, MovingAverageType};
@@ -224,7 +225,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&trs),
             ConstantModelType::SimpleMovingMode => mode(&trs),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         }
     }
 
@@ -263,6 +264,7 @@ pub mod single {
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::basic_indicators::bulk::{median, mode};
     use crate::moving_average::bulk::moving_average;
     use crate::other_indicators::single;
@@ -607,7 +609,7 @@ pub mod bulk {
             ),
             ConstantModelType::SimpleMovingMedian => median(&pis, signal_period),
             ConstantModelType::SimpleMovingMode => mode(&pis, signal_period),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         signal_line

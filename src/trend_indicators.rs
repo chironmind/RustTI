@@ -52,6 +52,7 @@ pub mod single {
     use crate::basic_indicators::single::{max, min};
     use crate::moving_average::bulk::moving_average as bulk_ma;
     use crate::moving_average::single::moving_average as single_ma;
+    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the Aroon up
@@ -77,9 +78,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_up(highs: &[f64]) -> f64 {
-        if highs.is_empty() {
-            panic!("Highs cannot be empty")
-        };
+        assert_non_empty("highs", highs);;
 
         let period = highs.len() - 1; // current period should be excluded from length
         let period_max = max(highs);
@@ -110,9 +109,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_down(lows: &[f64]) -> f64 {
-        if lows.is_empty() {
-            panic!("Lows cannot be empty")
-        };
+        assert_non_empty("lows", lows);;
 
         let period = lows.len() - 1; // current period should be excluded from length
         let period_min = min(lows);
@@ -367,9 +364,7 @@ pub mod single {
         first_period: usize,
         second_constant_model: ConstantModelType,
     ) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);;
         let length = prices.len();
         if length < first_period + 1 {
             panic!(
@@ -500,6 +495,7 @@ pub mod bulk {
     use crate::moving_average::bulk::moving_average;
     use crate::other_indicators::bulk::true_range;
     use crate::trend_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::{ConstantModelType, MovingAverageType, Position};
 
     /// Calculates the aroon up
@@ -1225,9 +1221,7 @@ pub mod bulk {
         second_constant_model: ConstantModelType,
         second_period: usize,
     ) -> Vec<f64> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);;
         let length = prices.len();
         let period_sum = first_period + second_period;
         if length < period_sum {

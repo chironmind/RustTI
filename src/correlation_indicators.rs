@@ -29,6 +29,7 @@
 
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::basic_indicators::single::{
         absolute_deviation, cauchy_iqr_scale, laplace_std_equivalent, log_standard_deviation,
         median, mode, standard_deviation, student_t_adjusted_std,
@@ -124,7 +125,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices_asset_a),
             ConstantModelType::SimpleMovingMode => mode(prices_asset_a),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let asset_b_average = match constant_model_type {
@@ -149,7 +150,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices_asset_b),
             ConstantModelType::SimpleMovingMode => mode(prices_asset_b),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let joint_average_return: f64 = (0..length)
@@ -253,6 +254,7 @@ pub mod single {
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::correlation_indicators::single;
     use crate::{ConstantModelType, DeviationModel};
 
