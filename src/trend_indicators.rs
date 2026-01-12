@@ -109,7 +109,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_down(lows: &[f64]) -> f64 {
-        assert_non_empty("lows", lows);;
+        assert_non_empty("lows", lows);
 
         let period = lows.len() - 1; // current period should be excluded from length
         let period_min = min(lows);

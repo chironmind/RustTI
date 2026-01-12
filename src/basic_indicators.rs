@@ -1249,10 +1249,7 @@ pub mod bulk {
         low: f64,
         high: f64,
     ) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        crate::validation::assert_period("period", period, prices.len());
+        assert_period(period, prices.len());
         prices
             .windows(period)
             .map(|w| single::empirical_quantile_range_from_distribution(w, precision, low, high))
