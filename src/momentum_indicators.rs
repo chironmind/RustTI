@@ -382,15 +382,8 @@ pub mod single {
     /// ```
     #[inline]
     pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> f64 {
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
         assert_non_empty("highs", highs);
-        assert_non_empty("lows", lows);
-        if highs.len() != lows.len() {
-            panic!(
-                "Length of highs ({}) and lows ({}) must match",
-                highs.len(),
-                lows.len()
-            )
-        };
         let max_high = max(highs);
         let min_low = min(lows);
         -100.0_f64 * ((max_high - close) / (max_high - min_low))

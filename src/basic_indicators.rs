@@ -48,7 +48,7 @@
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
     use crate::validation::{
-        assert_min_value, assert_non_empty, assert_positive,
+        assert_min_period, assert_min_value, assert_non_empty, assert_positive,
         unsupported_type,
     };
     use crate::{AbsDevConfig, CentralPoint, DeviationAggregate};
@@ -696,7 +696,7 @@ pub mod single {
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::basic_indicators::single;
-    use crate::validation::{assert_non_empty, assert_period};
+    use crate::validation::{assert_min_period, assert_non_empty, assert_period};
     use crate::AbsDevConfig;
 
     /// Calculates the mean (averages) of a slice of prices over a given period
@@ -1199,19 +1199,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn cauchy_iqr_scale(prices: &[f64], period: usize) -> Vec<f64> {
-        if period < 4 {
-            panic!(
-                "Period ({}) must be at least 4 for Cauchy IQR scale",
-                period
-            );
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of prices ({})",
-                period,
-                prices.len()
-            );
-        }
+        assert_min_period(period, 4, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::cauchy_iqr_scale(window))

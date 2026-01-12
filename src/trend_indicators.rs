@@ -171,13 +171,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_indicator(highs: &[f64], lows: &[f64]) -> (f64, f64, f64) {
-        if highs.len() != lows.len() {
-            panic!(
-                "Length of highs ({}) must match length of lows ({})",
-                highs.len(),
-                lows.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
 
         let aroon_up = aroon_up(highs);
         let aroon_down = aroon_down(lows);
