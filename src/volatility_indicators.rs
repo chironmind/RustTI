@@ -30,8 +30,8 @@
 
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::basic_indicators::single::max;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
 
     /// Calculates the Ulcer Index
     ///
@@ -72,10 +72,10 @@ pub mod single {
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::basic_indicators::single::{max, min};
     use crate::chart_trends::overall_trend;
     use crate::other_indicators::bulk::average_true_range;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::volatility_indicators::single;
     use crate::{ConstantModelType, Position};
 

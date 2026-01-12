@@ -43,7 +43,7 @@ pub fn assert_same_len<T>(slices: &[(&str, &[T])]) {
     }
 
     let expected_len = slices[0].1.len();
-    
+
     for (name, slice) in slices {
         let len = slice.len();
         if len != expected_len {
@@ -113,10 +113,7 @@ pub fn assert_positive(name: &str, value: f64) {
 #[inline]
 pub fn assert_range(name: &str, value: f64, min: f64, max: f64) {
     if value <= min || value >= max || value.is_nan() {
-        panic!(
-            "{} ({}) must be in range ({}, {})",
-            name, value, min, max
-        );
+        panic!("{} ({}) must be in range ({}, {})", name, value, min, max);
     }
 }
 
@@ -171,10 +168,7 @@ pub fn assert_all_positive(name: &str, slice: &[f64]) {
 #[inline]
 pub fn assert_min_period(period: usize, min_period: usize, data_len: usize) {
     if period < min_period {
-        panic!(
-            "Period ({}) must be at least {}",
-            period, min_period
-        );
+        panic!("Period ({}) must be at least {}", period, min_period);
     }
 
     assert_period(period, data_len);

@@ -48,7 +48,7 @@ pub mod single {
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::other_indicators::single::average_true_range;
-    use crate::validation::{assert_non_empty, assert_min_period, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::unsupported_type;
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -723,7 +723,6 @@ pub mod single {
 /// **bulk** : Functions that compute values of a slice of prices over a period and return a vector
 pub mod bulk {
     use crate::candle_indicators::single;
-    use crate::validation::{assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the Moving Constant Envelopes

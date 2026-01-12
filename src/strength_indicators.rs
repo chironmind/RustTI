@@ -34,9 +34,9 @@
 
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the accumulation distribution
@@ -271,8 +271,8 @@ pub mod single {
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::strength_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::ConstantModelType;
 
     /// Calculates the accumulation distribution

@@ -29,12 +29,12 @@
 
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::basic_indicators::single::{
         absolute_deviation, cauchy_iqr_scale, laplace_std_equivalent, log_standard_deviation,
         median, mode, standard_deviation, student_t_adjusted_std,
     };
     use crate::moving_average::single::moving_average;
+    use crate::validation::{unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -254,8 +254,8 @@ pub mod single {
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::correlation_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the correlation between two asset prices over a period

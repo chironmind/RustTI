@@ -12,13 +12,9 @@ use std::fmt;
 #[derive(Debug, Clone, PartialEq)]
 pub enum TechnicalIndicatorError {
     /// Input data is empty when it shouldn't be
-    EmptyData {
-        name: String,
-    },
+    EmptyData { name: String },
     /// Multiple input slices have mismatched lengths
-    MismatchedLength {
-        names: Vec<(String, usize)>,
-    },
+    MismatchedLength { names: Vec<(String, usize)> },
     /// Period parameter is invalid (e.g., zero or larger than data length)
     InvalidPeriod {
         period: usize,
@@ -32,13 +28,9 @@ pub enum TechnicalIndicatorError {
         reason: String,
     },
     /// An enum variant is not supported in this context
-    UnsupportedType {
-        type_name: String,
-    },
+    UnsupportedType { type_name: String },
     /// Custom error message for edge cases
-    Custom {
-        message: String,
-    },
+    Custom { message: String },
 }
 
 impl fmt::Display for TechnicalIndicatorError {
@@ -57,14 +49,22 @@ impl fmt::Display for TechnicalIndicatorError {
                 }
                 Ok(())
             }
-            TechnicalIndicatorError::InvalidPeriod { period, data_len, reason } => {
+            TechnicalIndicatorError::InvalidPeriod {
+                period,
+                data_len,
+                reason,
+            } => {
                 write!(
                     f,
                     "Invalid period {}: {} (data length: {})",
                     period, reason, data_len
                 )
             }
-            TechnicalIndicatorError::InvalidValue { name, value, reason } => {
+            TechnicalIndicatorError::InvalidValue {
+                name,
+                value,
+                reason,
+            } => {
                 write!(f, "Invalid value for {}: {} ({})", name, value, reason)
             }
             TechnicalIndicatorError::UnsupportedType { type_name } => {
