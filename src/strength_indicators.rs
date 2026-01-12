@@ -193,10 +193,8 @@ pub mod single {
                 close.len()
             )
         };
-        if open.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-        if length < 4 {
+        assert_non_empty("open", open);
+if length < 4 {
             panic!("Prices must be at least 4 in length")
         };
 
@@ -399,11 +397,8 @@ pub mod bulk {
                 volume.len()
             )
         };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let mut pvis = Vec::with_capacity(length - 1);
+        assert_non_empty("close", close);
+let mut pvis = Vec::with_capacity(length - 1);
         let mut prev = previous_positive_volume_index;
 
         for i in 1..length {
@@ -481,11 +476,8 @@ pub mod bulk {
                 volume.len()
             )
         };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let mut nvis = Vec::with_capacity(length - 1);
+        assert_non_empty("close", close);
+let mut nvis = Vec::with_capacity(length - 1);
         let mut prev = previous_negative_volume_index;
 
         for i in 1..length {
@@ -559,10 +551,8 @@ pub mod bulk {
                 close.len()
             )
         };
-        if open.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-        if length < period {
+        assert_non_empty("open", open);
+if length < period {
             panic!(
                 "Period ({}) less than or equal to length of prices ({})",
                 period, length

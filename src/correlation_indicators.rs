@@ -34,7 +34,7 @@ pub mod single {
         median, mode, standard_deviation, student_t_adjusted_std,
     };
     use crate::moving_average::single::moving_average;
-    use crate::validation::{unsupported_type};
+    use crate::validation::{assert_non_empty, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -322,12 +322,7 @@ pub mod bulk {
                 prices_asset_b.len()
             )
         };
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         (0..=length - period)
             .map(|i| {

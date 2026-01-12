@@ -777,10 +777,9 @@ pub mod bulk {
         start_position: Position,
         previous_sar: f64,
     ) -> Vec<f64> {
-        if highs.is_empty() || lows.is_empty() {
-            panic!("Highs or lows cannot be empty")
-        };
-        let length = highs.len();
+        assert_non_empty("highs", highs);
+        assert_non_empty("lows", lows);
+let length = highs.len();
         if length != lows.len() {
             panic!(
                 "Highs ({}) and lows ({}) must be the same length",
@@ -996,10 +995,8 @@ pub mod bulk {
                 close.len()
             )
         };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-        let length_min = 3 * period;
+        assert_non_empty("highs", highs);
+let length_min = 3 * period;
         if length_min > length {
             panic!(
                 "Length of prices ({}) must be greater than 3 times the period (3 * {} = {})",
@@ -1153,11 +1150,9 @@ pub mod bulk {
             )
         };
 
-        if volumes.is_empty() || prices.is_empty() {
-            panic!("Volumes nor prices can be empty")
-        };
-
-        let mut vpts = Vec::with_capacity(length);
+        assert_non_empty("volumes", volumes);
+        assert_non_empty("prices", prices);
+let mut vpts = Vec::with_capacity(length);
         let mut vpt = single::volume_price_trend(
             prices[1],
             prices[0],

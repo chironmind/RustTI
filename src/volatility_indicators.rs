@@ -109,12 +109,7 @@ pub mod bulk {
     #[inline]
     pub fn ulcer_index(prices: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut ulcer_indexes = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {

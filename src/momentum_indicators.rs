@@ -1391,12 +1391,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) is longer than length of prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut rsis = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {
@@ -1432,12 +1427,7 @@ pub mod bulk {
     #[inline]
     pub fn stochastic_oscillator(prices: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length ({}) of prices",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut so = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {
@@ -1502,12 +1492,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = stochastics.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length ({}) of stochastics",
-                period, length
-            );
-        };
+        assert_period(period, length);
         let mut sso = Vec::with_capacity(length - period + 1);
         for window in stochastics.windows(period) {
             sso.push(single::slow_stochastic(window, constant_model_type));
@@ -1568,12 +1553,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = slow_stochastics.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length ({}) of stochastics",
-                period, length
-            );
-        };
+        assert_period(period, length);
         let mut sso = Vec::with_capacity(length - period + 1);
         for window in slow_stochastics.windows(period) {
             sso.push(single::slowest_stochastic(window, constant_model_type));
@@ -1632,12 +1612,7 @@ pub mod bulk {
                 lows.len()
             );
         };
-        if period > length {
-            panic!(
-                "Length of price ({}) must be greater or equal to period ({})",
-                length, period
-            )
-        };
+        assert_period(period, length);
 
         let loop_max = length - period + 1;
         let mut wprs = Vec::with_capacity(loop_max);
@@ -1686,12 +1661,7 @@ pub mod bulk {
     #[inline]
     pub fn money_flow_index(prices: &[f64], volume: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
         if length != volume.len() {
             panic!(
                 "Length of prices ({}) must match length of volume ({})",
@@ -1873,12 +1843,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than lenght ({}) of prices",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut ccis = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {
@@ -1931,12 +1896,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<(f64, f64)> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer the length of prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut ccis = Vec::with_capacity(length - period + 1);
         let mut cci = single::mcginley_dynamic_commodity_channel_index(
@@ -2097,12 +2057,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = macds.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length ({}) of prices",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut signals = Vec::with_capacity(length - period + 1);
         for window in macds.windows(period) {
@@ -2439,12 +2394,7 @@ pub mod bulk {
     pub fn chande_momentum_oscillator(prices: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
         assert_non_empty("prices", prices);
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut cmos = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {

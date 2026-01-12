@@ -29,7 +29,7 @@
 //! ---
 
 use crate::basic_indicators::single::{max, mean, min};
-use crate::validation::{assert_period, assert_same_len};
+use crate::validation::{assert_non_empty, assert_period, assert_same_len};
 
 /// Calculates all peaks over a given period
 ///
@@ -388,11 +388,8 @@ pub fn break_down_trends(
     prices: &[f64],
     trend_break_config: TrendBreakConfig,
 ) -> Vec<(usize, usize, f64, f64)> {
-    if prices.is_empty() {
-        panic!("Prices cannot be empty");
-    };
-
-    let mut outliers: Vec<usize> = Vec::new();
+    assert_non_empty("prices", prices);
+let mut outliers: Vec<usize> = Vec::new();
     let mut trends: Vec<(usize, usize, f64, f64)> = Vec::new();
     let mut current_slope = 0.0;
     let mut current_intercept = 0.0;

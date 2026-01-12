@@ -99,11 +99,8 @@ pub mod single {
         constant_model_type: ConstantModelType,
         difference: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let moving_constant = match constant_model_type {
+        assert_non_empty("prices", prices);
+let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(prices, MovingAverageType::Simple)
             }
@@ -178,11 +175,8 @@ pub mod single {
         difference: f64,
         previous_mcginley_dynamic: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty!");
-        };
-
-        let last_price = prices.last().unwrap();
+        assert_non_empty("prices", prices);
+let last_price = prices.last().unwrap();
         let mcginley_dynamic =
             mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len());
         let upper_envelope = mcginley_dynamic * (1.0 + (difference / 100.0));
@@ -240,11 +234,8 @@ pub mod single {
         deviation_model: DeviationModel,
         deviation_multiplier: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let moving_constant = match constant_model_type {
+        assert_non_empty("prices", prices);
+let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(prices, MovingAverageType::Simple)
             }
@@ -364,11 +355,8 @@ pub mod single {
         deviation_multiplier: f64,
         previous_mcginley_dynamic: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let last_price = prices.last().unwrap();
+        assert_non_empty("prices", prices);
+let last_price = prices.last().unwrap();
         let mcginley_dynamic =
             mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len());
 

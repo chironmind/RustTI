@@ -430,12 +430,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = close.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
         if length != highs.len() || length != lows.len() {
             panic!(
                 "Length of close ({}), highs ({}), and lows ({}) must match",
