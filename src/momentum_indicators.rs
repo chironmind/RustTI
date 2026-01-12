@@ -67,6 +67,7 @@ pub mod single {
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::strength_indicators::single::accumulation_distribution;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -161,7 +162,7 @@ pub mod single {
                 (median(&previous_gains), median(&previous_loss))
             }
             ConstantModelType::SimpleMovingMode => (mode(&previous_gains), mode(&previous_loss)),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         if previous_average_loss == 0.0 {
@@ -195,9 +196,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn stochastic_oscillator(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices is empty");
-        };
+        assert_non_empty("prices", prices);
         let mut ordered_prices = prices
             .iter()
             .filter_map(|f| if f.is_nan() { None } else { Some(*f) })
@@ -251,9 +250,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn slow_stochastic(stochastics: &[f64], constant_model_type: ConstantModelType) -> f64 {
-        if stochastics.is_empty() {
-            panic!("stochastics cannot be empty");
-        };
+        assert_non_empty("stochastics", stochastics);
 
         match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -277,7 +274,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(stochastics),
             ConstantModelType::SimpleMovingMode => mode(stochastics),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         }
     }
 
@@ -323,9 +320,7 @@ pub mod single {
         slow_stochastics: &[f64],
         constant_model_type: ConstantModelType,
     ) -> f64 {
-        if slow_stochastics.is_empty() {
-            panic!("slow stochastics cannot be empty");
-        };
+        assert_non_empty("slow_stochastics", slow_stochastics);
 
         match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -349,7 +344,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(slow_stochastics),
             ConstantModelType::SimpleMovingMode => mode(slow_stochastics),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         }
     }
 
@@ -387,9 +382,8 @@ pub mod single {
     /// ```
     #[inline]
     pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> f64 {
-        if highs.is_empty() || lows.is_empty() {
-            panic!("highs and lows cannot be empty")
-        };
+        assert_non_empty("highs", highs);
+        assert_non_empty("lows", lows);
         if highs.len() != lows.len() {
             panic!(
                 "Length of highs ({}) and lows ({}) must match",
@@ -433,9 +427,8 @@ pub mod single {
     /// ```
     #[inline]
     pub fn money_flow_index(prices: &[f64], volume: &[f64]) -> f64 {
-        if prices.is_empty() || volume.is_empty() {
-            panic!("Prices and volume cannot be empty");
-        }
+        assert_non_empty("prices", prices);
+        assert_non_empty("volume", volume);
         let length = prices.len();
         if length != volume.len() {
             panic!(
@@ -612,9 +605,7 @@ pub mod single {
         deviation_model: DeviationModel,
         constant_multiplier: f64,
     ) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_non_empty("prices", prices);
 
         let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -638,7 +629,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices),
             ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let deviation = match deviation_model {
@@ -680,7 +671,7 @@ pub mod single {
                 prices, precision, low, high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         if deviation == 0.0 {
             0.0
@@ -734,9 +725,7 @@ pub mod single {
         deviation_model: DeviationModel,
         constant_multiplier: f64,
     ) -> (f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_non_empty("prices", prices);
 
         let last_price = prices.last().copied().unwrap();
 
@@ -782,7 +771,7 @@ pub mod single {
                 prices, precision, low, high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         if deviation == 0.0 {
             (0.0, mcginley_dynamic)
@@ -839,9 +828,7 @@ pub mod single {
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
     ) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_non_empty("prices", prices);
         let length = prices.len();
         if short_period >= length {
             panic!(
@@ -873,7 +860,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(short_period_slice),
             ConstantModelType::SimpleMovingMode => mode(short_period_slice),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let long_period_average = match long_period_model {
@@ -898,7 +885,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices),
             ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
         short_period_average - long_period_average
     }
@@ -939,9 +926,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn signal_line(macds: &[f64], constant_model_type: ConstantModelType) -> f64 {
-        if macds.is_empty() {
-            panic!("MACDs cannot be empty");
-        };
+        assert_non_empty("macds", macds);
         match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(macds, MovingAverageType::Simple)
@@ -964,7 +949,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(macds),
             ConstantModelType::SimpleMovingMode => mode(macds),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         }
     }
 
@@ -1014,17 +999,9 @@ pub mod single {
         previous_short_mcginley: f64,
         previous_long_mcginley: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_non_empty("prices", prices);
 
-        if short_period >= prices.len() {
-            panic!(
-                "Short period ({}) cannot be longer or equal to length of prices ({})",
-                short_period,
-                prices.len()
-            );
-        };
+        assert_period(short_period, prices.len() - 1);
 
         let latest_price = *prices.last().unwrap();
         if previous_short_mcginley == 0.0 && previous_long_mcginley == 0.0 {
@@ -1166,7 +1143,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(short_period_slice),
             ConstantModelType::SimpleMovingMode => mode(short_period_slice),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let long_period_average = match long_period_model {
@@ -1191,7 +1168,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&ad),
             ConstantModelType::SimpleMovingMode => mode(&ad),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         (short_period_average - long_period_average, ad[ad.len() - 1])
@@ -1232,9 +1209,7 @@ pub mod single {
         short_period: usize,
         constant_model_type: ConstantModelType,
     ) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         let long_period = prices.len();
         if short_period > long_period {
             panic!(
@@ -1278,7 +1253,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => (median(short_period_slice), median(prices)),
             ConstantModelType::SimpleMovingMode => (mode(short_period_slice), mode(prices)),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         ((short_period - long_period) / long_period) * 100.0
@@ -1323,9 +1298,7 @@ pub mod single {
 
     #[inline]
     fn previous_gains_loss(prices: &[f64]) -> (Vec<f64>, Vec<f64>) {
-        if prices.is_empty() {
-            panic!("Prices is empty");
-        };
+        assert_non_empty("prices", prices);
         let len = prices.len();
         let mut previous_gains = Vec::with_capacity(len - 1);
         let mut previous_loss = Vec::with_capacity(len - 1);
@@ -1355,6 +1328,7 @@ pub mod single {
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::momentum_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the Relative strength index (RSI)
@@ -1768,9 +1742,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn rate_of_change(prices: &[f64]) -> Vec<f64> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        }
+        assert_non_empty("prices", prices);
         let mut rocs = Vec::with_capacity(prices.len() - 1);
         for pair in prices.windows(2) {
             rocs.push(single::rate_of_change(pair[1], pair[0]));
@@ -1815,9 +1787,7 @@ pub mod bulk {
         volume: &[f64],
         previous_on_balance_volume: f64,
     ) -> Vec<f64> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_non_empty("prices", prices);
         let length = prices.len();
         if length != volume.len() {
             panic!(
@@ -2195,9 +2165,7 @@ pub mod bulk {
         long_period: usize,
         previous_long_mcginley: f64,
     ) -> Vec<(f64, f64, f64)> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_non_empty("prices", prices);
 
         let length = prices.len();
         if long_period > length {
@@ -2426,9 +2394,7 @@ pub mod bulk {
                 long_period, short_period
             )
         };
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         if long_period > length {
             panic!(
                 "Long period ({}) cannot be greater than length of prices ({})",
@@ -2479,9 +2445,7 @@ pub mod bulk {
     #[inline]
     pub fn chande_momentum_oscillator(prices: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         if period > length {
             panic!(
                 "Period ({}) cannot be greater than length of prices ({})",
