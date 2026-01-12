@@ -192,9 +192,7 @@ pub mod single {
                 lows.len()
             )
         };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("close", close);
 
         let trs: Vec<f64> = close
             .iter()
@@ -309,9 +307,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn return_on_investment(prices: &[f64], investment: f64) -> Vec<(f64, f64)> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         let mut rois = Vec::with_capacity(prices.len() - 1);
         let mut roi = single::return_on_investment(prices[0], prices[1], investment);
         rois.push(roi);
@@ -365,9 +361,7 @@ pub mod bulk {
                 lows.len()
             )
         };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("close", close);
 
         (0..length)
             .map(|i| single::true_range(close[i], highs[i], lows[i]))
@@ -439,9 +433,7 @@ pub mod bulk {
                 lows.len()
             )
         };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("close", close);
 
         (0..=length - period)
             .map(|i| {
@@ -567,9 +559,7 @@ pub mod bulk {
                 previous_close.len()
             )
         };
-        if open.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("open", open);
         if signal_period > length {
             panic!(
                 "Period ({}) cannot be longer than length of prices ({})",

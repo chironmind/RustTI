@@ -429,7 +429,7 @@ pub mod single {
                 bulk_mode(&price_momentum, first_period),
                 bulk_mode(&abs_price_momentum, first_period),
             ),
-            _ => panic!("Not a supported constant model type"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let (second_smoothing, abs_second_smoothing) = match second_constant_model {
@@ -472,7 +472,7 @@ pub mod single {
                 single_mode(&initial_smoothing),
                 single_mode(&abs_initial_smoothing),
             ),
-            _ => panic!("Not a supported constant model type"),
+            _ => unsupported_type("ConstantModelType"),
         };
         if abs_second_smoothing == 0.0 {
             0.0
@@ -489,7 +489,7 @@ pub mod bulk {
     use crate::moving_average::bulk::moving_average;
     use crate::other_indicators::bulk::true_range;
     use crate::trend_indicators::single;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType, Position};
 
     /// Calculates the aroon up
@@ -1069,7 +1069,7 @@ let length_min = 3 * period;
             ),
             ConstantModelType::SimpleMovingMedian => median(&dx, period),
             ConstantModelType::SimpleMovingMode => mode(&dx, period),
-            _ => panic!("Not a supported constant model type"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let mut adxr = Vec::with_capacity(adx.len() - period - 1);

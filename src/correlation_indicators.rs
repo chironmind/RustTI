@@ -201,7 +201,7 @@ pub mod single {
                 high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
 
         let asset_b_deviation = match deviation_model {
@@ -246,7 +246,7 @@ pub mod single {
                 high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         covariance / (asset_a_deviation * asset_b_deviation)
     }

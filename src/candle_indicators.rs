@@ -471,14 +471,7 @@ let last_price = prices.last().unwrap();
         span_b_period: usize,
     ) -> (f64, f64, f64, f64, f64) {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         let max_period = conversion_period.max(base_period).max(span_b_period);
         if length < max_period {
@@ -672,17 +665,8 @@ let last_price = prices.last().unwrap();
         multiplier: f64,
     ) -> f64 {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) must be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_non_empty("highs", highs);
 
         let atr = average_true_range(close, highs, lows, constant_model_type);
         let max_high = max(highs);
@@ -1042,14 +1026,7 @@ pub mod bulk {
         span_b_period: usize,
     ) -> Vec<(f64, f64, f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         let max_period = conversion_period.max(base_period.max(span_b_period));
         if length < max_period {

@@ -423,13 +423,7 @@ pub mod single {
         assert_non_empty("prices", prices);
         assert_non_empty("volume", volume);
         let length = prices.len();
-        if length != volume.len() {
-            panic!(
-                "Length of prices ({}) needs to length of volume ({})",
-                length,
-                volume.len()
-            );
-        };
+        assert_same_len(&[("prices", prices), ("volume", volume)]);
 
         let mut raw_money_flow = Vec::with_capacity(length);
         for i in 0..length {
@@ -1078,15 +1072,7 @@ pub mod single {
         long_period_model: ConstantModelType,
     ) -> (f64, f64) {
         let long_period = highs.len();
-        if long_period != lows.len() || long_period != close.len() || long_period != volume.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), close ({}), and volume ({}) must match",
-                long_period,
-                lows.len(),
-                close.len(),
-                volume.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close), ("volume", volume)]);
 
         if long_period <= short_period {
             panic!(
@@ -1604,14 +1590,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = close.len();
-        if length != highs.len() || length != lows.len() {
-            panic!(
-                "Length of close ({}) needs to match length of highs ({}) and lows ({})",
-                length,
-                highs.len(),
-                lows.len()
-            );
-        };
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
         assert_period(period, length);
 
         let loop_max = length - period + 1;
@@ -1662,13 +1641,7 @@ pub mod bulk {
     pub fn money_flow_index(prices: &[f64], volume: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
         assert_period(period, length);
-        if length != volume.len() {
-            panic!(
-                "Length of prices ({}) must match length of volume ({})",
-                length,
-                volume.len()
-            );
-        };
+        assert_same_len(&[("prices", prices), ("volume", volume)]);
 
         let loop_max = length - period + 1;
         let mut mfis = Vec::with_capacity(loop_max);
@@ -1752,13 +1725,7 @@ pub mod bulk {
     ) -> Vec<f64> {
         assert_non_empty("prices", prices);
         let length = prices.len();
-        if length != volume.len() {
-            panic!(
-                "Length of prices ({}) and volume ({}) must match",
-                length,
-                volume.len()
-            );
-        };
+        assert_same_len(&[("prices", prices), ("volume", volume)]);
         let mut obvs = Vec::with_capacity(length - 1);
         let mut obv =
             single::on_balance_volume(prices[1], prices[0], volume[1], previous_on_balance_volume);
@@ -2234,15 +2201,7 @@ pub mod bulk {
         long_period_model: ConstantModelType,
     ) -> Vec<(f64, f64)> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() || length != volume.len() {
-            panic!(
-                "Lengths of highs ({}), lows ({}), close ({}), and volume ({}) must match",
-                length,
-                lows.len(),
-                close.len(),
-                volume.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         if length < long_period {
             panic!(

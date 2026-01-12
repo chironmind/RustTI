@@ -36,7 +36,7 @@
 pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::{assert_min_period, assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the accumulation distribution
@@ -184,19 +184,9 @@ pub mod single {
         constant_model_type: ConstantModelType,
     ) -> f64 {
         let length = open.len();
-        if length != high.len() || length != low.len() || length != close.len() {
-            panic!(
-                "Length of open ({}), high ({}), low ({}), and close ({}) must be equal",
-                length,
-                high.len(),
-                low.len(),
-                close.len()
-            )
-        };
+        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)]);
         assert_non_empty("open", open);
-if length < 4 {
-            panic!("Prices must be at least 4 in length")
-        };
+        assert_min_period(4, 4, length);
 
         let mut close_open_diff = Vec::with_capacity(length);
         let mut high_low_diff = Vec::with_capacity(length);
@@ -319,9 +309,7 @@ pub mod bulk {
         previous_accumulation_distribution: f64,
     ) -> Vec<f64> {
         let length = close.len();
-        if length != high.len() || length != close.len() || length != volume.len() {
-            panic!("Length of close prices ({}) must match length of high ({}), low ({}), and volume ({})", length, high.len(), close.len(), volume.len());
-        };
+        assert_same_len(&[("high", high), ("low", low), ("close", close), ("volume", volume)]);
         let mut ads = Vec::with_capacity(length);
         let mut ad = single::accumulation_distribution(
             high[0],
@@ -390,13 +378,7 @@ pub mod bulk {
         previous_positive_volume_index: f64,
     ) -> Vec<f64> {
         let length = close.len();
-        if length != volume.len() {
-            panic!(
-                "Length of close ({}) and volume ({}) need to be equal",
-                length,
-                volume.len()
-            )
-        };
+        assert_same_len(&[("close", close), ("volume", volume)]);
         assert_non_empty("close", close);
 let mut pvis = Vec::with_capacity(length - 1);
         let mut prev = previous_positive_volume_index;
@@ -469,13 +451,7 @@ let mut pvis = Vec::with_capacity(length - 1);
         previous_negative_volume_index: f64,
     ) -> Vec<f64> {
         let length = close.len();
-        if length != volume.len() {
-            panic!(
-                "Length of close ({}) and volume ({}) need to be equal",
-                length,
-                volume.len()
-            )
-        };
+        assert_same_len(&[("close", close), ("volume", volume)]);
         assert_non_empty("close", close);
 let mut nvis = Vec::with_capacity(length - 1);
         let mut prev = previous_negative_volume_index;
@@ -542,15 +518,7 @@ let mut nvis = Vec::with_capacity(length - 1);
         period: usize,
     ) -> Vec<f64> {
         let length = open.len();
-        if length != high.len() || length != low.len() || length != close.len() {
-            panic!(
-                "Length of open ({}), high ({}), low ({}), and close ({}) must be equal",
-                length,
-                high.len(),
-                low.len(),
-                close.len()
-            )
-        };
+        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)]);
         assert_non_empty("open", open);
 if length < period {
             panic!(
