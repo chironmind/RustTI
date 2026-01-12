@@ -759,7 +759,6 @@ pub mod bulk {
     #[inline]
     pub fn median(prices: &[f64], period: usize) -> Vec<f64> {
         assert_period(period, prices.len());
-        ;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::median(window))
@@ -797,7 +796,6 @@ pub mod bulk {
     #[inline]
     pub fn mode(prices: &[f64], period: usize) -> Vec<f64> {
         assert_period(period, prices.len());
-        ;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::mode(window))
@@ -1254,7 +1252,7 @@ pub mod bulk {
         if period == 0 {
             panic!("Period ({}) must be greater than 0", period);
         }
-        
+        crate::validation::assert_period("period", period, prices.len());
         prices
             .windows(period)
             .map(|w| single::empirical_quantile_range_from_distribution(w, precision, low, high))

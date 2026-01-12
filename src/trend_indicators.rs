@@ -78,7 +78,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_up(highs: &[f64]) -> f64 {
-        assert_non_empty("highs", highs);;
+        assert_non_empty("highs", highs);
 
         let period = highs.len() - 1; // current period should be excluded from length
         let period_max = max(highs);
@@ -364,7 +364,7 @@ pub mod single {
         first_period: usize,
         second_constant_model: ConstantModelType,
     ) -> f64 {
-        assert_non_empty("prices", prices);;
+        assert_non_empty("prices", prices);
         let length = prices.len();
         if length < first_period + 1 {
             panic!(
@@ -1221,7 +1221,7 @@ pub mod bulk {
         second_constant_model: ConstantModelType,
         second_period: usize,
     ) -> Vec<f64> {
-        assert_non_empty("prices", prices);;
+        assert_non_empty("prices", prices);
         let length = prices.len();
         let period_sum = first_period + second_period;
         if length < period_sum {
