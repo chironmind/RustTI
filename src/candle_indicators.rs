@@ -48,6 +48,7 @@ pub mod single {
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::other_indicators::single::average_true_range;
+    use crate::validation::{assert_non_empty, assert_min_period, assert_period, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -124,7 +125,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices),
             ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let upper_envelope = moving_constant * (1.0 + (difference / 100.0));
@@ -265,7 +266,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices),
             ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let deviation = match deviation_model {
@@ -307,7 +308,7 @@ pub mod single {
                 prices, precision, low, high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         let upper_band = moving_constant + (deviation * deviation_multiplier);
         let lower_band = moving_constant - (deviation * deviation_multiplier);
@@ -410,7 +411,7 @@ pub mod single {
                 prices, precision, low, high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         let upper_band = mcginley_dynamic + (deviation * deviation_multiplier);
         let lower_band = mcginley_dynamic - (deviation * deviation_multiplier);
@@ -649,7 +650,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&prices),
             ConstantModelType::SimpleMovingMode => mode(&prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
         let constant = atr * multiplier;
         (mc - constant, mc, mc + constant)
@@ -722,6 +723,7 @@ pub mod single {
 /// **bulk** : Functions that compute values of a slice of prices over a period and return a vector
 pub mod bulk {
     use crate::candle_indicators::single;
+    use crate::validation::{assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the Moving Constant Envelopes
