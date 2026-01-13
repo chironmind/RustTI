@@ -153,9 +153,9 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `open.len()` != `high.len()` != `low,len()` != `close.len()`
-    ///     * `open.is_empty()`
-    ///     * `open.len()` < 4
+    /// * `open.len()` != `high.len()` != `low,len()` != `close.len()`
+    /// * `open.is_empty()`
+    /// * `open.len()` < 4
     ///
     /// # Examples
     ///
@@ -341,8 +341,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `volume.len()`
-    ///     * `close.is_empty()`
+    /// * `close.len()` != `volume.len()`
+    /// * `close.is_empty()`
     ///
     /// # Examples
     ///
@@ -407,8 +407,8 @@ let mut pvis = Vec::with_capacity(length - 1);
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `volume.len()`
-    ///     * `close.is_empty()`
+    /// * `close.len()` != `volume.len()`
+    /// * `close.is_empty()`
     ///
     /// # Examples
     ///
@@ -483,10 +483,10 @@ let mut nvis = Vec::with_capacity(length - 1);
     /// # Panics
     ///
     /// Panics if:
-    ///     * `open.len()` != `high.len()` != `low.len()` != `close.len()`
-    ///     * `open.is_empty()`
-    ///     * `period` > lengths
-    ///     * `period` < 4
+    /// * `open.len()` != `high.len()` != `low.len()` != `close.len()`
+    /// * `open.is_empty()`
+    /// * `period` > lengths
+    /// * `period` < 4
     ///
     /// # Examples
     ///
@@ -520,12 +520,7 @@ let mut nvis = Vec::with_capacity(length - 1);
         let length = open.len();
         assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)]);
         assert_non_empty("open", open);
-if length < period {
-            panic!(
-                "Period ({}) less than or equal to length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
         if period < 4 {
             panic!("Period ({}) needs to be greater or equal to 4", period)
         };

@@ -363,8 +363,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.is_empty()` or `lows.is_empty()`
-    ///     * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()` or `lows.is_empty()`
+    /// * `highs.len()` != `lows.len()`
     ///
     /// # Examples
     ///
@@ -403,8 +403,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()` or `volume.is_empty()`
-    ///     * `prices.len()` != `volume.len()`
+    /// * `prices.is_empty()` or `volume.is_empty()`
+    /// * `prices.len()` != `volume.len()`
     ///
     /// # Examples
     ///
@@ -817,12 +817,7 @@ pub mod single {
     ) -> f64 {
         assert_non_empty("prices", prices);
         let length = prices.len();
-        if short_period >= length {
-            panic!(
-                "Short period ({}) cannot be greater or equal to long period ({})",
-                short_period, length
-            );
-        };
+        assert_period(short_period, length);
 
         let short_period_slice = &prices[length - short_period..];
         let short_period_average = match short_period_model {
@@ -952,8 +947,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `short_period` >= `prices.len()`
+    /// * `prices.is_empty()`
+    /// * `short_period` >= `prices.len()`
     ///
     /// # Examples
     ///
@@ -1021,8 +1016,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
-    ///     * If lengths <= `short_period`
+    /// * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
+    /// * If lengths <= `short_period`
     ///
     /// # Examples
     ///
@@ -1073,13 +1068,7 @@ pub mod single {
     ) -> (f64, f64) {
         let long_period = highs.len();
         assert_same_len(&[("highs", highs), ("lows", lows), ("close", close), ("volume", volume)]);
-
-        if long_period <= short_period {
-            panic!(
-                "Long period ({}) cannot be smaller or equal to short period ({})",
-                long_period, short_period
-            )
-        };
+        assert_period(short_period, long_period);
 
         let mut ad = Vec::with_capacity(long_period);
         ad.push(accumulation_distribution(
@@ -1164,8 +1153,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     *  `prices.is_empty()`
-    ///     * `prices.len()` <= `short_period`
+    /// *  `prices.is_empty()`
+    /// * `prices.len()` <= `short_period`
     ///
     /// # Examples
     ///
@@ -1190,12 +1179,7 @@ pub mod single {
     ) -> f64 {
         assert_non_empty("prices", prices);
         let long_period = prices.len();
-        if short_period > long_period {
-            panic!(
-                "Length of prices ({}) must be longer than short period ({})",
-                long_period, short_period
-            )
-        };
+        assert_period(short_period, long_period);
 
         let short_period_slice = &prices[long_period - short_period..];
         let (short_period, long_period) = match constant_model_type {
@@ -1563,8 +1547,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `period` > lengths
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `period` > lengths
     ///
     /// # Examples
     ///
@@ -1620,8 +1604,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` > `prices.len()`
-    ///     * `prices.len()` != `volume.len()`
+    /// * `period` > `prices.len()`
+    /// * `prices.len()` != `volume.len()`
     ///
     /// # Examples
     ///
@@ -1701,8 +1685,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `prices.len()` != `volume.len()`
+    /// * `prices.is_empty()`
+    /// * `prices.len()` != `volume.len()`
     ///
     /// # Examples
     ///
@@ -1942,20 +1926,10 @@ pub mod bulk {
         long_period: usize,
         long_period_model: ConstantModelType,
     ) -> Vec<f64> {
-        if short_period > long_period {
-            panic!(
-                "Short period ({}) cannot be longer than long period ({})",
-                short_period, long_period
-            )
-        };
+        assert_period(short_period, long_period);
 
         let length = prices.len();
-        if long_period > length {
-            panic!(
-                "Long period ({}) cannot be shorter than length of prices ({})",
-                long_period, length
-            );
-        };
+        assert_period(long_period, length);
 
         let mut macds = Vec::with_capacity(length - long_period + 1);
         for window in prices.windows(long_period) {
@@ -2046,9 +2020,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `long_period` > `prices.len()`
-    ///     * `short_period` >= `long_period`
+    /// * `prices.is_empty()`
+    /// * `long_period` > `prices.len()`
+    /// * `short_period` >= `long_period`
     ///
     /// # Examples
     ///
@@ -2081,21 +2055,9 @@ pub mod bulk {
         previous_long_mcginley: f64,
     ) -> Vec<(f64, f64, f64)> {
         assert_non_empty("prices", prices);
-
+        assert_period(short_period, long_period);
         let length = prices.len();
-        if long_period > length {
-            panic!(
-                "Long period ({}) cannot be longer than length ({}) of prices",
-                long_period, length
-            );
-        };
-
-        if short_period >= long_period {
-            panic!(
-                "Short period ({}) cannot be greater or equal to long period ({})",
-                short_period, long_period
-            );
-        };
+        assert_period(long_period, length);
 
         let loop_max = length - long_period + 1;
         let mut macds = Vec::with_capacity(loop_max);
@@ -2202,20 +2164,8 @@ pub mod bulk {
     ) -> Vec<(f64, f64)> {
         let length = highs.len();
         assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
-
-        if length < long_period {
-            panic!(
-                "Length of prices ({}) must me greater or equal to long period ({})",
-                length, long_period
-            )
-        };
-
-        if short_period >= long_period {
-            panic!(
-                "Short period ({}) cannot be greater or equal to long period ({})",
-                short_period, long_period
-            );
-        };
+        assert_period(short_period, long_period);
+        assert_period(long_period, length);
 
         let loop_max = length - long_period + 1;
         let mut cos = Vec::with_capacity(loop_max);
@@ -2263,9 +2213,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `short_period` >= `long_period`
-    ///     * `prices.is_empty()`
-    ///     * 'long_period` > `prices.len()`
+    /// * `short_period` >= `long_period`
+    /// * `prices.is_empty()`
+    /// * 'long_period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -2295,19 +2245,9 @@ pub mod bulk {
         constant_model_type: ConstantModelType,
     ) -> Vec<f64> {
         let length = prices.len();
-        if short_period >= long_period {
-            panic!(
-                "Length of prices ({}) must be longer than short period ({})",
-                long_period, short_period
-            )
-        };
+        assert_period(short_period, long_period);
         assert_non_empty("prices", prices);
-        if long_period > length {
-            panic!(
-                "Long period ({}) cannot be greater than length of prices ({})",
-                long_period, length
-            )
-        };
+        assert_period(long_period, length);
 
         let mut ppos = Vec::with_capacity(length - long_period + 1);
 
@@ -2335,8 +2275,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `period` > `prices.len()`
+    /// * `prices.is_empty()`
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///

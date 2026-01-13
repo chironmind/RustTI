@@ -344,8 +344,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * Any price is <= 0
+    /// * `prices.is_empty()`
+    /// * Any price is <= 0
     ///
     /// # Examples
     ///
@@ -713,8 +713,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -749,8 +749,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -786,8 +786,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -885,8 +885,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -922,8 +922,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -959,8 +959,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1026,8 +1026,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1073,9 +1073,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
-    ///     * Any price in a window is <= 0
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
+    /// * Any price in a window is <= 0
     ///
     /// # Examples
     ///
@@ -1112,9 +1112,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
-    ///     * `df` <= 2.0
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
+    /// * `df` <= 2.0
     ///
     /// # Examples
     ///
@@ -1150,8 +1150,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1187,8 +1187,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` < 4
-    ///     * `period` > `prices.len()`
+    /// * `period` < 4
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///

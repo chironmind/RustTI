@@ -48,7 +48,7 @@ pub mod single {
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::other_indicators::single::average_true_range;
-    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -424,8 +424,8 @@ let last_price = prices.last().unwrap();
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `conversion_period`, `base_period`, `span_b_period` >
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `conversion_period`, `base_period`, `span_b_period` >
     ///         `high.len()`, `low.len()`, `close.len()`
     ///
     /// # Examples
@@ -474,12 +474,8 @@ let last_price = prices.last().unwrap();
         assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         let max_period = conversion_period.max(base_period).max(span_b_period);
-        if length < max_period {
-            panic!(
-                "Length of prices ({}) cannot be smaller than the size of periods ({})",
-                length, max_period,
-            );
-        };
+        assert_period(max_period, length);
+
         let conversion_line = (max(&highs[length - conversion_period..])
             + min(&lows[length - conversion_period..]))
             / 2.0;
@@ -511,8 +507,8 @@ let last_price = prices.last().unwrap();
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()`
-    ///     * `highs.is_empty()`
+    /// * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -554,8 +550,8 @@ let last_price = prices.last().unwrap();
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -637,8 +633,8 @@ let last_price = prices.last().unwrap();
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `high.is_empty()`
     ///
     /// # Examples
     ///
@@ -697,8 +693,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -770,8 +766,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -830,8 +826,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -910,8 +906,8 @@ pub mod bulk {
     ///
     ///
     /// Panics if:
-    ///     * `period` <= 0
-    ///     * `period` > `prices.len()`
+    /// * `period` <= 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -974,8 +970,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `conversion_period`, `base_period`, `span_b_period` > `high.len()`
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `conversion_period`, `base_period`, `span_b_period` > `high.len()`
     ///
     /// # Examples
     ///
@@ -1029,12 +1025,7 @@ pub mod bulk {
         assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         let max_period = conversion_period.max(base_period.max(span_b_period));
-        if length < max_period {
-            panic!(
-                "Length of prices ({}) cannot be smaller than the size of periods ({})",
-                length, max_period,
-            );
-        };
+        assert_period(max_period, length);
         (0..=length - max_period)
             .map(|i| {
                 single::ichimoku_cloud(
@@ -1064,10 +1055,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `highs.len()`
-    ///     * `highs.len()` != `lows.len()`
-    ///     * `highs.is_empty()` or `lows.is_empty()`
+    /// * `period` == 0
+    /// * `period` > `highs.len()`
+    /// * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()` or `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -1116,10 +1107,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`, `lows.is_empty()`, or `close.is_empty()`
-    ///     * `period` == 0
-    ///     * `period` > `highs.len()`
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`, `lows.is_empty()`, or `close.is_empty()`
+    /// * `period` == 0
+    /// * `period` > `highs.len()`
     ///
     /// # Examples
     ///
@@ -1192,10 +1183,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`, `low.is_empty()`, or `close.is_empty()`
-    ///     * `period` == 0
-    ///     * `period` > `slices.len()`
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `high.is_empty()`, `low.is_empty()`, or `close.is_empty()`
+    /// * `period` == 0
+    /// * `period` > `slices.len()`
     ///
     /// # Examples
     ///

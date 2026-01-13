@@ -336,8 +336,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `prices.len()` > `first_period` + 1
+    /// * `prices.is_empty()`
+    /// * `prices.len()` > `first_period` + 1
     ///
     /// # Examples
     ///
@@ -518,12 +518,7 @@ pub mod bulk {
     #[inline]
     pub fn aroon_up(highs: &[f64], period: usize) -> Vec<f64> {
         let length = highs.len();
-        if length < period {
-            panic!(
-                "Period ({}) cannot be longer than length of highs ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut aroon_ups = Vec::with_capacity(length - period + 1);
         for window in highs.windows(period) {
@@ -558,12 +553,7 @@ pub mod bulk {
     #[inline]
     pub fn aroon_down(lows: &[f64], period: usize) -> Vec<f64> {
         let length = lows.len();
-        if length < period {
-            panic!(
-                "Period ({}) cannot be longer than length of lows ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut aroon_downs = Vec::with_capacity(length - period + 1);
         for window in lows.windows(period) {
@@ -602,13 +592,7 @@ pub mod bulk {
     #[inline]
     pub fn aroon_oscillator(aroon_up: &[f64], aroon_down: &[f64]) -> Vec<f64> {
         let length = aroon_up.len();
-        if length != aroon_down.len() {
-            panic!(
-                "Length of Aroon up ({}) and Aroon down ({}) must match",
-                length,
-                aroon_down.len()
-            )
-        };
+        assert_same_len(&[("aroon_up", aroon_up), ("aroon_down", aroon_down)]);
 
         (0..length)
             .map(|i| single::aroon_oscillator(aroon_up[i], aroon_down[i]))
@@ -654,19 +638,8 @@ pub mod bulk {
     #[inline]
     pub fn aroon_indicator(highs: &[f64], lows: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() {
-            panic!(
-                "Length of highs ({}) must match length of lows ({})",
-                highs.len(),
-                lows.len()
-            )
-        };
-        if length < period {
-            panic!(
-                "Period ({}) cannot be longer than lengths of highs and lows ({})",
-                period, length
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
+        assert_period(period, length);
 
         let loop_max = length - period + 1;
         (0..loop_max)
@@ -689,8 +662,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()`
-    ///     * `highs.is_empty()` or `lows.is_empty()`
+    /// * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()` or `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -778,15 +751,8 @@ pub mod bulk {
         previous_sar: f64,
     ) -> Vec<f64> {
         assert_non_empty("highs", highs);
-        assert_non_empty("lows", lows);
-let length = highs.len();
-        if length != lows.len() {
-            panic!(
-                "Highs ({}) and lows ({}) must be the same length",
-                length,
-                lows.len()
-            )
-        };
+        let length = highs.len();
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
 
         // Due to the nature of floats some floats when increased aren't increased exactly
         // For example instead of 0.2 when increasing the acceleration factor by 0.02 we
@@ -915,9 +881,9 @@ let length = highs.len();
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`
-    ///     * `period` > lengths
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`
+    /// * `period` > `length * 3`
     ///
     /// # Examples
     ///
@@ -987,22 +953,10 @@ let length = highs.len();
         constant_model_type: ConstantModelType,
     ) -> Vec<(f64, f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) need to be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
         assert_non_empty("highs", highs);
-let length_min = 3 * period;
-        if length_min > length {
-            panic!(
-                "Length of prices ({}) must be greater than 3 times the period (3 * {} = {})",
-                length, period, length_min
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        let length_min = 3 * period;
+        assert_period(period, length_min);
 
         let mut positive_dm = Vec::with_capacity(length - 1);
         let mut negative_dm = Vec::with_capacity(length - 1);
@@ -1149,7 +1103,6 @@ let length_min = 3 * period;
                 prices.len()
             )
         };
-
         assert_non_empty("volumes", volumes);
         assert_non_empty("prices", prices);
 let mut vpts = Vec::with_capacity(length);
@@ -1181,8 +1134,8 @@ let mut vpts = Vec::with_capacity(length);
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `prices.len()` < `first_period` + `second_period`
+    /// * `prices.is_empty()`
+    /// * `prices.len()` < `first_period` + `second_period`
     ///
     /// # Examples
     ///

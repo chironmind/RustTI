@@ -34,7 +34,7 @@
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
     use crate::basic_indicators::single::mean;
-    use crate::validation::{assert_non_empty, assert_period, unsupported_type};
+    use crate::validation::{assert_all_positive, assert_min_period, assert_non_empty, assert_period, unsupported_type};
     use crate::MovingAverageType;
 
     /// Calculates the Moving Average

@@ -34,7 +34,7 @@ pub mod single {
         median, mode, standard_deviation, student_t_adjusted_std,
     };
     use crate::moving_average::single::moving_average;
-    use crate::validation::{assert_non_empty, unsupported_type};
+    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -90,18 +90,9 @@ pub mod single {
         constant_model_type: ConstantModelType,
         deviation_model: DeviationModel,
     ) -> f64 {
-        if prices_asset_a.is_empty() || prices_asset_b.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
         let length = prices_asset_a.len();
-        if length != prices_asset_b.len() {
-            panic!(
-                "Length of asset a ({}) must match length of asset b ({})",
-                length,
-                prices_asset_b.len()
-            )
-        };
+        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)]);
+        assert_non_empty(&"prices_asset_a", prices_asset_a);
 
         let asset_a_average = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -275,8 +266,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices_asset_a.len()` != `prices_asset_b.len()`
-    ///     * `period` > `slices.len()`
+    /// * `prices_asset_a.len()` != `prices_asset_b.len()`
+    /// * `period` > `slices.len()`
     ///
     /// # Examples
     ///
@@ -315,13 +306,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = prices_asset_a.len();
-        if length != prices_asset_b.len() {
-            panic!(
-                "Length of asset a ({}) must match length of asset b ({})",
-                length,
-                prices_asset_b.len()
-            )
-        };
+        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)]);
         assert_period(period, length);
 
         (0..=length - period)

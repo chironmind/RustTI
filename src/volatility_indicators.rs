@@ -134,9 +134,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `highs.len()` != `lows.len()`
-    ///     * `close.is_empty()`
-    ///     * lengths < `period`
+    /// * `close.len()` != `highs.len()` != `lows.len()`
+    /// * `close.is_empty()`
+    /// * lengths < `period`
     ///
     /// # Examples
     ///

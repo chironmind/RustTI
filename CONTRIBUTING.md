@@ -28,6 +28,7 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
   assert_same_len([("high", high), ("low", low), ...])
   assert_period(period, len)
   Use them everywhere so error messages and edge-case behavior are uniform.
+- search for `///     *`
 
 ### New Indicator Ideas
 

@@ -46,8 +46,8 @@ use crate::validation::{assert_non_empty, assert_period, assert_same_len};
 /// # Panics
 ///
 /// Panics if:
-///     * `period` == 0
-///     * `period` > `prices.len()`
+/// * `period` == 0
+/// * `period` > `prices.len()`
 ///
 /// # Examples
 ///
@@ -132,8 +132,8 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
 /// # Panics
 ///
 /// Panics if:
-///     * `period` == 0
-///     * `period` > `prices.len()`
+/// * `period` == 0
+/// * `period` > `prices.len()`
 ///
 /// # Examples
 ///
