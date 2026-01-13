@@ -48,7 +48,7 @@
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
     use crate::validation::{
-        assert_min_period, assert_min_value, assert_non_empty, assert_period, assert_positive,
+        assert_min_length, assert_min_period, assert_min_value, assert_non_empty, assert_positive,
         unsupported_type,
     };
     use crate::{AbsDevConfig, CentralPoint, DeviationAggregate};
@@ -463,7 +463,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn cauchy_iqr_scale(prices: &[f64]) -> f64 {
-        assert_period(4, prices.len());
+        assert_min_length("prices", 4, prices.len());
         // Compute Q1, Q3 via sorted slice and Tukey hinges (simple, fast)
         let mut v = prices.to_vec();
         v.sort_by(|a, b| a.partial_cmp(b).unwrap());
