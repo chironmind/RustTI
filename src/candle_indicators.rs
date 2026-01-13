@@ -48,6 +48,7 @@ pub mod single {
     };
     use crate::moving_average::single::{mcginley_dynamic, moving_average};
     use crate::other_indicators::single::average_true_range;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -98,11 +99,8 @@ pub mod single {
         constant_model_type: ConstantModelType,
         difference: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let moving_constant = match constant_model_type {
+        assert_non_empty("prices", prices);
+let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(prices, MovingAverageType::Simple)
             }
@@ -124,7 +122,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices),
             ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let upper_envelope = moving_constant * (1.0 + (difference / 100.0));
@@ -177,11 +175,8 @@ pub mod single {
         difference: f64,
         previous_mcginley_dynamic: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty!");
-        };
-
-        let last_price = prices.last().unwrap();
+        assert_non_empty("prices", prices);
+let last_price = prices.last().unwrap();
         let mcginley_dynamic =
             mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len());
         let upper_envelope = mcginley_dynamic * (1.0 + (difference / 100.0));
@@ -239,11 +234,8 @@ pub mod single {
         deviation_model: DeviationModel,
         deviation_multiplier: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let moving_constant = match constant_model_type {
+        assert_non_empty("prices", prices);
+let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(prices, MovingAverageType::Simple)
             }
@@ -265,7 +257,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices),
             ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let deviation = match deviation_model {
@@ -307,7 +299,7 @@ pub mod single {
                 prices, precision, low, high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         let upper_band = moving_constant + (deviation * deviation_multiplier);
         let lower_band = moving_constant - (deviation * deviation_multiplier);
@@ -363,11 +355,8 @@ pub mod single {
         deviation_multiplier: f64,
         previous_mcginley_dynamic: f64,
     ) -> (f64, f64, f64) {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
-        let last_price = prices.last().unwrap();
+        assert_non_empty("prices", prices);
+let last_price = prices.last().unwrap();
         let mcginley_dynamic =
             mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len());
 
@@ -410,7 +399,7 @@ pub mod single {
                 prices, precision, low, high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         let upper_band = mcginley_dynamic + (deviation * deviation_multiplier);
         let lower_band = mcginley_dynamic - (deviation * deviation_multiplier);
@@ -435,8 +424,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `conversion_period`, `base_period`, `span_b_period` >
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `conversion_period`, `base_period`, `span_b_period` >
     ///         `high.len()`, `low.len()`, `close.len()`
     ///
     /// # Examples
@@ -482,22 +471,11 @@ pub mod single {
         span_b_period: usize,
     ) -> (f64, f64, f64, f64, f64) {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         let max_period = conversion_period.max(base_period).max(span_b_period);
-        if length < max_period {
-            panic!(
-                "Length of prices ({}) cannot be smaller than the size of periods ({})",
-                length, max_period,
-            );
-        };
+        assert_period(max_period, length);
+
         let conversion_line = (max(&highs[length - conversion_period..])
             + min(&lows[length - conversion_period..]))
             / 2.0;
@@ -529,8 +507,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()`
-    ///     * `highs.is_empty()`
+    /// * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -547,16 +525,8 @@ pub mod single {
     /// ```
     #[inline]
     pub fn donchian_channels(highs: &[f64], lows: &[f64]) -> (f64, f64, f64) {
-        if highs.len() != lows.len() {
-            panic!(
-                "Highs ({}) must be of same length as lows ({})",
-                highs.len(),
-                lows.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
+        assert_non_empty("highs", highs);
         let max_price = max(highs);
         let min_price = min(lows);
         (min_price, (max_price + min_price) / 2.0, max_price)
@@ -580,8 +550,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -610,17 +580,8 @@ pub mod single {
         multiplier: f64,
     ) -> (f64, f64, f64) {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) must be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_non_empty("highs", highs);
 
         let atr = average_true_range(close, highs, lows, atr_constant_model_type);
         let prices: Vec<f64> = (0..length)
@@ -649,7 +610,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&prices),
             ConstantModelType::SimpleMovingMode => mode(&prices),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
         let constant = atr * multiplier;
         (mc - constant, mc, mc + constant)
@@ -672,8 +633,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `high.is_empty()`
     ///
     /// # Examples
     ///
@@ -700,17 +661,8 @@ pub mod single {
         multiplier: f64,
     ) -> f64 {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) must be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_non_empty("highs", highs);
 
         let atr = average_true_range(close, highs, lows, constant_model_type);
         let max_high = max(highs);
@@ -722,6 +674,7 @@ pub mod single {
 /// **bulk** : Functions that compute values of a slice of prices over a period and return a vector
 pub mod bulk {
     use crate::candle_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the Moving Constant Envelopes
@@ -740,8 +693,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -784,16 +737,8 @@ pub mod bulk {
         difference: f64,
         period: usize,
     ) -> Vec<(f64, f64, f64)> {
-        if period == 0 {
-            panic!("period ({}) must be greater than 0", period)
-        };
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length of prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
         (0..=(length - period))
             .map(|i| {
                 single::moving_constant_envelopes(
@@ -821,8 +766,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -851,16 +796,8 @@ pub mod bulk {
         previous_mcginley_dynamic: f64,
         period: usize,
     ) -> Vec<(f64, f64, f64)> {
-        if period == 0 {
-            panic!("period ({}) must be greater than 0", period)
-        };
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer the length of prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut envelopes = Vec::with_capacity(length - period + 1);
         let mut prev = previous_mcginley_dynamic;
@@ -889,8 +826,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -937,16 +874,8 @@ pub mod bulk {
         deviation_multiplier: f64,
         period: usize,
     ) -> Vec<(f64, f64, f64)> {
-        if period == 0 {
-            panic!("period ({}) must be greater than 0", period)
-        };
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer then length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
         (0..=length - period)
             .map(|i| {
                 single::moving_constant_bands(
@@ -977,8 +906,8 @@ pub mod bulk {
     ///
     ///
     /// Panics if:
-    ///     * `period` <= 0
-    ///     * `period` > `prices.len()`
+    /// * `period` <= 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1010,16 +939,8 @@ pub mod bulk {
         previous_mcginley_dynamic: f64,
         period: usize,
     ) -> Vec<(f64, f64, f64)> {
-        if period == 0 {
-            panic!("period ({}) must be greater than 0", period)
-        };
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer then length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
         let mut mcginley_bands = Vec::with_capacity(length - period + 1);
         let mut prev = previous_mcginley_dynamic;
         for window in prices.windows(period) {
@@ -1049,8 +970,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `conversion_period`, `base_period`, `span_b_period` > `high.len()`
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `conversion_period`, `base_period`, `span_b_period` > `high.len()`
     ///
     /// # Examples
     ///
@@ -1101,22 +1022,10 @@ pub mod bulk {
         span_b_period: usize,
     ) -> Vec<(f64, f64, f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}) must equal length of lows ({}) and length of close ({})",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
 
         let max_period = conversion_period.max(base_period.max(span_b_period));
-        if length < max_period {
-            panic!(
-                "Length of prices ({}) cannot be smaller than the size of periods ({})",
-                length, max_period,
-            );
-        };
+        assert_period(max_period, length);
         (0..=length - max_period)
             .map(|i| {
                 single::ichimoku_cloud(
@@ -1146,10 +1055,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `highs.len()`
-    ///     * `highs.len()` != `lows.len()`
-    ///     * `highs.is_empty()` or `lows.is_empty()`
+    /// * `period` == 0
+    /// * `period` > `highs.len()`
+    /// * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()` or `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -1170,29 +1079,10 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn donchian_channels(highs: &[f64], lows: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
-        if highs.is_empty() || lows.is_empty() {
-            panic!(
-                "Prices cannot be empty: highs: ({:?}); lows: ({:?})",
-                highs, lows
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
+        assert_non_empty("highs", highs);
         let length = highs.len();
-        if length != lows.len() {
-            panic!(
-                "Highs ({}) must be of same length as lows ({})",
-                length,
-                lows.len()
-            )
-        };
-        if period == 0 {
-            panic!("period ({}) must be greater than 0", period)
-        };
-        if period > length {
-            panic!(
-                "Period ({}) must be less than or equal to length of price ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
         (0..=length - period)
             .map(|i| single::donchian_channels(&highs[i..i + period], &lows[i..i + period]))
             .collect()
@@ -1217,10 +1107,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`, `lows.is_empty()`, or `close.is_empty()`
-    ///     * `period` == 0
-    ///     * `period` > `highs.len()`
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`, `lows.is_empty()`, or `close.is_empty()`
+    /// * `period` == 0
+    /// * `period` > `highs.len()`
     ///
     /// # Examples
     ///
@@ -1258,26 +1148,9 @@ pub mod bulk {
         period: usize,
     ) -> Vec<(f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) must be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period)
-        }
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length of prices ({})",
-                period, length
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_non_empty("highs", highs);
+        assert_period(period, length);
         (0..=length - period)
             .map(|i| {
                 single::keltner_channel(
@@ -1310,10 +1183,10 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `high.len()` != `low.len()` != `close.len()`
-    ///     * `high.is_empty()`, `low.is_empty()`, or `close.is_empty()`
-    ///     * `period` == 0
-    ///     * `period` > `slices.len()`
+    /// * `high.len()` != `low.len()` != `close.len()`
+    /// * `high.is_empty()`, `low.is_empty()`, or `close.is_empty()`
+    /// * `period` == 0
+    /// * `period` > `slices.len()`
     ///
     /// # Examples
     ///
@@ -1343,26 +1216,9 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) must be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period)
-        };
-        if period > length {
-            panic!(
-                "Period ({}) cannot be greater than length of prices ({})",
-                period, length
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_non_empty("highs", highs);
+        assert_period(period, length);
 
         (0..=length - period)
             .map(|i| {

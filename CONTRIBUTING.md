@@ -19,15 +19,6 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
 ## 🛠️ What to Work On?
 
 - Refactor parabolic T/P system: remove single functions; let bulk function determine trend (like `volatility` system)
-- No more panics, use `Result` types instead, and centralize validation and error messages
-  There are lots of repeated checks: empty slices, mismatched lengths, period > len, etc. Also error strings vary (“Prices is empty”, “Prices cannot be empty”, etc.).
-  You currently rely on panics by design; that’s okay for a low-level math crate, but consistency matters.
-  Refactor suggestion:
-  Add internal helpers (private module) like:
-  assert_non_empty(name, slice)
-  assert_same_len([("high", high), ("low", low), ...])
-  assert_period(period, len)
-  Use them everywhere so error messages and edge-case behavior are uniform.
 
 ### New Indicator Ideas
 

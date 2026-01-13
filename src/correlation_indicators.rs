@@ -34,6 +34,7 @@ pub mod single {
         median, mode, standard_deviation, student_t_adjusted_std,
     };
     use crate::moving_average::single::moving_average;
+    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single::ulcer_index;
     use crate::{
         AbsDevConfig, CentralPoint, ConstantModelType, DeviationAggregate, DeviationModel,
@@ -89,18 +90,9 @@ pub mod single {
         constant_model_type: ConstantModelType,
         deviation_model: DeviationModel,
     ) -> f64 {
-        if prices_asset_a.is_empty() || prices_asset_b.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-
         let length = prices_asset_a.len();
-        if length != prices_asset_b.len() {
-            panic!(
-                "Length of asset a ({}) must match length of asset b ({})",
-                length,
-                prices_asset_b.len()
-            )
-        };
+        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)]);
+        assert_non_empty(&"prices_asset_a", prices_asset_a);
 
         let asset_a_average = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -124,7 +116,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices_asset_a),
             ConstantModelType::SimpleMovingMode => mode(prices_asset_a),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let asset_b_average = match constant_model_type {
@@ -149,7 +141,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(prices_asset_b),
             ConstantModelType::SimpleMovingMode => mode(prices_asset_b),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let joint_average_return: f64 = (0..length)
@@ -200,7 +192,7 @@ pub mod single {
                 high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
 
         let asset_b_deviation = match deviation_model {
@@ -245,7 +237,7 @@ pub mod single {
                 high,
             ),
             #[allow(unreachable_patterns)]
-            _ => panic!("Unsupported DeviationModel"),
+            _ => unsupported_type("DeviationModel"),
         };
         covariance / (asset_a_deviation * asset_b_deviation)
     }
@@ -254,6 +246,7 @@ pub mod single {
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::correlation_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the correlation between two asset prices over a period
@@ -273,8 +266,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices_asset_a.len()` != `prices_asset_b.len()`
-    ///     * `period` > `slices.len()`
+    /// * `prices_asset_a.len()` != `prices_asset_b.len()`
+    /// * `period` > `slices.len()`
     ///
     /// # Examples
     ///
@@ -313,19 +306,8 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = prices_asset_a.len();
-        if length != prices_asset_b.len() {
-            panic!(
-                "Length of asset a ({}) must match length of asset b ({})",
-                length,
-                prices_asset_b.len()
-            )
-        };
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            )
-        };
+        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)]);
+        assert_period(period, length);
 
         (0..=length - period)
             .map(|i| {

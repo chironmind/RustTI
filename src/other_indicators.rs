@@ -38,6 +38,7 @@
 pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the final value and percentage return of a investment
@@ -147,8 +148,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `highs.len()` !=  `lows.len()`
-    ///     * `close.is_empty()`
+    /// * `close.len()` != `highs.len()` !=  `lows.len()`
+    /// * `close.is_empty()`
     ///
     /// # Examples
     ///
@@ -183,17 +184,8 @@ pub mod single {
         constant_model_type: ConstantModelType,
     ) -> f64 {
         let length = close.len();
-        if length != highs.len() || length != lows.len() {
-            panic!(
-                "Length of close ({}), highs ({}), and lows ({}) must match",
-                length,
-                highs.len(),
-                lows.len()
-            )
-        };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
+        assert_non_empty("close", close);
 
         let trs: Vec<f64> = close
             .iter()
@@ -224,7 +216,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&trs),
             ConstantModelType::SimpleMovingMode => mode(&trs),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         }
     }
 
@@ -266,6 +258,7 @@ pub mod bulk {
     use crate::basic_indicators::bulk::{median, mode};
     use crate::moving_average::bulk::moving_average;
     use crate::other_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the return on investment and percent return
@@ -307,9 +300,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn return_on_investment(prices: &[f64], investment: f64) -> Vec<(f64, f64)> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         let mut rois = Vec::with_capacity(prices.len() - 1);
         let mut roi = single::return_on_investment(prices[0], prices[1], investment);
         rois.push(roi);
@@ -335,8 +326,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `highs.len()` != `lows.len()`
-    ///     * `close.is_empty()`
+    /// * `close.len()` != `highs.len()` != `lows.len()`
+    /// * `close.is_empty()`
     ///
     /// # Examples
     ///
@@ -355,17 +346,8 @@ pub mod bulk {
     #[inline]
     pub fn true_range(close: &[f64], highs: &[f64], lows: &[f64]) -> Vec<f64> {
         let length = close.len();
-        if length != highs.len() || length != lows.len() {
-            panic!(
-                "Length of close ({}), highs ({}), and lows ({}) must match",
-                length,
-                highs.len(),
-                lows.len()
-            )
-        };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
+        assert_non_empty("close", close);
 
         (0..length)
             .map(|i| single::true_range(close[i], highs[i], lows[i]))
@@ -389,9 +371,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// `average_true_range` will panic if:
-    ///     * `close.len()` != `highs.len()` != `lows.len()`
-    ///     * `close.is_empty()`
-    ///     * `period.len()` > lengths
+    /// * `close.len()` != `highs.len()` != `lows.len()`
+    /// * `close.is_empty()`
+    /// * `period.len()` > lengths
     ///
     /// # Examples
     ///
@@ -428,23 +410,9 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = close.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            )
-        };
-        if length != highs.len() || length != lows.len() {
-            panic!(
-                "Length of close ({}), highs ({}), and lows ({}) must match",
-                length,
-                highs.len(),
-                lows.len()
-            )
-        };
-        if close.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_period(period, length);
+        assert_same_len(&[("close", close), ("lows", lows), ("highs", highs)]);
+        assert_non_empty("close", close);
 
         (0..=length - period)
             .map(|i| {
@@ -473,8 +441,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`
     ///
     /// # Examples
     ///
@@ -498,17 +466,8 @@ pub mod bulk {
     #[inline]
     pub fn internal_bar_strength(highs: &[f64], lows: &[f64], close: &[f64]) -> Vec<f64> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Lengths of highs ({}), lows ({}), and close ({}) must be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty");
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_non_empty("highs", highs);
 
         (0..length)
             .map(|i| single::internal_bar_strength(highs[i], lows[i], close[i]))
@@ -527,9 +486,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `open.len()` != `previous_close'len()`
-    ///     * `open.is_empty()`
-    ///     * `signal_period` is greater than length of prices
+    /// * `open.len()` != `previous_close'len()`
+    /// * `open.is_empty()`
+    /// * `signal_period` is greater than length of prices
     ///
     /// # Examples
     ///
@@ -563,22 +522,9 @@ pub mod bulk {
         constant_model_type: ConstantModelType,
     ) -> Vec<(f64, f64)> {
         let length = open.len();
-        if length != previous_close.len() {
-            panic!(
-                "Length of open ({}) and close ({}) must be equal",
-                length,
-                previous_close.len()
-            )
-        };
-        if open.is_empty() {
-            panic!("Prices cannot be empty")
-        };
-        if signal_period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                signal_period, length
-            )
-        };
+        assert_same_len(&[("open", open), ("previous_close", previous_close)]);
+        assert_non_empty("open", open);
+        assert_period(signal_period, length);
 
         let pis: Vec<f64> = (0..length)
             .map(|i| ((open[i] - previous_close[i]) / previous_close[i]) * 100.0)
@@ -607,7 +553,7 @@ pub mod bulk {
             ),
             ConstantModelType::SimpleMovingMedian => median(&pis, signal_period),
             ConstantModelType::SimpleMovingMode => mode(&pis, signal_period),
-            _ => panic!("Unsupported ConstantModelType"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         signal_line

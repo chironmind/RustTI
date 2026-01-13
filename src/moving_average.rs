@@ -34,6 +34,7 @@
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
     use crate::basic_indicators::single::mean;
+    use crate::validation::{assert_all_positive, assert_min_period, assert_non_empty, assert_period, assert_positive_usize, unsupported_type};
     use crate::MovingAverageType;
 
     /// Calculates the Moving Average
@@ -79,9 +80,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn moving_average(prices: &[f64], moving_average_type: MovingAverageType) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices is empty")
-        };
+        assert_non_empty("prices", prices);
         match moving_average_type {
             MovingAverageType::Simple => mean(prices),
             MovingAverageType::Smoothed => personalised_moving_average(prices, 1.0, 0.0),
@@ -90,7 +89,7 @@ pub mod single {
                 alpha_num,
                 alpha_den,
             } => personalised_moving_average(prices, alpha_num, alpha_den),
-            _ => panic!("Unsupported MovingiAverageType"),
+            _ => unsupported_type("MovingAverageType"),
         }
     }
 
@@ -164,9 +163,7 @@ pub mod single {
         previous_mcginley_dynamic: f64,
         period: usize,
     ) -> f64 {
-        if period == 0 {
-            panic!("Cannot have a 0 period");
-        };
+        assert_positive_usize("period", period);
         if previous_mcginley_dynamic == 0.0 {
             return latest_price;
         };
@@ -179,6 +176,7 @@ pub mod single {
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::moving_average::single;
+    use crate::validation::assert_period;
     use crate::MovingAverageType;
 
     /// Calculates the moving average
@@ -243,12 +241,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut moving_averages = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {
@@ -302,12 +295,7 @@ pub mod bulk {
         period: usize,
     ) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period, length
-            );
-        };
+        assert_period(period, length);
 
         let mut mcginley_dynamics = Vec::with_capacity(length - period + 1);
         let mut mcginley_dynamic =

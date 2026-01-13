@@ -47,6 +47,10 @@
 
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
+    use crate::validation::{
+        assert_min_length, assert_min_period, assert_min_value, assert_non_empty, assert_positive,
+        unsupported_type,
+    };
     use crate::{AbsDevConfig, CentralPoint, DeviationAggregate};
     use std::cmp::Ordering;
     use std::collections::HashMap;
@@ -74,9 +78,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn mean(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        };
+        assert_non_empty("prices", prices);
         prices.iter().sum::<f64>() / prices.len() as f64
     }
 
@@ -111,9 +113,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn median(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        };
+        assert_non_empty("prices", prices);
 
         let mut values: Vec<f64> = prices.iter().copied().filter(|f| !f.is_nan()).collect();
         values.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
@@ -156,9 +156,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn mode(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        };
+        assert_non_empty("prices", prices);
         let mut frequency: HashMap<i64, usize> = HashMap::new();
         for &price in prices {
             *frequency.entry(price.round() as i64).or_insert(0) += 1;
@@ -236,9 +234,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn variance(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        }
+        assert_non_empty("prices", prices);
         let prices_mean = mean(prices);
         let mean_diff_sq: Vec<f64> = prices.iter().map(|x| (x - prices_mean).powi(2)).collect();
         mean(&mean_diff_sq)
@@ -315,14 +311,12 @@ pub mod single {
     /// ```
     #[inline]
     pub fn absolute_deviation(prices: &[f64], config: AbsDevConfig) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices is empty")
-        };
+        assert_non_empty("prices", prices);
         let mid_point = match config.center {
             CentralPoint::Mean => mean(prices),
             CentralPoint::Median => median(prices),
             CentralPoint::Mode => mode(prices),
-            _ => panic!("Unsupported central_point {:?}", config.center),
+            _ => unsupported_type("CentralPoint"),
         };
 
         let devs: Vec<f64> = prices.iter().map(|&x| (x - mid_point).abs()).collect();
@@ -350,8 +344,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * Any price is <= 0
+    /// * `prices.is_empty()`
+    /// * Any price is <= 0
     ///
     /// # Examples
     ///
@@ -363,13 +357,11 @@ pub mod single {
     /// ```
     #[inline]
     pub fn log_standard_deviation(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        }
+        assert_non_empty("prices", prices);
         let mut logs = Vec::with_capacity(prices.len());
         for &x in prices {
             if x <= 0.0 {
-                panic!("LogStandardDeviation requires positive prices; found {}", x);
+                panic!("prices requires all positive values; found {}", x);
             }
             logs.push(x.ln());
         }
@@ -403,9 +395,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn student_t_adjusted_std(prices: &[f64], df: f64) -> f64 {
-        if df <= 2.0 {
-            panic!("Degrees of freedom ({}) must be greater than 2", df);
-        }
+        assert_min_value("degrees_of_freedom", df, 2.0);
         let s = standard_deviation(prices);
         s * (df / (df - 2.0)).sqrt()
     }
@@ -473,12 +463,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn cauchy_iqr_scale(prices: &[f64]) -> f64 {
-        if prices.len() < 4 {
-            panic!(
-                "CauchyIQRScale requires at least 4 values; received {}",
-                prices.len()
-            );
-        }
+        assert_min_length("prices", 4, prices.len());
         // Compute Q1, Q3 via sorted slice and Tukey hinges (simple, fast)
         let mut v = prices.to_vec();
         v.sort_by(|a, b| a.partial_cmp(b).unwrap());
@@ -530,9 +515,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn max(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices is empty")
-        };
+        assert_non_empty("prices", prices);
         prices
             .iter()
             .copied()
@@ -563,9 +546,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn min(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices is empty")
-        };
+        assert_non_empty("prices", prices);
         prices
             .iter()
             .copied()
@@ -599,12 +580,8 @@ pub mod single {
     /// ```
     #[inline]
     pub fn price_distribution(prices: &[f64], precision: f64) -> Vec<(f64, usize)> {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        }
-        if !(precision > 0.0) {
-            panic!("precision ({}) must be > 0.0 and not NaN", precision);
-        }
+        assert_non_empty("prices", prices);
+        assert_positive("precision", precision);
 
         let mut frequency: HashMap<i64, usize> = HashMap::new();
         for &price in prices {
@@ -629,7 +606,7 @@ pub mod single {
     #[inline]
     fn empirical_quantile_from_distribution(prices: &[f64], precision: f64, q: f64) -> f64 {
         if !(q > 0.0 && q < 1.0) {
-            panic!("Quantile ({}) must be in (0,1)", q);
+            panic!("quantile ({}) must be in range (0, 1)", q);
         }
         let hist = price_distribution(prices, precision);
         let n: usize = hist.iter().map(|(_, c)| *c).sum();
@@ -698,9 +675,7 @@ pub mod single {
         low: f64,
         high: f64,
     ) -> f64 {
-        if !(precision > 0.0) {
-            panic!("precision ({}) must be > 0.0 and not NaN", precision);
-        }
+        assert_positive("precision", precision);
         if !(low > 0.0 && low < 1.0 && high > 0.0 && high < 1.0 && low < high) {
             panic!(
                 "Invalid quantile bounds: low ({}) and high ({}) must be in (0,1) and low < high",
@@ -716,6 +691,7 @@ pub mod single {
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::basic_indicators::single;
+    use crate::validation::{assert_min_period, assert_non_empty, assert_period};
     use crate::AbsDevConfig;
 
     /// Calculates the mean (averages) of a slice of prices over a given period
@@ -732,8 +708,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -744,16 +720,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn mean(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of prices ({})",
-                period,
-                prices.len()
-            );
-        };
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::mean(window))
@@ -777,8 +744,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -789,16 +756,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn median(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        };
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        };
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::median(window))
@@ -823,8 +781,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -835,16 +793,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn mode(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        };
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        };
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::mode(window))
@@ -878,9 +827,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn log(prices: &[f64]) -> Vec<f64> {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        }
+        assert_non_empty("prices", prices);
         prices.iter().map(|&p| p.ln()).collect()
     }
 
@@ -910,9 +857,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn log_difference(prices: &[f64]) -> Vec<f64> {
-        if prices.is_empty() {
-            panic!("Prices ({:?}) is empty", prices);
-        }
+        assert_non_empty("prices", prices);
         prices
             .windows(2)
             .map(|w| single::log_difference(w[1], w[0]))
@@ -935,8 +880,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -948,16 +893,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn variance(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period)
-        };
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        };
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::variance(window))
@@ -981,8 +917,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -995,16 +931,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn standard_deviation(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period)
-        };
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        };
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::standard_deviation(window));
@@ -1027,8 +954,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1069,16 +996,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn absolute_deviation(prices: &[f64], period: usize, config: AbsDevConfig) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period)
-        };
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        };
+        assert_period(period, prices.len());
         prices
             .windows(period)
             .map(|w| single::absolute_deviation(w, config))
@@ -1103,8 +1021,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1126,17 +1044,7 @@ pub mod bulk {
         period: usize,
         precision: f64,
     ) -> Vec<Vec<(f64, usize)>> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        }
-
+        assert_period(period, prices.len());
         prices
             .windows(period)
             .map(|w| single::price_distribution(w, precision))
@@ -1160,9 +1068,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
-    ///     * Any price in a window is <= 0
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
+    /// * Any price in a window is <= 0
     ///
     /// # Examples
     ///
@@ -1173,16 +1081,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn log_standard_deviation(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of prices ({})",
-                period,
-                prices.len()
-            );
-        }
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::log_standard_deviation(window))
@@ -1208,9 +1107,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
-    ///     * `df` <= 2.0
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
+    /// * `df` <= 2.0
     ///
     /// # Examples
     ///
@@ -1221,16 +1120,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn student_t_adjusted_std(prices: &[f64], period: usize, df: f64) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of prices ({})",
-                period,
-                prices.len()
-            );
-        }
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::student_t_adjusted_std(window, df))
@@ -1255,8 +1145,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` == 0
-    ///     * `period` > `prices.len()`
+    /// * `period` == 0
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1267,16 +1157,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn laplace_std_equivalent(prices: &[f64], period: usize) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of prices ({})",
-                period,
-                prices.len()
-            );
-        }
+        assert_period(period, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::laplace_std_equivalent(window))
@@ -1301,8 +1182,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `period` < 4
-    ///     * `period` > `prices.len()`
+    /// * `period` < 4
+    /// * `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -1313,19 +1194,7 @@ pub mod bulk {
     /// ```
     #[inline]
     pub fn cauchy_iqr_scale(prices: &[f64], period: usize) -> Vec<f64> {
-        if period < 4 {
-            panic!(
-                "Period ({}) must be at least 4 for Cauchy IQR scale",
-                period
-            );
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of prices ({})",
-                period,
-                prices.len()
-            );
-        }
+        assert_min_period(period, 4, prices.len());
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
             result.push(single::cauchy_iqr_scale(window))
@@ -1366,16 +1235,7 @@ pub mod bulk {
         low: f64,
         high: f64,
     ) -> Vec<f64> {
-        if period == 0 {
-            panic!("Period ({}) must be greater than 0", period);
-        }
-        if period > prices.len() {
-            panic!(
-                "Period ({}) cannot be longer than the length of provided prices ({})",
-                period,
-                prices.len()
-            );
-        }
+        assert_period(period, prices.len());
         prices
             .windows(period)
             .map(|w| single::empirical_quantile_range_from_distribution(w, precision, low, high))

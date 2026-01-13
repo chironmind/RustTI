@@ -76,5 +76,10 @@ pub mod strength_indicators;
 pub mod trend_indicators;
 pub mod volatility_indicators;
 
+mod error;
+pub use error::*;
+
 mod types;
 pub use types::*;
+
+mod validation;

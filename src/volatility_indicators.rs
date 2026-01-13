@@ -31,6 +31,7 @@
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
     use crate::basic_indicators::single::max;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
 
     /// Calculates the Ulcer Index
     ///
@@ -55,9 +56,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn ulcer_index(prices: &[f64]) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
 
         let mut sum_sq = 0.0;
         for (i, price) in prices.iter().enumerate().skip(1) {
@@ -74,6 +73,7 @@ pub mod bulk {
     use crate::basic_indicators::single::{max, min};
     use crate::chart_trends::overall_trend;
     use crate::other_indicators::bulk::average_true_range;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::volatility_indicators::single;
     use crate::{ConstantModelType, Position};
 
@@ -107,12 +107,7 @@ pub mod bulk {
     #[inline]
     pub fn ulcer_index(prices: &[f64], period: usize) -> Vec<f64> {
         let length = prices.len();
-        if period > length {
-            panic!(
-                "Period ({}) cannot be longer than length of prices ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut ulcer_indexes = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {
@@ -139,9 +134,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `close.len()` != `highs.len()` != `lows.len()`
-    ///     * `close.is_empty()`
-    ///     * lengths < `period`
+    /// * `close.len()` != `highs.len()` != `lows.len()`
+    /// * `close.is_empty()`
+    /// * lengths < `period`
     ///
     /// # Examples
     ///
@@ -206,23 +201,9 @@ pub mod bulk {
         constant_model_type: ConstantModelType,
     ) -> Vec<f64> {
         let length = close.len();
-        if length != highs.len() || length != lows.len() {
-            panic!(
-                "Lengths of close ({}), high ({}), and low ({}) must be equal",
-                length,
-                highs.len(),
-                lows.len()
-            )
-        };
-        if close.is_empty() {
-            panic!("Prices cannot be empty");
-        };
-        if length < period {
-            panic!(
-                "Period ({}) must be less than or equal to length of prices ({})",
-                period, length
-            )
-        };
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
+        assert_non_empty("close", close);
+        assert_period(period, length);
 
         let typical_price: Vec<f64> = (0..length)
             .map(|i| (highs[i] + lows[i] + close[i]) / 3.0)
@@ -270,7 +251,7 @@ pub mod bulk {
                     sars.push(significant_close - arc[i]);
                 }
             } else {
-                panic!("Invalid position {:?}", position);
+                unsupported_type("Position");
             }
         }
         sars

@@ -52,6 +52,7 @@ pub mod single {
     use crate::basic_indicators::single::{max, min};
     use crate::moving_average::bulk::moving_average as bulk_ma;
     use crate::moving_average::single::moving_average as single_ma;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the Aroon up
@@ -77,9 +78,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_up(highs: &[f64]) -> f64 {
-        if highs.is_empty() {
-            panic!("Highs cannot be empty")
-        };
+        assert_non_empty("highs", highs);
 
         let period = highs.len() - 1; // current period should be excluded from length
         let period_max = max(highs);
@@ -110,9 +109,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_down(lows: &[f64]) -> f64 {
-        if lows.is_empty() {
-            panic!("Lows cannot be empty")
-        };
+        assert_non_empty("lows", lows);
 
         let period = lows.len() - 1; // current period should be excluded from length
         let period_min = min(lows);
@@ -174,13 +171,7 @@ pub mod single {
     /// ```
     #[inline]
     pub fn aroon_indicator(highs: &[f64], lows: &[f64]) -> (f64, f64, f64) {
-        if highs.len() != lows.len() {
-            panic!(
-                "Length of highs ({}) must match length of lows ({})",
-                highs.len(),
-                lows.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
 
         let aroon_up = aroon_up(highs);
         let aroon_down = aroon_down(lows);
@@ -345,8 +336,8 @@ pub mod single {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `prices.len()` > `first_period` + 1
+    /// * `prices.is_empty()`
+    /// * `prices.len()` > `first_period` + 1
     ///
     /// # Examples
     ///
@@ -367,16 +358,9 @@ pub mod single {
         first_period: usize,
         second_constant_model: ConstantModelType,
     ) -> f64 {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         let length = prices.len();
-        if length < first_period + 1 {
-            panic!(
-                "Length of prices ({}) needs to be equal or greater than the sum ({}) of first_period ({}) and second_period({})",
-                length, first_period + 1, first_period, 1
-            )
-        };
+        assert_period(first_period + 1, length);
 
         let mut price_momentum = Vec::with_capacity(length - 1);
         let mut abs_price_momentum = Vec::with_capacity(length - 1);
@@ -440,7 +424,7 @@ pub mod single {
                 bulk_mode(&price_momentum, first_period),
                 bulk_mode(&abs_price_momentum, first_period),
             ),
-            _ => panic!("Not a supported constant model type"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let (second_smoothing, abs_second_smoothing) = match second_constant_model {
@@ -483,7 +467,7 @@ pub mod single {
                 single_mode(&initial_smoothing),
                 single_mode(&abs_initial_smoothing),
             ),
-            _ => panic!("Not a supported constant model type"),
+            _ => unsupported_type("ConstantModelType"),
         };
         if abs_second_smoothing == 0.0 {
             0.0
@@ -500,6 +484,7 @@ pub mod bulk {
     use crate::moving_average::bulk::moving_average;
     use crate::other_indicators::bulk::true_range;
     use crate::trend_indicators::single;
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType, Position};
 
     /// Calculates the aroon up
@@ -528,12 +513,7 @@ pub mod bulk {
     #[inline]
     pub fn aroon_up(highs: &[f64], period: usize) -> Vec<f64> {
         let length = highs.len();
-        if length < period {
-            panic!(
-                "Period ({}) cannot be longer than length of highs ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut aroon_ups = Vec::with_capacity(length - period + 1);
         for window in highs.windows(period) {
@@ -568,12 +548,7 @@ pub mod bulk {
     #[inline]
     pub fn aroon_down(lows: &[f64], period: usize) -> Vec<f64> {
         let length = lows.len();
-        if length < period {
-            panic!(
-                "Period ({}) cannot be longer than length of lows ({})",
-                period, length
-            )
-        };
+        assert_period(period, length);
 
         let mut aroon_downs = Vec::with_capacity(length - period + 1);
         for window in lows.windows(period) {
@@ -612,13 +587,7 @@ pub mod bulk {
     #[inline]
     pub fn aroon_oscillator(aroon_up: &[f64], aroon_down: &[f64]) -> Vec<f64> {
         let length = aroon_up.len();
-        if length != aroon_down.len() {
-            panic!(
-                "Length of Aroon up ({}) and Aroon down ({}) must match",
-                length,
-                aroon_down.len()
-            )
-        };
+        assert_same_len(&[("aroon_up", aroon_up), ("aroon_down", aroon_down)]);
 
         (0..length)
             .map(|i| single::aroon_oscillator(aroon_up[i], aroon_down[i]))
@@ -664,19 +633,8 @@ pub mod bulk {
     #[inline]
     pub fn aroon_indicator(highs: &[f64], lows: &[f64], period: usize) -> Vec<(f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() {
-            panic!(
-                "Length of highs ({}) must match length of lows ({})",
-                highs.len(),
-                lows.len()
-            )
-        };
-        if length < period {
-            panic!(
-                "Period ({}) cannot be longer than lengths of highs and lows ({})",
-                period, length
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
+        assert_period(period, length);
 
         let loop_max = length - period + 1;
         (0..loop_max)
@@ -699,8 +657,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()`
-    ///     * `highs.is_empty()` or `lows.is_empty()`
+    /// * `highs.len()` != `lows.len()`
+    /// * `highs.is_empty()` or `lows.is_empty()`
     ///
     /// # Examples
     ///
@@ -787,17 +745,9 @@ pub mod bulk {
         start_position: Position,
         previous_sar: f64,
     ) -> Vec<f64> {
-        if highs.is_empty() || lows.is_empty() {
-            panic!("Highs or lows cannot be empty")
-        };
+        assert_non_empty("highs", highs);
         let length = highs.len();
-        if length != lows.len() {
-            panic!(
-                "Highs ({}) and lows ({}) must be the same length",
-                length,
-                lows.len()
-            )
-        };
+        assert_same_len(&[("highs", highs), ("lows", lows)]);
 
         // Due to the nature of floats some floats when increased aren't increased exactly
         // For example instead of 0.2 when increasing the acceleration factor by 0.02 we
@@ -926,9 +876,9 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `highs.len()` != `lows.len()` != `close.len()`
-    ///     * `highs.is_empty()`
-    ///     * `period` > lengths
+    /// * `highs.len()` != `lows.len()` != `close.len()`
+    /// * `highs.is_empty()`
+    /// * `period` > `length * 3`
     ///
     /// # Examples
     ///
@@ -998,24 +948,10 @@ pub mod bulk {
         constant_model_type: ConstantModelType,
     ) -> Vec<(f64, f64, f64, f64)> {
         let length = highs.len();
-        if length != lows.len() || length != close.len() {
-            panic!(
-                "Length of highs ({}), lows ({}), and close ({}) need to be equal",
-                length,
-                lows.len(),
-                close.len()
-            )
-        };
-        if highs.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("highs", highs);
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
         let length_min = 3 * period;
-        if length_min > length {
-            panic!(
-                "Length of prices ({}) must be greater than 3 times the period (3 * {} = {})",
-                length, period, length_min
-            )
-        };
+        assert_period(period, length_min);
 
         let mut positive_dm = Vec::with_capacity(length - 1);
         let mut negative_dm = Vec::with_capacity(length - 1);
@@ -1082,7 +1018,7 @@ pub mod bulk {
             ),
             ConstantModelType::SimpleMovingMedian => median(&dx, period),
             ConstantModelType::SimpleMovingMode => mode(&dx, period),
-            _ => panic!("Not a supported constant model type"),
+            _ => unsupported_type("ConstantModelType"),
         };
 
         let mut adxr = Vec::with_capacity(adx.len() - period - 1);
@@ -1162,12 +1098,9 @@ pub mod bulk {
                 prices.len()
             )
         };
-
-        if volumes.is_empty() || prices.is_empty() {
-            panic!("Volumes nor prices can be empty")
-        };
-
-        let mut vpts = Vec::with_capacity(length);
+        assert_non_empty("volumes", volumes);
+        assert_non_empty("prices", prices);
+let mut vpts = Vec::with_capacity(length);
         let mut vpt = single::volume_price_trend(
             prices[1],
             prices[0],
@@ -1196,8 +1129,8 @@ pub mod bulk {
     /// # Panics
     ///
     /// Panics if:
-    ///     * `prices.is_empty()`
-    ///     * `prices.len()` < `first_period` + `second_period`
+    /// * `prices.is_empty()`
+    /// * `prices.len()` < `first_period` + `second_period`
     ///
     /// # Examples
     ///
@@ -1225,17 +1158,10 @@ pub mod bulk {
         second_constant_model: ConstantModelType,
         second_period: usize,
     ) -> Vec<f64> {
-        if prices.is_empty() {
-            panic!("Prices cannot be empty")
-        };
+        assert_non_empty("prices", prices);
         let length = prices.len();
         let period_sum = first_period + second_period;
-        if length < period_sum {
-            panic!(
-                "Length of prices ({}) needs to be equal or greater than the sum ({}) of first_period ({}) + second_period ({})",
-                length, first_period + second_period, first_period, second_period
-            )
-        };
+        assert_period(period_sum, length);
 
         let loop_max = length - period_sum + 1;
 
