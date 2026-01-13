@@ -1,10 +1,8 @@
 //! Error types for Centaur Technical Indicators
 //!
-//! This module defines error types that may be used in the future.
-//! Currently, the library uses panics for validation failures with centralized
+//! This module defines error types for the library.
+//! All validation failures return these errors with centralized
 //! validation helpers in the `validation` module.
-
-#![allow(dead_code)]
 
 use std::fmt;
 
