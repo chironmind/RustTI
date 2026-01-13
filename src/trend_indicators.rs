@@ -52,7 +52,7 @@ pub mod single {
     use crate::basic_indicators::single::{max, min};
     use crate::moving_average::bulk::moving_average as bulk_ma;
     use crate::moving_average::single::moving_average as single_ma;
-    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
+    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the Aroon up
@@ -360,12 +360,7 @@ pub mod single {
     ) -> f64 {
         assert_non_empty("prices", prices);
         let length = prices.len();
-        if length < first_period + 1 {
-            panic!(
-                "Length of prices ({}) needs to be equal or greater than the sum ({}) of first_period ({}) and second_period({})",
-                length, first_period + 1, first_period, 1
-            )
-        };
+        assert_period(first_period + 1, length);
 
         let mut price_momentum = Vec::with_capacity(length - 1);
         let mut abs_price_momentum = Vec::with_capacity(length - 1);
@@ -1166,12 +1161,7 @@ let mut vpts = Vec::with_capacity(length);
         assert_non_empty("prices", prices);
         let length = prices.len();
         let period_sum = first_period + second_period;
-        if length < period_sum {
-            panic!(
-                "Length of prices ({}) needs to be equal or greater than the sum ({}) of first_period ({}) + second_period ({})",
-                length, first_period + second_period, first_period, second_period
-            )
-        };
+        assert_period(period_sum, length);
 
         let loop_max = length - period_sum + 1;
 

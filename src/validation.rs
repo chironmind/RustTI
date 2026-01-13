@@ -174,6 +174,44 @@ pub fn assert_min_period(period: usize, min_period: usize, data_len: usize) {
     assert_period(period, data_len);
 }
 
+/// Validates that a slice has a minimum length
+///
+/// # Arguments
+///
+/// * `name` - Human-readable name of the data
+/// * `min_length` - Minimum required length
+/// * `actual_length` - Actual length of the data
+///
+/// # Panics
+///
+/// Panics if actual_length < min_length
+#[inline]
+pub fn assert_min_length(name: &str, min_length: usize, actual_length: usize) {
+    if actual_length < min_length {
+        panic!(
+            "{} must be at least {} in length; received {}",
+            name, min_length, actual_length
+        );
+    }
+}
+
+/// Validates that a usize value is positive (> 0)
+///
+/// # Arguments
+///
+/// * `name` - Human-readable name of the value
+/// * `value` - The value to validate
+///
+/// # Panics
+///
+/// Panics if the value is 0
+#[inline]
+pub fn assert_positive_usize(name: &str, value: usize) {
+    if value == 0 {
+        panic!("{} ({}) must be greater than 0", name, value);
+    }
+}
+
 /// Validates that a type variant is supported
 ///
 /// # Arguments
