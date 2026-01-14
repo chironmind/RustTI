@@ -1044,10 +1044,10 @@ pub mod bulk {
         precision: f64,
     ) -> crate::Result<Vec<Vec<(f64, usize)>>> {
         assert_period(period, prices.len())?;
-        Ok(prices
+        prices
             .windows(period)
             .map(|w| single::price_distribution(w, precision))
-            .collect())
+            .collect()
     }
 
     /// Calculates the log standard deviation of a slice of prices over a given period.

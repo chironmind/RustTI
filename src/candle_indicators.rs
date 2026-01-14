@@ -67,9 +67,9 @@ pub mod single {
     ///
     /// A tuple containing (lower_envelope, middle_line, upper_envelope)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns an error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -82,7 +82,7 @@ pub mod single {
     ///         &prices,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         difference
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((97.59303317535547, 100.61137440758296, 103.62971563981044), ema_envelope);
     ///
     /// let median_envelope =
@@ -90,7 +90,7 @@ pub mod single {
     ///         &prices,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         difference
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((97.97, 101.0, 104.03), median_envelope);
     /// ```
     #[inline]
@@ -98,17 +98,17 @@ pub mod single {
         prices: &[f64],
         constant_model_type: ConstantModelType,
         difference: f64,
-    ) -> (f64, f64, f64) {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<(f64, f64, f64)> {
+        assert_non_empty("prices", prices)?;
 let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(prices, MovingAverageType::Simple)
+                moving_average(prices, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(prices, MovingAverageType::Smoothed)
+                moving_average(prices, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(prices, MovingAverageType::Exponential)
+                moving_average(prices, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -119,15 +119,15 @@ let moving_constant = match constant_model_type {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(prices),
-            ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(prices)?,
+            ConstantModelType::SimpleMovingMode => mode(prices)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let upper_envelope = moving_constant * (1.0 + (difference / 100.0));
         let lower_envelope = moving_constant * (1.0 - (difference / 100.0));
-        (lower_envelope, moving_constant, upper_envelope)
+        Ok((lower_envelope, moving_constant, upper_envelope))
     }
 
     /// Calculates upper and lower bands around the McGinley dynamic.
@@ -142,9 +142,9 @@ let moving_constant = match constant_model_type {
     ///
     /// A tuple containing (lower_envelope, mcginley_dynamic, upper_envelope)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns an error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -157,7 +157,7 @@ let moving_constant = match constant_model_type {
     ///         &prices,
     ///         difference,
     ///         0.0
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((96.03, 99.0, 101.97), mcginley_envelope);
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
@@ -166,7 +166,7 @@ let moving_constant = match constant_model_type {
     ///         &prices,
     ///         difference,
     ///         mcginley_envelope.1
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((96.54649137791692, 99.53246533805869, 102.51843929820045), mcginley_envelope);
     /// ```
     #[inline]
@@ -174,14 +174,14 @@ let moving_constant = match constant_model_type {
         prices: &[f64],
         difference: f64,
         previous_mcginley_dynamic: f64,
-    ) -> (f64, f64, f64) {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<(f64, f64, f64)> {
+        assert_non_empty("prices", prices)?;
 let last_price = prices.last().unwrap();
         let mcginley_dynamic =
-            mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len());
+            mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len())?;
         let upper_envelope = mcginley_dynamic * (1.0 + (difference / 100.0));
         let lower_envelope = mcginley_dynamic * (1.0 - (difference / 100.0));
-        (lower_envelope, mcginley_dynamic, upper_envelope)
+        Ok((lower_envelope, mcginley_dynamic, upper_envelope))
     }
 
     /// Inspired from the Bollinger Bands, generalized to use
@@ -199,9 +199,9 @@ let last_price = prices.last().unwrap();
     ///
     /// A tuple containing (lower_band, middle_band, upper_band)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns an error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -215,7 +215,7 @@ let last_price = prices.last().unwrap();
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((98.17157287525382, 101.0, 103.82842712474618), bollinger_bands);
     ///
     /// let ema_mad_bands =
@@ -224,7 +224,7 @@ let last_price = prices.last().unwrap();
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         multiplier
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((98.21137440758295, 100.61137440758296, 103.01137440758296), ema_mad_bands);
     /// ```
     #[inline]
@@ -233,17 +233,17 @@ let last_price = prices.last().unwrap();
         constant_model_type: ConstantModelType,
         deviation_model: DeviationModel,
         deviation_multiplier: f64,
-    ) -> (f64, f64, f64) {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<(f64, f64, f64)> {
+        assert_non_empty("prices", prices)?;
 let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(prices, MovingAverageType::Simple)
+                moving_average(prices, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(prices, MovingAverageType::Smoothed)
+                moving_average(prices, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(prices, MovingAverageType::Exponential)
+                moving_average(prices, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -254,56 +254,56 @@ let moving_constant = match constant_model_type {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(prices),
-            ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(prices)?,
+            ConstantModelType::SimpleMovingMode => mode(prices)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let deviation = match deviation_model {
-            DeviationModel::StandardDeviation => standard_deviation(prices),
+            DeviationModel::StandardDeviation => standard_deviation(prices)?,
             DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mean,
                     aggregate: DeviationAggregate::Mean,
                 },
-            ),
+            )?,
             DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Median,
                     aggregate: DeviationAggregate::Median,
                 },
-            ),
+            )?,
             DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mode,
                     aggregate: DeviationAggregate::Mode,
                 },
-            ),
+            )?,
             DeviationModel::CustomAbsoluteDeviation { config } => {
-                absolute_deviation(prices, config)
+                absolute_deviation(prices, config)?
             }
-            DeviationModel::UlcerIndex => ulcer_index(prices),
-            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
-            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
-            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
-            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::UlcerIndex => ulcer_index(prices)?,
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices)?,
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df)?,
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices)?,
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices)?,
             DeviationModel::EmpiricalQuantileRange {
                 low,
                 high,
                 precision,
             } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
                 prices, precision, low, high,
-            ),
+            )?,
             #[allow(unreachable_patterns)]
-            _ => unsupported_type("DeviationModel"),
+            _ => return Err(unsupported_type("DeviationModel")),
         };
         let upper_band = moving_constant + (deviation * deviation_multiplier);
         let lower_band = moving_constant - (deviation * deviation_multiplier);
-        (lower_band, moving_constant, upper_band)
+        Ok((lower_band, moving_constant, upper_band))
     }
 
     /// Calculates bands around the McGinley Dynamic.
@@ -319,9 +319,9 @@ let moving_constant = match constant_model_type {
     ///
     /// A tuple containing (lower_band, mcginley_dynamic, upper_band)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns an error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -335,7 +335,7 @@ let moving_constant = match constant_model_type {
     ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier,
     ///         0.0
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((96.17157287525382, 99.0, 101.82842712474618), mcginley_bands);
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
@@ -345,7 +345,7 @@ let moving_constant = match constant_model_type {
     ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         multiplier,
     ///         mcginley_bands.1
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((96.81953334480858, 99.53246533805869, 102.2453973313088), mcginley_bands);
     /// ```
     #[inline]
@@ -354,56 +354,56 @@ let moving_constant = match constant_model_type {
         deviation_model: DeviationModel,
         deviation_multiplier: f64,
         previous_mcginley_dynamic: f64,
-    ) -> (f64, f64, f64) {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<(f64, f64, f64)> {
+        assert_non_empty("prices", prices)?;
 let last_price = prices.last().unwrap();
         let mcginley_dynamic =
-            mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len());
+            mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len())?;
 
         let deviation = match deviation_model {
-            DeviationModel::StandardDeviation => standard_deviation(prices),
+            DeviationModel::StandardDeviation => standard_deviation(prices)?,
             DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mean,
                     aggregate: DeviationAggregate::Mean,
                 },
-            ),
+            )?,
             DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Median,
                     aggregate: DeviationAggregate::Median,
                 },
-            ),
+            )?,
             DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mode,
                     aggregate: DeviationAggregate::Mode,
                 },
-            ),
+            )?,
             DeviationModel::CustomAbsoluteDeviation { config } => {
-                absolute_deviation(prices, config)
+                absolute_deviation(prices, config)?
             }
-            DeviationModel::UlcerIndex => ulcer_index(prices),
-            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
-            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
-            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
-            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::UlcerIndex => ulcer_index(prices)?,
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices)?,
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df)?,
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices)?,
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices)?,
             DeviationModel::EmpiricalQuantileRange {
                 low,
                 high,
                 precision,
             } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
                 prices, precision, low, high,
-            ),
+            )?,
             #[allow(unreachable_patterns)]
-            _ => unsupported_type("DeviationModel"),
+            _ => return Err(unsupported_type("DeviationModel")),
         };
         let upper_band = mcginley_dynamic + (deviation * deviation_multiplier);
         let lower_band = mcginley_dynamic - (deviation * deviation_multiplier);
-        (lower_band, mcginley_dynamic, upper_band)
+        Ok((lower_band, mcginley_dynamic, upper_band))
     }
 
     /// Calculates the Ichimoku Cloud
@@ -421,9 +421,9 @@ let last_price = prices.last().unwrap();
     ///
     /// A tuple containing (leading_span_a, leading_span_b, base_line, conversion_line, lagging_span)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `high.len()` != `low.len()` != `close.len()`
     /// * `conversion_period`, `base_period`, `span_b_period` >
     ///         `high.len()`, `low.len()`, `close.len()`
@@ -459,7 +459,7 @@ let last_price = prices.last().unwrap();
     ///         conversion_period,
     ///         base_period,
     ///         span_b_period
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((102.25, 102.5, 102.5, 102.0, 99.0), ichimoku_cloud);
     /// ```
     pub fn ichimoku_cloud(
@@ -469,28 +469,28 @@ let last_price = prices.last().unwrap();
         conversion_period: usize,
         base_period: usize,
         span_b_period: usize,
-    ) -> (f64, f64, f64, f64, f64) {
+    ) -> crate::Result<(f64, f64, f64, f64, f64)> {
         let length = highs.len();
-        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)])?;
 
         let max_period = conversion_period.max(base_period).max(span_b_period);
-        assert_period(max_period, length);
+        assert_period(max_period, length)?;
 
-        let conversion_line = (max(&highs[length - conversion_period..])
-            + min(&lows[length - conversion_period..]))
+        let conversion_line = (max(&highs[length - conversion_period..])?
+            + min(&lows[length - conversion_period..])?)
             / 2.0;
         let base_line =
-            (max(&highs[length - base_period..]) + min(&lows[length - base_period..])) / 2.0;
+            (max(&highs[length - base_period..])? + min(&lows[length - base_period..])?) / 2.0;
         let leading_span_a = (conversion_line + base_line) / 2.0;
         let leading_span_b =
-            (max(&highs[length - span_b_period..]) + min(&lows[length - span_b_period..])) / 2.0;
-        (
+            (max(&highs[length - span_b_period..])? + min(&lows[length - span_b_period..])?) / 2.0;
+        Ok((
             leading_span_a,
             leading_span_b,
             base_line,
             conversion_line,
             close[length - base_period],
-        )
+        ))
     }
 
     /// Calculates the Donchian Channels for given highs and lows.
@@ -504,9 +504,9 @@ let last_price = prices.last().unwrap();
     ///
     /// A tuple containing (lower_band, middle_band, upper_band)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `highs.len()` != `lows.len()`
     /// * `highs.is_empty()`
     ///
@@ -519,17 +519,17 @@ let last_price = prices.last().unwrap();
     /// let donchian_channels = centaur_technical_indicators::candle_indicators::single::donchian_channels(
     ///     &highs,
     ///     &lows
-    /// );
+    /// ).unwrap();
     ///
     /// assert_eq!((95.0, 101.0 ,107.0), donchian_channels);
     /// ```
     #[inline]
-    pub fn donchian_channels(highs: &[f64], lows: &[f64]) -> (f64, f64, f64) {
-        assert_same_len(&[("highs", highs), ("lows", lows)]);
-        assert_non_empty("highs", highs);
-        let max_price = max(highs);
-        let min_price = min(lows);
-        (min_price, (max_price + min_price) / 2.0, max_price)
+    pub fn donchian_channels(highs: &[f64], lows: &[f64]) -> crate::Result<(f64, f64, f64)> {
+        assert_same_len(&[("highs", highs), ("lows", lows)])?;
+        assert_non_empty("highs", highs)?;
+        let max_price = max(highs)?;
+        let min_price = min(lows)?;
+        Ok((min_price, (max_price + min_price) / 2.0, max_price))
     }
 
     /// Calculates the Keltner Channel.
@@ -547,9 +547,9 @@ let last_price = prices.last().unwrap();
     ///
     /// A tuple containing (lower_channel, middle_line, upper_channel)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `highs.len()` != `lows.len()` != `close.len()`
     /// * `highs.is_empty()`
     ///
@@ -567,7 +567,7 @@ let last_price = prices.last().unwrap();
     ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     2.0
-    /// );
+    /// ).unwrap();
     ///
     /// assert_eq!((86.76777251184836, 100.76777251184836, 114.76777251184836), keltner_channel);
     /// ```
@@ -578,25 +578,25 @@ let last_price = prices.last().unwrap();
         constant_model_type: ConstantModelType,
         atr_constant_model_type: ConstantModelType,
         multiplier: f64,
-    ) -> (f64, f64, f64) {
+    ) -> crate::Result<(f64, f64, f64)> {
         let length = highs.len();
-        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
-        assert_non_empty("highs", highs);
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)])?;
+        assert_non_empty("highs", highs)?;
 
-        let atr = average_true_range(close, highs, lows, atr_constant_model_type);
+        let atr = average_true_range(close, highs, lows, atr_constant_model_type)?;
         let prices: Vec<f64> = (0..length)
             .map(|i| (highs[i] + lows[i] + close[i]) / 3.0)
             .collect();
 
         let mc = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(&prices, MovingAverageType::Simple)
+                moving_average(&prices, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(&prices, MovingAverageType::Smoothed)
+                moving_average(&prices, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(&prices, MovingAverageType::Exponential)
+                moving_average(&prices, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -607,13 +607,13 @@ let last_price = prices.last().unwrap();
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(&prices),
-            ConstantModelType::SimpleMovingMode => mode(&prices),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(&prices)?,
+            ConstantModelType::SimpleMovingMode => mode(&prices)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
         let constant = atr * multiplier;
-        (mc - constant, mc, mc + constant)
+        Ok((mc - constant, mc, mc + constant))
     }
 
     /// Calculates the supertrend indicator
@@ -630,9 +630,9 @@ let last_price = prices.last().unwrap();
     ///
     /// The calculated supertrend value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `high.len()` != `low.len()` != `close.len()`
     /// * `high.is_empty()`
     ///
@@ -649,7 +649,7 @@ let last_price = prices.last().unwrap();
     ///     &close,
     ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     2.0
-    /// );
+    /// ).unwrap();
     ///
     /// assert_eq!(115.0, supertrend);
     /// ```
@@ -659,15 +659,15 @@ let last_price = prices.last().unwrap();
         close: &[f64],
         constant_model_type: ConstantModelType,
         multiplier: f64,
-    ) -> f64 {
+    ) -> crate::Result<f64> {
         let length = highs.len();
-        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
-        assert_non_empty("highs", highs);
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)])?;
+        assert_non_empty("highs", highs)?;
 
-        let atr = average_true_range(close, highs, lows, constant_model_type);
-        let max_high = max(highs);
-        let min_low = min(lows);
-        ((max_high + min_low) / 2.0) + (multiplier * atr)
+        let atr = average_true_range(close, highs, lows, constant_model_type)?;
+        let max_high = max(highs)?;
+        let min_low = min(lows)?;
+        Ok(((max_high + min_low) / 2.0) + (multiplier * atr))
     }
 }
 
