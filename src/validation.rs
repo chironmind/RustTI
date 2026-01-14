@@ -336,7 +336,9 @@ mod tests {
         let result = assert_period(11, 10);
         assert!(result.is_err());
         match result {
-            Err(crate::TechnicalIndicatorError::InvalidPeriod { period, data_len, .. }) => {
+            Err(crate::TechnicalIndicatorError::InvalidPeriod {
+                period, data_len, ..
+            }) => {
                 assert_eq!(period, 11);
                 assert_eq!(data_len, 10);
             }

@@ -36,7 +36,9 @@
 pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
-    use crate::validation::{assert_min_period, assert_non_empty, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::{
+        assert_min_period, assert_non_empty, assert_period, assert_same_len, unsupported_type,
+    };
     use crate::{ConstantModelType, MovingAverageType, Result};
 
     /// Calculates the accumulation distribution
@@ -184,7 +186,12 @@ pub mod single {
         constant_model_type: ConstantModelType,
     ) -> Result<f64> {
         let length = open.len();
-        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)])?;
+        assert_same_len(&[
+            ("open", open),
+            ("high", high),
+            ("low", low),
+            ("close", close),
+        ])?;
         assert_non_empty("open", open)?;
         assert_min_period(4, 4, length)?;
 
@@ -309,7 +316,12 @@ pub mod bulk {
         previous_accumulation_distribution: f64,
     ) -> Result<Vec<f64>> {
         let length = close.len();
-        assert_same_len(&[("high", high), ("low", low), ("close", close), ("volume", volume)])?;
+        assert_same_len(&[
+            ("high", high),
+            ("low", low),
+            ("close", close),
+            ("volume", volume),
+        ])?;
         let mut ads = Vec::with_capacity(length);
         let mut ad = single::accumulation_distribution(
             high[0],
@@ -518,7 +530,12 @@ pub mod bulk {
         period: usize,
     ) -> Result<Vec<f64>> {
         let length = open.len();
-        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)])?;
+        assert_same_len(&[
+            ("open", open),
+            ("high", high),
+            ("low", low),
+            ("close", close),
+        ])?;
         assert_non_empty("open", open)?;
         assert_period(period, length)?;
         if period < 4 {
@@ -911,7 +928,8 @@ mod tests {
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -926,7 +944,8 @@ mod tests {
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -941,7 +960,8 @@ mod tests {
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -956,7 +976,8 @@ mod tests {
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -971,7 +992,8 @@ mod tests {
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -986,7 +1008,8 @@ mod tests {
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1044,7 +1067,8 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1060,7 +1084,8 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1078,7 +1103,8 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1096,7 +1122,8 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1114,7 +1141,8 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             60_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1132,7 +1160,8 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             3_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1148,6 +1177,7 @@ mod tests {
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 }

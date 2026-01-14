@@ -100,7 +100,7 @@ pub mod single {
         difference: f64,
     ) -> crate::Result<(f64, f64, f64)> {
         assert_non_empty("prices", prices)?;
-let moving_constant = match constant_model_type {
+        let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(prices, MovingAverageType::Simple)?
             }
@@ -176,7 +176,7 @@ let moving_constant = match constant_model_type {
         previous_mcginley_dynamic: f64,
     ) -> crate::Result<(f64, f64, f64)> {
         assert_non_empty("prices", prices)?;
-let last_price = prices.last().unwrap();
+        let last_price = prices.last().unwrap();
         let mcginley_dynamic =
             mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len())?;
         let upper_envelope = mcginley_dynamic * (1.0 + (difference / 100.0));
@@ -235,7 +235,7 @@ let last_price = prices.last().unwrap();
         deviation_multiplier: f64,
     ) -> crate::Result<(f64, f64, f64)> {
         assert_non_empty("prices", prices)?;
-let moving_constant = match constant_model_type {
+        let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(prices, MovingAverageType::Simple)?
             }
@@ -356,7 +356,7 @@ let moving_constant = match constant_model_type {
         previous_mcginley_dynamic: f64,
     ) -> crate::Result<(f64, f64, f64)> {
         assert_non_empty("prices", prices)?;
-let last_price = prices.last().unwrap();
+        let last_price = prices.last().unwrap();
         let mcginley_dynamic =
             mcginley_dynamic(*last_price, previous_mcginley_dynamic, prices.len())?;
 
@@ -943,8 +943,12 @@ pub mod bulk {
         let mut mcginley_bands = Vec::with_capacity(length - period + 1);
         let mut prev = previous_mcginley_dynamic;
         for window in prices.windows(period) {
-            let band =
-                single::mcginley_dynamic_bands(window, deviation_model, deviation_multiplier, prev)?;
+            let band = single::mcginley_dynamic_bands(
+                window,
+                deviation_model,
+                deviation_multiplier,
+                prev,
+            )?;
             prev = band.1;
             mcginley_bands.push(band);
         }
@@ -1077,7 +1081,11 @@ pub mod bulk {
     ///     ], donchian_channels);
     /// ```
     #[inline]
-    pub fn donchian_channels(highs: &[f64], lows: &[f64], period: usize) -> crate::Result<Vec<(f64, f64, f64)>> {
+    pub fn donchian_channels(
+        highs: &[f64],
+        lows: &[f64],
+        period: usize,
+    ) -> crate::Result<Vec<(f64, f64, f64)>> {
         assert_same_len(&[("highs", highs), ("lows", lows)])?;
         assert_non_empty("highs", highs)?;
         let length = highs.len();
@@ -1339,7 +1347,8 @@ mod tests {
                 crate::ConstantModelType::ExponentialMovingAverage,
                 3.0,
                 5_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1351,7 +1360,8 @@ mod tests {
             crate::ConstantModelType::ExponentialMovingAverage,
             3.0,
             50_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1580,7 +1590,8 @@ mod tests {
                 crate::DeviationModel::StandardDeviation,
                 2.0,
                 5_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1593,7 +1604,8 @@ mod tests {
             crate::DeviationModel::StandardDeviation,
             2.0,
             50_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1697,7 +1709,8 @@ mod tests {
                 2.0,
                 0.0,
                 5_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1715,7 +1728,8 @@ mod tests {
                 2.0,
                 100.21,
                 5_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1728,7 +1742,8 @@ mod tests {
             2.0,
             100.21,
             50_usize,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -2126,7 +2141,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0,
                 5_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2135,7 +2151,16 @@ mod tests {
         let highs = vec![101.26, 102.57, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 100.55, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::keltner_channel(&highs, &lows, &close, crate::ConstantModelType::ExponentialMovingAverage, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::keltner_channel(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::ExponentialMovingAverage,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2143,7 +2168,16 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 100.55, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::keltner_channel(&highs, &lows, &close, crate::ConstantModelType::ExponentialMovingAverage, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::keltner_channel(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::ExponentialMovingAverage,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2151,7 +2185,16 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::keltner_channel(&highs, &lows, &close, crate::ConstantModelType::ExponentialMovingAverage, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::keltner_channel(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::ExponentialMovingAverage,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2159,7 +2202,16 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 100.55, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::keltner_channel(&highs, &lows, &close, crate::ConstantModelType::ExponentialMovingAverage, crate::ConstantModelType::SimpleMovingAverage, 2.0, 50_usize).is_err());
+        assert!(bulk::keltner_channel(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::ExponentialMovingAverage,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            50_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2167,7 +2219,16 @@ mod tests {
         let highs = Vec::new();
         let lows = Vec::new();
         let close = Vec::new();
-        assert!(bulk::keltner_channel(&highs, &lows, &close, crate::ConstantModelType::ExponentialMovingAverage, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::keltner_channel(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::ExponentialMovingAverage,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2261,7 +2322,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0,
                 5_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2270,7 +2332,15 @@ mod tests {
         let highs = vec![101.26, 102.57, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 100.55, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::supertrend(&highs, &lows, &close, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::supertrend(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2278,7 +2348,15 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 100.55, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::supertrend(&highs, &lows, &close, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::supertrend(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2286,7 +2364,15 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::supertrend(&highs, &lows, &close, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::supertrend(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2294,7 +2380,15 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.94, 101.27, 100.55, 99.01, 100.43, 101.0, 101.76];
-        assert!(bulk::supertrend(&highs, &lows, &close, crate::ConstantModelType::SimpleMovingAverage, 2.0, 50_usize).is_err());
+        assert!(bulk::supertrend(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            50_usize
+        )
+        .is_err());
     }
 
     #[test]
@@ -2302,9 +2396,16 @@ mod tests {
         let highs = Vec::new();
         let lows = Vec::new();
         let close = Vec::new();
-        assert!(bulk::supertrend(&highs, &lows, &close, crate::ConstantModelType::SimpleMovingAverage, 2.0, 5_usize).is_err());
+        assert!(bulk::supertrend(
+            &highs,
+            &lows,
+            &close,
+            crate::ConstantModelType::SimpleMovingAverage,
+            2.0,
+            5_usize
+        )
+        .is_err());
     }
-
 
     // Tests for new deviation models
     #[test]

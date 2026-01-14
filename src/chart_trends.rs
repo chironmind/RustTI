@@ -77,7 +77,11 @@ use crate::validation::{assert_non_empty, assert_period, assert_same_len};
 /// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(107.0, 5)], peaks);
 /// ```
-pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> crate::Result<Vec<(f64, usize)>> {
+pub fn peaks(
+    prices: &[f64],
+    period: usize,
+    closest_neighbor: usize,
+) -> crate::Result<Vec<(f64, usize)>> {
     let length = prices.len();
     assert_period(period, length)?;
 
@@ -160,7 +164,11 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> crate::R
 /// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(95.0, 5)], valleys);
 /// ```
-pub fn valleys(prices: &[f64], period: usize, closest_neighbor: usize) -> crate::Result<Vec<(f64, usize)>> {
+pub fn valleys(
+    prices: &[f64],
+    period: usize,
+    closest_neighbor: usize,
+) -> crate::Result<Vec<(f64, usize)>> {
     let length = prices.len();
     assert_period(period, length)?;
 
@@ -398,7 +406,7 @@ pub fn break_down_trends(
     trend_break_config: TrendBreakConfig,
 ) -> crate::Result<Vec<(usize, usize, f64, f64)>> {
     assert_non_empty("prices", prices)?;
-let mut outliers: Vec<usize> = Vec::new();
+    let mut outliers: Vec<usize> = Vec::new();
     let mut trends: Vec<(usize, usize, f64, f64)> = Vec::new();
     let mut current_slope = 0.0;
     let mut current_intercept = 0.0;
@@ -478,7 +486,10 @@ let mut outliers: Vec<usize> = Vec::new();
 /// - Adjusted R² penalizes small samples; negative raw R² values are clamped to 0.0 here.
 /// - RMSE is unnormalized; if you need scale invariance, normalize externally.
 /// - Durbin–Watson near 2.0 suggests little autocorrelation; < 1 or > 3 signals structural issues.
-fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> crate::Result<(f64, f64, f64)> {
+fn goodness_of_fit(
+    indexed_points: &[(f64, usize)],
+    trend: &(f64, f64),
+) -> crate::Result<(f64, f64, f64)> {
     let n = indexed_points.len();
     if n < 2 {
         return Ok((0.0, 0.0, 2.0)); // Bad fit indicators
@@ -613,13 +624,19 @@ mod tests {
     #[test]
     fn valleys_trend() {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        assert_eq!((0.11500000000000199, 98.635), valley_trend(&lows, 4_usize).unwrap());
+        assert_eq!(
+            (0.11500000000000199, 98.635),
+            valley_trend(&lows, 4_usize).unwrap()
+        );
     }
 
     #[test]
     fn overall_trends() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!((-0.010000000000000852, 100.372), overall_trend(&prices).unwrap());
+        assert_eq!(
+            (-0.010000000000000852, 100.372),
+            overall_trend(&prices).unwrap()
+        );
     }
 
     #[test]

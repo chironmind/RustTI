@@ -464,7 +464,11 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn internal_bar_strength(highs: &[f64], lows: &[f64], close: &[f64]) -> crate::Result<Vec<f64>> {
+    pub fn internal_bar_strength(
+        highs: &[f64],
+        lows: &[f64],
+        close: &[f64],
+    ) -> crate::Result<Vec<f64>> {
         let length = highs.len();
         assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)])?;
         assert_non_empty("highs", highs)?;
@@ -677,7 +681,8 @@ mod tests {
                 &high,
                 &low,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -693,7 +698,8 @@ mod tests {
                 &high,
                 &low,
                 crate::ConstantModelType::SmoothedMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -709,7 +715,8 @@ mod tests {
                 &high,
                 &low,
                 crate::ConstantModelType::ExponentialMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -728,7 +735,8 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -744,7 +752,8 @@ mod tests {
                 &high,
                 &low,
                 crate::ConstantModelType::SimpleMovingMedian
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -760,7 +769,8 @@ mod tests {
                 &high,
                 &low,
                 crate::ConstantModelType::SimpleMovingMode
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -774,7 +784,8 @@ mod tests {
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -787,7 +798,8 @@ mod tests {
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -800,7 +812,8 @@ mod tests {
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -813,7 +826,8 @@ mod tests {
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -830,7 +844,8 @@ mod tests {
                 &low,
                 crate::ConstantModelType::SimpleMovingAverage,
                 period
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -846,7 +861,8 @@ mod tests {
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -861,7 +877,8 @@ mod tests {
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -876,7 +893,8 @@ mod tests {
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -891,7 +909,8 @@ mod tests {
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -906,7 +925,8 @@ mod tests {
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -985,7 +1005,8 @@ mod tests {
                 &previous_close,
                 signal_period,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1005,7 +1026,8 @@ mod tests {
                 &previous_close,
                 signal_period,
                 crate::ConstantModelType::SmoothedMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1025,7 +1047,8 @@ mod tests {
                 &previous_close,
                 signal_period,
                 crate::ConstantModelType::ExponentialMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1048,7 +1071,8 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1068,7 +1092,8 @@ mod tests {
                 &previous_close,
                 signal_period,
                 crate::ConstantModelType::SimpleMovingMedian
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1088,7 +1113,8 @@ mod tests {
                 &previous_close,
                 signal_period,
                 crate::ConstantModelType::SimpleMovingMode
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1102,7 +1128,8 @@ mod tests {
             &previous_close,
             signal_period,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1115,7 +1142,8 @@ mod tests {
             &previous_close,
             signal_period,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 
     #[test]
@@ -1128,6 +1156,7 @@ mod tests {
             &previous_close,
             signal_period,
             crate::ConstantModelType::SimpleMovingMode,
-        ).is_err());
+        )
+        .is_err());
     }
 }

@@ -34,7 +34,10 @@
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
     use crate::basic_indicators::single::mean;
-    use crate::validation::{assert_all_positive, assert_min_period, assert_non_empty, assert_period, assert_positive_usize, unsupported_type};
+    use crate::validation::{
+        assert_all_positive, assert_min_period, assert_non_empty, assert_period,
+        assert_positive_usize, unsupported_type,
+    };
     use crate::MovingAverageType;
 
     /// Calculates the Moving Average
@@ -80,7 +83,10 @@ pub mod single {
     /// assert_eq!(101.11375535459305, smoothed_moving_average);
     /// ```
     #[inline]
-    pub fn moving_average(prices: &[f64], moving_average_type: MovingAverageType) -> crate::Result<f64> {
+    pub fn moving_average(
+        prices: &[f64],
+        moving_average_type: MovingAverageType,
+    ) -> crate::Result<f64> {
         assert_non_empty("prices", prices)?;
         match moving_average_type {
             MovingAverageType::Simple => mean(prices),
@@ -328,14 +334,16 @@ mod tests {
     #[test]
     fn single_exponential_moving_average() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        let exponential_ma = single::moving_average(&prices, crate::MovingAverageType::Exponential).unwrap();
+        let exponential_ma =
+            single::moving_average(&prices, crate::MovingAverageType::Exponential).unwrap();
         assert_eq!(100.32810426540287, exponential_ma);
     }
 
     #[test]
     fn single_smoothed_moving_average() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        let smoothed_ma = single::moving_average(&prices, crate::MovingAverageType::Smoothed).unwrap();
+        let smoothed_ma =
+            single::moving_average(&prices, crate::MovingAverageType::Smoothed).unwrap();
         assert_eq!(100.34228938600666, smoothed_ma);
     }
 
@@ -348,7 +356,8 @@ mod tests {
                 alpha_num: 5.0,
                 alpha_den: 3.0,
             },
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(100.27405995388162, personalised_ma)
     }
 
@@ -376,7 +385,8 @@ mod tests {
     fn bulk_simlpe_moving_average() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 3;
-        let simple_ma = bulk::moving_average(&prices, crate::MovingAverageType::Simple, period).unwrap();
+        let simple_ma =
+            bulk::moving_average(&prices, crate::MovingAverageType::Simple, period).unwrap();
         assert_eq!(
             vec![100.39666666666666, 100.456666666666666, 100.36666666666667],
             simple_ma
@@ -399,7 +409,8 @@ mod tests {
     fn bulk_smoothed_moving_average() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 3;
-        let smoothed_ma = bulk::moving_average(&prices, crate::MovingAverageType::Smoothed, period).unwrap();
+        let smoothed_ma =
+            bulk::moving_average(&prices, crate::MovingAverageType::Smoothed, period).unwrap();
         assert_eq!(
             vec![100.43842105263158, 100.4442105263158, 100.32157894736842],
             smoothed_ma
@@ -417,7 +428,8 @@ mod tests {
                 alpha_den: 3.0,
             },
             period,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(
             vec![100.5125581395349, 100.40279069767443, 100.22441860465118],
             personalised_ma

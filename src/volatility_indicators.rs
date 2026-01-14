@@ -305,7 +305,8 @@ mod tests {
                 period,
                 2.0,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -324,7 +325,8 @@ mod tests {
                 period,
                 2.0,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 

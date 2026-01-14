@@ -611,7 +611,11 @@ pub mod single {
     }
 
     #[inline]
-    fn empirical_quantile_from_distribution(prices: &[f64], precision: f64, q: f64) -> crate::Result<f64> {
+    fn empirical_quantile_from_distribution(
+        prices: &[f64],
+        precision: f64,
+        q: f64,
+    ) -> crate::Result<f64> {
         if !(q > 0.0 && q < 1.0) {
             panic!("quantile ({}) must be in range (0, 1)", q);
         }
@@ -996,7 +1000,11 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn absolute_deviation(prices: &[f64], period: usize, config: AbsDevConfig) -> crate::Result<Vec<f64>> {
+    pub fn absolute_deviation(
+        prices: &[f64],
+        period: usize,
+        config: AbsDevConfig,
+    ) -> crate::Result<Vec<f64>> {
         assert_period(period, prices.len())?;
         prices
             .windows(period)
@@ -1114,7 +1122,11 @@ pub mod bulk {
     /// assert_eq!(3, student_std.len());
     /// ```
     #[inline]
-    pub fn student_t_adjusted_std(prices: &[f64], period: usize, df: f64) -> crate::Result<Vec<f64>> {
+    pub fn student_t_adjusted_std(
+        prices: &[f64],
+        period: usize,
+        df: f64,
+    ) -> crate::Result<Vec<f64>> {
         assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {

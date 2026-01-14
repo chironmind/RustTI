@@ -631,7 +631,11 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn aroon_indicator(highs: &[f64], lows: &[f64], period: usize) -> crate::Result<Vec<(f64, f64, f64)>> {
+    pub fn aroon_indicator(
+        highs: &[f64],
+        lows: &[f64],
+        period: usize,
+    ) -> crate::Result<Vec<(f64, f64, f64)>> {
         let length = highs.len();
         assert_same_len(&[("highs", highs), ("lows", lows)])?;
         assert_period(period, length)?;
@@ -1092,12 +1096,13 @@ pub mod bulk {
     ) -> crate::Result<Vec<f64>> {
         let length = volumes.len();
         if length != prices.len() - 1 {
-            return Err(TechnicalIndicatorError::MismatchedLength { 
+            return Err(TechnicalIndicatorError::MismatchedLength {
                 names: vec![
                     ("volumes".to_string(), length),
-                    ("prices - 1".to_string(), prices.len() - 1)
-                ]
-            }.into());
+                    ("prices - 1".to_string(), prices.len() - 1),
+                ],
+            }
+            .into());
         }
         assert_non_empty("volumes", volumes)?;
         assert_non_empty("prices", prices)?;
@@ -1619,7 +1624,8 @@ mod tests {
                 &close,
                 3_usize,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1651,7 +1657,8 @@ mod tests {
                 &close,
                 3_usize,
                 crate::ConstantModelType::SmoothedMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1683,7 +1690,8 @@ mod tests {
                 &close,
                 3_usize,
                 crate::ConstantModelType::ExponentialMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1723,7 +1731,8 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1760,7 +1769,8 @@ mod tests {
                 &close,
                 3_usize,
                 crate::ConstantModelType::SimpleMovingMedian
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1792,7 +1802,8 @@ mod tests {
                 &close,
                 3_usize,
                 crate::ConstantModelType::SimpleMovingMode
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1980,7 +1991,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 5_usize,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1994,7 +2006,8 @@ mod tests {
                 crate::ConstantModelType::SmoothedMovingAverage,
                 5_usize,
                 crate::ConstantModelType::SmoothedMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2008,7 +2021,8 @@ mod tests {
                 crate::ConstantModelType::ExponentialMovingAverage,
                 5_usize,
                 crate::ConstantModelType::ExponentialMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2028,7 +2042,8 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2042,7 +2057,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMedian,
                 5_usize,
                 crate::ConstantModelType::SimpleMovingMedian
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2056,7 +2072,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMedian,
                 5_usize,
                 crate::ConstantModelType::SimpleMovingMode
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2097,7 +2114,8 @@ mod tests {
                 5_usize,
                 crate::ConstantModelType::ExponentialMovingAverage,
                 3_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 

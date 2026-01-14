@@ -91,7 +91,10 @@ pub mod single {
         deviation_model: DeviationModel,
     ) -> crate::Result<f64> {
         let length = prices_asset_a.len();
-        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)])?;
+        assert_same_len(&[
+            ("prices_asset_a", prices_asset_a),
+            ("prices_asset_b", prices_asset_b),
+        ])?;
         assert_non_empty(&"prices_asset_a", prices_asset_a)?;
 
         let asset_a_average = match constant_model_type {
@@ -306,7 +309,10 @@ pub mod bulk {
         period: usize,
     ) -> crate::Result<Vec<f64>> {
         let length = prices_asset_a.len();
-        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)])?;
+        assert_same_len(&[
+            ("prices_asset_a", prices_asset_a),
+            ("prices_asset_b", prices_asset_b),
+        ])?;
         assert_period(period, length)?;
 
         (0..=length - period)
