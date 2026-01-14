@@ -1192,8 +1192,6 @@ pub mod bulk {
         }
         Ok(result)
     }
-        result
-    }
 
     /// Empirical quantile range `q_high - q_low` computed from the price histogram.
     ///
