@@ -37,7 +37,7 @@ pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
     use crate::validation::{assert_min_period, assert_non_empty, assert_period, assert_same_len, unsupported_type};
-    use crate::{ConstantModelType, MovingAverageType};
+    use crate::{ConstantModelType, MovingAverageType, Result};
 
     /// Calculates the accumulation distribution
     ///
@@ -150,9 +150,9 @@ pub mod single {
     /// * `close` - Slice of closing prices
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `open.len()` != `high.len()` != `low,len()` != `close.len()`
     /// * `open.is_empty()`
     /// * `open.len()` < 4
@@ -172,7 +172,7 @@ pub mod single {
     ///         &low,
     ///         &close,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(0.10185185185185186, relative_vigor_index);
     /// ```
@@ -182,11 +182,11 @@ pub mod single {
         low: &[f64],
         close: &[f64],
         constant_model_type: ConstantModelType,
-    ) -> f64 {
+    ) -> Result<f64> {
         let length = open.len();
-        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)]);
-        assert_non_empty("open", open);
-        assert_min_period(4, 4, length);
+        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)])?;
+        assert_non_empty("open", open)?;
+        assert_min_period(4, 4, length)?;
 
         let mut close_open_diff = Vec::with_capacity(length);
         let mut high_low_diff = Vec::with_capacity(length);
@@ -218,16 +218,16 @@ pub mod single {
 
         let (smoothed_numerator, smoothed_denominator) = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => (
-                moving_average(&numerator, MovingAverageType::Simple),
-                moving_average(&denominator, MovingAverageType::Simple),
+                moving_average(&numerator, MovingAverageType::Simple)?,
+                moving_average(&denominator, MovingAverageType::Simple)?,
             ),
             ConstantModelType::SmoothedMovingAverage => (
-                moving_average(&numerator, MovingAverageType::Smoothed),
-                moving_average(&denominator, MovingAverageType::Smoothed),
+                moving_average(&numerator, MovingAverageType::Smoothed)?,
+                moving_average(&denominator, MovingAverageType::Smoothed)?,
             ),
             ConstantModelType::ExponentialMovingAverage => (
-                moving_average(&numerator, MovingAverageType::Exponential),
-                moving_average(&denominator, MovingAverageType::Exponential),
+                moving_average(&numerator, MovingAverageType::Exponential)?,
+                moving_average(&denominator, MovingAverageType::Exponential)?,
             ),
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -239,21 +239,21 @@ pub mod single {
                         alpha_num,
                         alpha_den,
                     },
-                ),
+                )?,
                 moving_average(
                     &denominator,
                     MovingAverageType::Personalised {
                         alpha_num,
                         alpha_den,
                     },
-                ),
+                )?,
             ),
-            ConstantModelType::SimpleMovingMedian => (median(&numerator), median(&denominator)),
-            ConstantModelType::SimpleMovingMode => (mode(&numerator), mode(&denominator)),
-            _ => unsupported_type("ConstantModelType"),
+            ConstantModelType::SimpleMovingMedian => (median(&numerator)?, median(&denominator)?),
+            ConstantModelType::SimpleMovingMode => (mode(&numerator)?, mode(&denominator)?),
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
-        smoothed_numerator / smoothed_denominator
+        Ok(smoothed_numerator / smoothed_denominator)
     }
 }
 
@@ -261,7 +261,7 @@ pub mod single {
 pub mod bulk {
     use crate::strength_indicators::single;
     use crate::validation::{assert_non_empty, assert_period, assert_same_len};
-    use crate::ConstantModelType;
+    use crate::{ConstantModelType, Result};
 
     /// Calculates the accumulation distribution
     ///
@@ -277,9 +277,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `high.len()` != `low.len()` != `close.len()` != `volumes.len()`
+    /// Returns an error if `high.len()` != `low.len()` != `close.len()` != `volumes.len()`
     ///
     /// # Examples
     ///
@@ -297,7 +297,7 @@ pub mod bulk {
     ///         &close,
     ///         &volume,
     ///         previous
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(vec![500.0, 0.0, 240.0], accumulation_distribution);
     /// ```
     #[inline]
@@ -307,9 +307,9 @@ pub mod bulk {
         close: &[f64],
         volume: &[f64],
         previous_accumulation_distribution: f64,
-    ) -> Vec<f64> {
+    ) -> Result<Vec<f64>> {
         let length = close.len();
-        assert_same_len(&[("high", high), ("low", low), ("close", close), ("volume", volume)]);
+        assert_same_len(&[("high", high), ("low", low), ("close", close), ("volume", volume)])?;
         let mut ads = Vec::with_capacity(length);
         let mut ad = single::accumulation_distribution(
             high[0],
@@ -323,7 +323,7 @@ pub mod bulk {
             ad = single::accumulation_distribution(high[i], low[i], close[i], volume[i], ad);
             ads.push(ad);
         }
-        ads
+        Ok(ads)
     }
 
     /// Calculates the Positive Volume Index (PVI)
@@ -338,9 +338,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `close.len()` != `volume.len()`
     /// * `close.is_empty()`
     ///
@@ -355,7 +355,7 @@ pub mod bulk {
     ///         &close,
     ///         &volume,
     ///         0.0
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(vec![0.1725, 0.177, 0.177, 0.177], positive_volume_index);
     ///
@@ -367,7 +367,7 @@ pub mod bulk {
     ///         &next_close,
     ///         &next_volume,
     ///         *positive_volume_index.last().unwrap()
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(vec![0.177, 0.16684426229508195, 0.1740983606557377], positive_volume_index);
     /// ```
@@ -376,11 +376,11 @@ pub mod bulk {
         close: &[f64],
         volume: &[f64],
         previous_positive_volume_index: f64,
-    ) -> Vec<f64> {
+    ) -> Result<Vec<f64>> {
         let length = close.len();
-        assert_same_len(&[("close", close), ("volume", volume)]);
-        assert_non_empty("close", close);
-let mut pvis = Vec::with_capacity(length - 1);
+        assert_same_len(&[("close", close), ("volume", volume)])?;
+        assert_non_empty("close", close)?;
+        let mut pvis = Vec::with_capacity(length - 1);
         let mut prev = previous_positive_volume_index;
 
         for i in 1..length {
@@ -389,7 +389,7 @@ let mut pvis = Vec::with_capacity(length - 1);
             }
             pvis.push(prev);
         }
-        pvis
+        Ok(pvis)
     }
 
     /// Calculates the Negative Volume Index (NVI)
@@ -404,9 +404,9 @@ let mut pvis = Vec::with_capacity(length - 1);
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `close.len()` != `volume.len()`
     /// * `close.is_empty()`
     ///
@@ -421,7 +421,7 @@ let mut pvis = Vec::with_capacity(length - 1);
     ///         &close,
     ///         &volume,
     ///         0.0
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(
     ///     vec![0.0, 0.0, 0.017236426314277506, 0.017236426314277506],
@@ -437,7 +437,7 @@ let mut pvis = Vec::with_capacity(length - 1);
     ///         &next_close,
     ///         &next_volume,
     ///         *negative_volume_index.last().unwrap()
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(
     ///     vec![0.016822752082734847, 0.016822752082734847, 0.016822752082734847],
@@ -449,11 +449,11 @@ let mut pvis = Vec::with_capacity(length - 1);
         close: &[f64],
         volume: &[f64],
         previous_negative_volume_index: f64,
-    ) -> Vec<f64> {
+    ) -> Result<Vec<f64>> {
         let length = close.len();
-        assert_same_len(&[("close", close), ("volume", volume)]);
-        assert_non_empty("close", close);
-let mut nvis = Vec::with_capacity(length - 1);
+        assert_same_len(&[("close", close), ("volume", volume)])?;
+        assert_non_empty("close", close)?;
+        let mut nvis = Vec::with_capacity(length - 1);
         let mut prev = previous_negative_volume_index;
 
         for i in 1..length {
@@ -462,7 +462,7 @@ let mut nvis = Vec::with_capacity(length - 1);
             }
             nvis.push(prev);
         }
-        nvis
+        Ok(nvis)
     }
 
     /// Calculates the Relative Vigor Index (RVI)
@@ -480,9 +480,9 @@ let mut nvis = Vec::with_capacity(length - 1);
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `open.len()` != `high.len()` != `low.len()` != `close.len()`
     /// * `open.is_empty()`
     /// * `period` > lengths
@@ -504,7 +504,7 @@ let mut nvis = Vec::with_capacity(length - 1);
     ///     &close,
     ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     period
-    /// );
+    /// ).unwrap();
     ///
     /// assert_eq!(vec![0.10185185185185186, -0.06611570247933886, -0.17037037037037037], relative_vigor_index);
     /// ```
@@ -516,14 +516,18 @@ let mut nvis = Vec::with_capacity(length - 1);
         close: &[f64],
         constant_model_type: ConstantModelType,
         period: usize,
-    ) -> Vec<f64> {
+    ) -> Result<Vec<f64>> {
         let length = open.len();
-        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)]);
-        assert_non_empty("open", open);
-        assert_period(period, length);
+        assert_same_len(&[("open", open), ("high", high), ("low", low), ("close", close)])?;
+        assert_non_empty("open", open)?;
+        assert_period(period, length)?;
         if period < 4 {
-            panic!("Period ({}) needs to be greater or equal to 4", period)
-        };
+            return Err(crate::TechnicalIndicatorError::InvalidPeriod {
+                name: "period".to_string(),
+                value: period,
+                constraint: "needs to be greater or equal to 4".to_string(),
+            });
+        }
 
         let loop_max = length - period + 1;
         let mut rvis = Vec::with_capacity(loop_max);
@@ -534,9 +538,9 @@ let mut nvis = Vec::with_capacity(length - 1);
                 &low[i..i + period],
                 &close[i..i + period],
                 constant_model_type,
-            ));
+            )?);
         }
-        rvis
+        Ok(rvis)
     }
 }
 
@@ -568,7 +572,7 @@ mod tests {
         let volume = vec![268.0, 319.0];
         assert_eq!(
             vec![-38.28571428571309, 65.05231388329526],
-            bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0)
+            bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0).unwrap()
         );
     }
 
@@ -580,48 +584,44 @@ mod tests {
         let volume = vec![268.0, 319.0];
         assert_eq!(
             vec![0.6342857142869107, 103.97231388329524],
-            bulk::accumulation_distribution(&highs, &lows, &close, &volume, 38.92)
+            bulk::accumulation_distribution(&highs, &lows, &close, &volume, 38.92).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_accumulation_distribution_panic_high_length() {
         let highs = vec![100.53];
         let lows = vec![99.62, 99.97];
         let close = vec![100.01, 100.44];
         let volume = vec![268.0, 319.0];
-        bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0);
+        assert!(bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_accumulation_distribution_panic_low_length() {
         let highs = vec![100.53, 100.68];
         let lows = vec![99.62];
         let close = vec![100.01, 100.44];
         let volume = vec![268.0, 319.0];
-        bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0);
+        assert!(bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_accumulation_distribution_panic_close_length() {
         let highs = vec![100.53, 100.68];
         let lows = vec![99.62, 99.97];
         let close = vec![100.01];
         let volume = vec![268.0, 319.0];
-        bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0);
+        assert!(bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_accumulation_distribution_panic_volume_length() {
         let highs = vec![100.53, 100.68];
         let lows = vec![99.62, 99.97];
         let close = vec![100.01, 100.44];
         let volume = vec![268.0];
-        bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0);
+        assert!(bulk::accumulation_distribution(&highs, &lows, &close, &volume, 0.0).is_err());
     }
 
     #[test]
@@ -650,7 +650,7 @@ mod tests {
                 -0.011460009511748427,
                 -0.011460009511748427
             ],
-            bulk::positive_volume_index(&close, &volume, 0.0)
+            bulk::positive_volume_index(&close, &volume, 0.0).unwrap()
         );
     }
 
@@ -665,7 +665,7 @@ mod tests {
                 -0.011593533125987359,
                 -0.011644180014146955
             ],
-            bulk::positive_volume_index(&close, &volume, -0.011460009511748427)
+            bulk::positive_volume_index(&close, &volume, -0.011460009511748427).unwrap()
         );
     }
 
@@ -679,7 +679,7 @@ mod tests {
                 -0.011460009511748427,
                 -0.011579155668981706
             ],
-            bulk::positive_volume_index(&close, &volume, 0.0)
+            bulk::positive_volume_index(&close, &volume, 0.0).unwrap()
         );
     }
 
@@ -689,24 +689,22 @@ mod tests {
         let volume = vec![1000.0, 900.0, 800.0, 700.0];
         assert_eq!(
             vec![0.0, 0.0, 0.0],
-            bulk::positive_volume_index(&close, &volume, 0.0)
+            bulk::positive_volume_index(&close, &volume, 0.0).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_positive_volume_index_panic_length() {
         let close = vec![100.14, 98.98, 100.1];
         let volume = vec![1000.0, 900.0, 800.0, 700.0];
-        bulk::positive_volume_index(&close, &volume, 0.0);
+        assert!(bulk::positive_volume_index(&close, &volume, 0.0).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_positive_volume_index_panic_empty() {
         let close = Vec::new();
         let volume = Vec::new();
-        bulk::positive_volume_index(&close, &volume, 0.0);
+        assert!(bulk::positive_volume_index(&close, &volume, 0.0).is_err());
     }
 
     #[test]
@@ -715,7 +713,7 @@ mod tests {
         let volume = vec![1000.0, 1200.0, 1300.0, 1100.0];
         assert_eq!(
             vec![0.0, 0.0, 0.010504780356171802],
-            bulk::negative_volume_index(&close, &volume, 0.0)
+            bulk::negative_volume_index(&close, &volume, 0.0).unwrap()
         );
     }
 
@@ -730,7 +728,7 @@ mod tests {
                 0.010462744420372797,
                 0.010462744420372797
             ],
-            bulk::negative_volume_index(&close, &volume, 0.010504780356171802)
+            bulk::negative_volume_index(&close, &volume, 0.010504780356171802).unwrap()
         );
     }
 
@@ -740,7 +738,7 @@ mod tests {
         let volume = vec![1000.0, 1200.0, 1300.0, 1400.0];
         assert_eq!(
             vec![0.0, 0.0, 0.0],
-            bulk::negative_volume_index(&close, &volume, 0.0)
+            bulk::negative_volume_index(&close, &volume, 0.0).unwrap()
         );
     }
 
@@ -754,24 +752,22 @@ mod tests {
                 -0.011460009511748427,
                 -0.011579155668981706
             ],
-            bulk::negative_volume_index(&close, &volume, 0.0)
+            bulk::negative_volume_index(&close, &volume, 0.0).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_negative_volume_index_panic_length() {
         let close = vec![100.14, 98.98, 100.1];
         let volume = vec![1000.0, 900.0, 800.0, 700.0];
-        bulk::negative_volume_index(&close, &volume, 0.0);
+        assert!(bulk::negative_volume_index(&close, &volume, 0.0).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_negative_volume_index_panic_empty() {
         let close = Vec::new();
         let volume = Vec::new();
-        bulk::negative_volume_index(&close, &volume, 0.0);
+        assert!(bulk::negative_volume_index(&close, &volume, 0.0).is_err());
     }
 
     #[test]
@@ -904,99 +900,93 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_relative_vigor_index_panic_length_open() {
         let open = vec![100.73, 99.62, 99.82];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 99.07, 100.1];
         let close = vec![100.55, 99.01, 100.43, 101.0];
-        single::relative_vigor_index(
+        assert!(single::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_relative_vigor_index_panic_length_high() {
         let open = vec![100.73, 99.62, 99.82, 100.38];
         let high = vec![102.32, 100.69, 100.83];
         let low = vec![100.14, 98.98, 99.07, 100.1];
         let close = vec![100.55, 99.01, 100.43, 101.0];
-        single::relative_vigor_index(
+        assert!(single::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_relative_vigor_index_panic_length_low() {
         let open = vec![100.73, 99.62, 99.82, 100.38];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 100.1];
         let close = vec![100.55, 99.01, 100.43, 101.0];
-        single::relative_vigor_index(
+        assert!(single::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_relative_vigor_index_panic_length_close() {
         let open = vec![100.73, 99.62, 99.82, 100.38];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 99.07, 100.1];
         let close = vec![100.55, 99.01, 100.40];
-        single::relative_vigor_index(
+        assert!(single::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_relative_vigor_index_panic_length_overall() {
         let open = vec![100.73, 99.62, 99.82];
         let high = vec![102.32, 100.69, 100.83];
         let low = vec![100.14, 98.98, 99.07];
         let close = vec![100.55, 99.01, 100.43];
-        single::relative_vigor_index(
+        assert!(single::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_relative_vigor_index_panic_empty() {
         let open = Vec::new();
         let high = Vec::new();
         let low = Vec::new();
         let close = Vec::new();
-        single::relative_vigor_index(
+        assert!(single::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
-        );
+        ).is_err());
     }
 
     #[test]
@@ -1040,7 +1030,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_length_open() {
         let open = vec![100.73, 99.62, 99.82, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
@@ -1048,35 +1037,33 @@ mod tests {
         ];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76, 102.03, 102.35, 101.51];
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_length_high() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![102.32, 100.69, 100.83, 102.01, 102.75, 103.04, 102.94];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76, 102.03, 102.35, 101.51];
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_length_low() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
@@ -1084,18 +1071,17 @@ mod tests {
         ];
         let low = vec![18.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76, 102.03, 102.35, 101.51];
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_length_close() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
@@ -1103,18 +1089,17 @@ mod tests {
         ];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
         let close = vec![100.55, 99.01, 100.43, 101.76, 102.03, 102.35, 101.51];
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_period_high() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
@@ -1122,18 +1107,17 @@ mod tests {
         ];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76, 102.03, 102.35, 101.51];
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             60_usize,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_period_low() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
@@ -1141,30 +1125,29 @@ mod tests {
         ];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76, 102.03, 102.35, 101.51];
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             3_usize,
-        );
+        ).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_relative_vigor_index_panic_empty() {
         let open = Vec::new();
         let high = Vec::new();
         let low = Vec::new();
         let close = Vec::new();
-        bulk::relative_vigor_index(
+        assert!(bulk::relative_vigor_index(
             &open,
             &high,
             &low,
             &close,
             crate::ConstantModelType::SimpleMovingAverage,
             6_usize,
-        );
+        ).is_err());
     }
 }
