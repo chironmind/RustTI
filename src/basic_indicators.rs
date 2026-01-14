@@ -611,14 +611,14 @@ pub mod single {
     }
 
     #[inline]
-    fn empirical_quantile_from_distribution(prices: &[f64], precision: f64, q: f64) -> f64 {
+    fn empirical_quantile_from_distribution(prices: &[f64], precision: f64, q: f64) -> crate::Result<f64> {
         if !(q > 0.0 && q < 1.0) {
             panic!("quantile ({}) must be in range (0, 1)", q);
         }
-        let hist = price_distribution(prices, precision);
+        let hist = price_distribution(prices, precision)?;
         let n: usize = hist.iter().map(|(_, c)| *c).sum();
         if n == 0 {
-            return f64::NAN;
+            return Ok(f64::NAN);
         }
         // Rank using (n - 1) interpolation baseline
         let target = q * (n.saturating_sub(1)) as f64;
@@ -639,14 +639,14 @@ pub mod single {
                 };
                 if i + 1 < hist.len() {
                     let (next_price, _) = hist[i + 1];
-                    return price + within.clamp(0.0, 1.0) * (next_price - price);
+                    return Ok(price + within.clamp(0.0, 1.0) * (next_price - price));
                 } else {
-                    return *price;
+                    return Ok(*price);
                 }
             }
         }
         // Fallback (shouldn’t happen): return last price
-        hist.last().map(|(p, _)| *p).unwrap_or(f64::NAN)
+        Ok(hist.last().map(|(p, _)| *p).unwrap_or(f64::NAN))
     }
 
     /// Computes an empirical quantile from the histogram produced by `price_distribution`,
