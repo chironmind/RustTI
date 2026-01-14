@@ -43,11 +43,9 @@ use crate::validation::{assert_non_empty, assert_period, assert_same_len};
 ///
 /// A vector of tuples, each containing (peak_value, peak_index)
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if:
-/// * `period` == 0
-/// * `period` > `prices.len()`
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
 ///
 /// # Examples
 ///
@@ -55,33 +53,33 @@ use crate::validation::{assert_non_empty, assert_period, assert_same_len};
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0];
 /// let period: usize = 3;
 /// let closest_neighbor: usize = 1;
-/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(107.0, 2)], peaks);
 ///
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 109.0];
 /// let period: usize = 3;
-/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(107.0, 2), (109.0, 5)], peaks);
 ///
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 109.0];
 /// let period: usize = 6;
-/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(109.0, 5)], peaks);
 ///
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 107.0];
 /// let period: usize = 3;
-/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(107.0, 2), (107.0, 5)], peaks);
 ///
 /// // If there are 2 peaks it will take the most recent one
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 107.0];
 /// let period: usize = 6;
-/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor);
+/// let peaks = centaur_technical_indicators::chart_trends::peaks(&highs, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(107.0, 5)], peaks);
 /// ```
-pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64, usize)> {
+pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> crate::Result<Vec<(f64, usize)>> {
     let length = prices.len();
-    assert_period(period, length);
+    assert_period(period, length)?;
 
     let mut peaks: Vec<(f64, usize)> = Vec::new();
     let mut last_peak_idx: usize = 0;
@@ -89,7 +87,7 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
 
     for i in 0..=length - period {
         let window = &prices[i..i + period];
-        let peak = max(window);
+        let peak = max(window)?;
         let local_idx = window.iter().rposition(|&x| x == peak).unwrap();
         let idx = i + local_idx;
 
@@ -114,7 +112,7 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
             last_peak = peak;
         }
     }
-    peaks
+    Ok(peaks)
 }
 
 /// Calculates all valleys for a given period.
@@ -129,11 +127,9 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
 ///
 /// A vector of tuples, each containing (valley_value, valley_index)
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if:
-/// * `period` == 0
-/// * `period` > `prices.len()`
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
 ///
 /// # Examples
 ///
@@ -141,32 +137,32 @@ pub fn peaks(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0];
 /// let period: usize = 3;
 /// let closest_neighbor: usize = 1;
-/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(95.0, 2)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 93.0];
 /// let period: usize = 3;
-/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(95.0, 2), (93.0, 5)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 93.0];
 /// let period: usize = 6;
-/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(93.0, 5)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 95.0];
 /// let period: usize = 3;
-/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(95.0, 2), (95.0, 5)], valleys);
 ///
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 95.0];
 /// let period: usize = 6;
-/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor);
+/// let valleys = centaur_technical_indicators::chart_trends::valleys(&lows, period, closest_neighbor).unwrap();
 /// assert_eq!(vec![(95.0, 5)], valleys);
 /// ```
-pub fn valleys(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f64, usize)> {
+pub fn valleys(prices: &[f64], period: usize, closest_neighbor: usize) -> crate::Result<Vec<(f64, usize)>> {
     let length = prices.len();
-    assert_period(period, length);
+    assert_period(period, length)?;
 
     let mut valleys: Vec<(f64, usize)> = Vec::new();
     let mut last_valley_idx: usize = 0;
@@ -174,7 +170,7 @@ pub fn valleys(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f
 
     for i in 0..=length - period {
         let window = &prices[i..i + period];
-        let valley = min(window);
+        let valley = min(window)?;
         let local_idx = window.iter().rposition(|&x| x == valley).unwrap();
         let idx = i + local_idx;
 
@@ -199,7 +195,7 @@ pub fn valleys(prices: &[f64], period: usize, closest_neighbor: usize) -> Vec<(f
             last_valley = valley;
         }
     }
-    valleys
+    Ok(valleys)
 }
 
 /// OLS simple linear regression function
@@ -230,18 +226,22 @@ fn get_trend_line(p: &[(f64, usize)]) -> (f64, f64) {
 ///
 /// A tuple containing (slope, intercept) of the trend line
 ///
+/// # Errors
+///
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
+///
 /// # Examples
 ///
 /// ```rust
 /// let highs = vec![103.0, 102.0, 107.0, 104.0, 100.0, 109.0];
 /// let period: usize = 3;
-/// let peak_trend = centaur_technical_indicators::chart_trends::peak_trend(&highs, period);
+/// let peak_trend = centaur_technical_indicators::chart_trends::peak_trend(&highs, period).unwrap();
 /// assert_eq!((0.6666666666666666, 105.66666666666667), peak_trend);
 /// ```
 #[inline]
-pub fn peak_trend(prices: &[f64], period: usize) -> (f64, f64) {
-    let peaks = peaks(prices, period, 1);
-    get_trend_line(&peaks)
+pub fn peak_trend(prices: &[f64], period: usize) -> crate::Result<(f64, f64)> {
+    let peaks = peaks(prices, period, 1)?;
+    Ok(get_trend_line(&peaks))
 }
 
 /// Calculates the slope and intercept of the trend line fitted to valleys.
@@ -255,18 +255,22 @@ pub fn peak_trend(prices: &[f64], period: usize) -> (f64, f64) {
 ///
 /// A tuple containing (slope, intercept) of the trend line
 ///
+/// # Errors
+///
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
+///
 /// # Examples
 ///
 /// ```rust
 /// let lows = vec![98.0, 101.0, 95.0, 100.0, 97.0, 93.0];
 /// let period: usize = 3;
-/// let valley_trend = centaur_technical_indicators::chart_trends::valley_trend(&lows, period);
+/// let valley_trend = centaur_technical_indicators::chart_trends::valley_trend(&lows, period).unwrap();
 /// assert_eq!((-0.6666666666666666, 96.33333333333333), valley_trend);
 /// ```
 #[inline]
-pub fn valley_trend(prices: &[f64], period: usize) -> (f64, f64) {
-    let valleys = valleys(prices, period, 1);
-    get_trend_line(&valleys)
+pub fn valley_trend(prices: &[f64], period: usize) -> crate::Result<(f64, f64)> {
+    let valleys = valleys(prices, period, 1)?;
+    Ok(get_trend_line(&valleys))
 }
 
 /// Calculates the slope and intercept of the trend line fitted to all prices.
@@ -279,18 +283,23 @@ pub fn valley_trend(prices: &[f64], period: usize) -> (f64, f64) {
 ///
 /// A tuple containing (slope, intercept) of the trend line
 ///
+/// # Errors
+///
+/// Returns `TechnicalIndicatorError::EmptyData` if `prices` is empty
+///
 /// # Examples
 ///
 /// ```rust
 /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-/// let overall_trend = centaur_technical_indicators::chart_trends::overall_trend(&prices);
+/// let overall_trend = centaur_technical_indicators::chart_trends::overall_trend(&prices).unwrap();
 /// assert_eq!((-0.1, 101.4), overall_trend);
 /// ```
 #[inline]
-pub fn overall_trend(prices: &[f64]) -> (f64, f64) {
+pub fn overall_trend(prices: &[f64]) -> crate::Result<(f64, f64)> {
+    assert_non_empty("prices", prices)?;
     let indexed_prices: Vec<(f64, usize)> =
         prices.iter().enumerate().map(|(i, &y)| (y, i)).collect();
-    get_trend_line(&indexed_prices)
+    Ok(get_trend_line(&indexed_prices))
 }
 
 /// Configuration for trend break detection.
@@ -348,9 +357,9 @@ impl Default for TrendBreakConfig {
 /// * `prices` - Slice of prices
 /// * `trend_break_config` - Configuration thresholds (see [`TrendBreakConfig`])
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if `prices.is_empty()`
+/// Returns `TechnicalIndicatorError::EmptyData` if `prices` is empty
 ///
 /// # Examples
 ///
@@ -374,7 +383,7 @@ impl Default for TrendBreakConfig {
 /// let trend_break_down = centaur_technical_indicators::chart_trends::break_down_trends(
 ///     &prices,
 ///     trend_break_config
-/// );
+/// ).unwrap();
 ///
 /// assert_eq!(
 ///     vec![
@@ -387,8 +396,8 @@ impl Default for TrendBreakConfig {
 pub fn break_down_trends(
     prices: &[f64],
     trend_break_config: TrendBreakConfig,
-) -> Vec<(usize, usize, f64, f64)> {
-    assert_non_empty("prices", prices);
+) -> crate::Result<Vec<(usize, usize, f64, f64)>> {
+    assert_non_empty("prices", prices)?;
 let mut outliers: Vec<usize> = Vec::new();
     let mut trends: Vec<(usize, usize, f64, f64)> = Vec::new();
     let mut current_slope = 0.0;
@@ -407,7 +416,7 @@ let mut outliers: Vec<usize> = Vec::new();
         if index > end_index {
             let current_trend = get_trend_line(&indexed_points);
             let (adjusted_r_squared, rmse, durbin_watson) =
-                goodness_of_fit(&indexed_points, &current_trend);
+                goodness_of_fit(&indexed_points, &current_trend)?;
 
             let soft_break = (adjusted_r_squared < trend_break_config.soft_adj_r_squared_minimum)
                 && (rmse > trend_break_config.soft_rmse_multiplier * previous_rmse)
@@ -434,7 +443,7 @@ let mut outliers: Vec<usize> = Vec::new();
                 current_intercept = current_trend.1;
                 // if list bigger than 2
                 if indexed_points.len() > 2 {
-                    (_, previous_rmse, _) = goodness_of_fit(&indexed_points, &current_trend);
+                    (_, previous_rmse, _) = goodness_of_fit(&indexed_points, &current_trend)?;
                 } else {
                     previous_rmse = f64::MAX;
                 };
@@ -448,7 +457,7 @@ let mut outliers: Vec<usize> = Vec::new();
         end_index = index;
     }
     trends.push((start_index, end_index, current_slope, current_intercept));
-    trends
+    Ok(trends)
 }
 
 /// Computes adjusted R², RMSE, and Durbin–Watson statistic for an OLS fit.
@@ -460,15 +469,19 @@ let mut outliers: Vec<usize> = Vec::new();
 /// # Returns
 /// `(adjusted_r_squared, rmse, durbin_watson)`
 ///
+/// # Errors
+///
+/// Returns error if `mean` fails (e.g., empty data)
+///
 /// # Notes
 /// - For `n < 2` returns `(0.0, 0.0, 2.0)` (neutral DW).
 /// - Adjusted R² penalizes small samples; negative raw R² values are clamped to 0.0 here.
 /// - RMSE is unnormalized; if you need scale invariance, normalize externally.
 /// - Durbin–Watson near 2.0 suggests little autocorrelation; < 1 or > 3 signals structural issues.
-fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64, f64, f64) {
+fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> crate::Result<(f64, f64, f64)> {
     let n = indexed_points.len();
     if n < 2 {
-        return (0.0, 0.0, 2.0); // Bad fit indicators
+        return Ok((0.0, 0.0, 2.0)); // Bad fit indicators
     }
 
     let trend_line: Vec<f64> = indexed_points
@@ -477,7 +490,7 @@ fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64,
         .collect();
     let observed_prices: Vec<f64> = indexed_points.iter().map(|&(y, _)| y).collect();
 
-    let observed_mean = mean(&observed_prices);
+    let observed_mean = mean(&observed_prices)?;
 
     let (sum_sq_residuals, total_squares) = (0..n).fold((0.0, 0.0), |(ssr, tss), i| {
         let resid = observed_prices[i] - trend_line[i];
@@ -519,7 +532,7 @@ fn goodness_of_fit(indexed_points: &[(f64, usize)], trend: &(f64, f64)) -> (f64,
     // RMSE (root mean square error) - more interpretable than standard error
     let rmse = (sum_sq_residuals / n as f64).sqrt();
 
-    (adjusted_r_squared, rmse, durbin_watson)
+    Ok((adjusted_r_squared, rmse, durbin_watson))
 }
 
 #[cfg(test)]
@@ -529,7 +542,7 @@ mod tests {
     #[test]
     fn peaks_single_peak() {
         let highs = vec![101.26, 102.57, 102.32, 100.69];
-        assert_eq!(vec![(102.57, 1)], peaks(&highs, 4_usize, 1usize));
+        assert_eq!(vec![(102.57, 1)], peaks(&highs, 4_usize, 1usize).unwrap());
     }
 
     #[test]
@@ -537,7 +550,7 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         assert_eq!(
             vec![(102.57, 1), (102.01, 6)],
-            peaks(&highs, 4_usize, 1usize)
+            peaks(&highs, 4_usize, 1usize).unwrap()
         );
     }
 
@@ -546,21 +559,21 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.57, 100.69, 100.83, 101.73, 102.01];
         assert_eq!(
             vec![(102.57, 2), (102.01, 6)],
-            peaks(&highs, 4_usize, 1usize)
+            peaks(&highs, 4_usize, 1usize).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn peaks_panic() {
         let highs = vec![101.26, 102.57, 102.57, 100.69, 100.83, 101.73, 102.01];
-        peaks(&highs, 40_usize, 1usize);
+        let result = peaks(&highs, 40_usize, 1usize);
+        assert!(result.is_err());
     }
 
     #[test]
     fn valleys_single_valley() {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        assert_eq!(vec![(98.75, 1)], valleys(&lows, 7_usize, 1usize));
+        assert_eq!(vec![(98.75, 1)], valleys(&lows, 7_usize, 1usize).unwrap());
     }
 
     #[test]
@@ -568,7 +581,7 @@ mod tests {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         assert_eq!(
             vec![(98.75, 1), (98.98, 3)],
-            valleys(&lows, 4_usize, 1usize)
+            valleys(&lows, 4_usize, 1usize).unwrap()
         );
     }
 
@@ -577,15 +590,15 @@ mod tests {
         let lows = vec![98.75, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         assert_eq!(
             vec![(98.75, 1), (98.98, 3)],
-            valleys(&lows, 4_usize, 1usize)
+            valleys(&lows, 4_usize, 1usize).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn valleys_panic() {
         let lows = vec![98.75, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        valleys(&lows, 40_usize, 1usize);
+        let result = valleys(&lows, 40_usize, 1usize);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -593,20 +606,20 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         assert_eq!(
             (-0.11199999999999762, 102.68199999999999),
-            peak_trend(&highs, 4_usize)
+            peak_trend(&highs, 4_usize).unwrap()
         );
     }
 
     #[test]
     fn valleys_trend() {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        assert_eq!((0.11500000000000199, 98.635), valley_trend(&lows, 4_usize));
+        assert_eq!((0.11500000000000199, 98.635), valley_trend(&lows, 4_usize).unwrap());
     }
 
     #[test]
     fn overall_trends() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!((-0.010000000000000852, 100.372), overall_trend(&prices));
+        assert_eq!((-0.010000000000000852, 100.372), overall_trend(&prices).unwrap());
     }
 
     #[test]
@@ -623,7 +636,7 @@ mod tests {
             hard_durbin_watson_min: 0.5,
             hard_durbin_watson_max: 3.5,
         };
-        let trend_break_down = break_down_trends(&prices, trend_break_config);
+        let trend_break_down = break_down_trends(&prices, trend_break_config).unwrap();
         assert_eq!(
             vec![
                 (0, 2, 0.16499999999999915, 100.23166666666665),
