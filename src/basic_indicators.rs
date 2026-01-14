@@ -1064,28 +1064,26 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` == 0
-    /// * `period` > `prices.len()`
-    /// * Any price in a window is <= 0
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidValue` if any price in a window is <= 0
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
-    /// let log_std = centaur_technical_indicators::basic_indicators::bulk::log_standard_deviation(&prices, 3);
+    /// let log_std = centaur_technical_indicators::basic_indicators::bulk::log_standard_deviation(&prices, 3).unwrap();
     /// assert_eq!(3, log_std.len());
     /// ```
     #[inline]
-    pub fn log_standard_deviation(prices: &[f64], period: usize) -> Vec<f64> {
-        assert_period(period, prices.len());
+    pub fn log_standard_deviation(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::log_standard_deviation(window))
+            result.push(single::log_standard_deviation(window)?)
         }
-        result
+        Ok(result)
     }
 
     /// Calculates the Student's t-adjusted standard deviation over a given period.
@@ -1103,28 +1101,26 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` == 0
-    /// * `period` > `prices.len()`
-    /// * `df` <= 2.0
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidValue` if `df` <= 2.0
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
-    /// let student_std = centaur_technical_indicators::basic_indicators::bulk::student_t_adjusted_std(&prices, 3, 5.0);
+    /// let student_std = centaur_technical_indicators::basic_indicators::bulk::student_t_adjusted_std(&prices, 3, 5.0).unwrap();
     /// assert_eq!(3, student_std.len());
     /// ```
     #[inline]
-    pub fn student_t_adjusted_std(prices: &[f64], period: usize, df: f64) -> Vec<f64> {
-        assert_period(period, prices.len());
+    pub fn student_t_adjusted_std(prices: &[f64], period: usize, df: f64) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::student_t_adjusted_std(window, df))
+            result.push(single::student_t_adjusted_std(window, df)?)
         }
-        result
+        Ok(result)
     }
 
     /// Calculates the Laplace standard deviation equivalent over a given period.
@@ -1141,27 +1137,25 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` == 0
-    /// * `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-    /// let laplace_std = centaur_technical_indicators::basic_indicators::bulk::laplace_std_equivalent(&prices, 3);
+    /// let laplace_std = centaur_technical_indicators::basic_indicators::bulk::laplace_std_equivalent(&prices, 3).unwrap();
     /// assert_eq!(3, laplace_std.len());
     /// ```
     #[inline]
-    pub fn laplace_std_equivalent(prices: &[f64], period: usize) -> Vec<f64> {
-        assert_period(period, prices.len());
+    pub fn laplace_std_equivalent(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::laplace_std_equivalent(window))
+            result.push(single::laplace_std_equivalent(window)?)
         }
-        result
+        Ok(result)
     }
 
     /// Calculates the Cauchy IQR-based scale parameter over a given period.
@@ -1178,26 +1172,26 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` < 4
-    /// * `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` < 4 or `period` > `prices.len()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
-    /// let cauchy_scale = centaur_technical_indicators::basic_indicators::bulk::cauchy_iqr_scale(&prices, 4);
+    /// let cauchy_scale = centaur_technical_indicators::basic_indicators::bulk::cauchy_iqr_scale(&prices, 4).unwrap();
     /// assert_eq!(3, cauchy_scale.len());
     /// ```
     #[inline]
-    pub fn cauchy_iqr_scale(prices: &[f64], period: usize) -> Vec<f64> {
-        assert_min_period(period, 4, prices.len());
+    pub fn cauchy_iqr_scale(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
+        assert_min_period(period, 4, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::cauchy_iqr_scale(window))
+            result.push(single::cauchy_iqr_scale(window)?)
         }
+        Ok(result)
+    }
         result
     }
 
@@ -1233,8 +1227,8 @@ pub mod bulk {
         precision: f64,
         low: f64,
         high: f64,
-    ) -> Vec<f64> {
-        assert_period(period, prices.len());
+    ) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         prices
             .windows(period)
             .map(|w| single::empirical_quantile_range_from_distribution(w, precision, low, high))
