@@ -86,9 +86,9 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -99,45 +99,45 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::relative_strength_index(
     ///         &prices,
     ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(39.99999999999999, defaut_rsi);
     ///
     /// let ema_rsi =
     ///     centaur_technical_indicators::momentum_indicators::single::relative_strength_index(
     ///         &prices,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(38.46153846153846, ema_rsi);
     ///
     /// let moving_median_rsi =
     ///     centaur_technical_indicators::momentum_indicators::single::relative_strength_index(
     ///         &prices,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(42.857142857142854, moving_median_rsi);
     /// ```
     #[inline]
-    pub fn relative_strength_index(prices: &[f64], constant_model_type: ConstantModelType) -> f64 {
-        let (previous_gains, previous_loss) = previous_gains_loss(prices);
+    pub fn relative_strength_index(prices: &[f64], constant_model_type: ConstantModelType) -> crate::Result<f64> {
+        let (previous_gains, previous_loss) = previous_gains_loss(prices)?;
         if previous_gains.is_empty() {
-            return 0.0;
+            return Ok(0.0);
         }
         if previous_loss.is_empty() {
-            return 100.0;
+            return Ok(100.0);
         }
 
         let (previous_average_gains, previous_average_loss) = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => (
-                moving_average(&previous_gains, MovingAverageType::Simple),
-                moving_average(&previous_loss, MovingAverageType::Simple),
+                moving_average(&previous_gains, MovingAverageType::Simple)?,
+                moving_average(&previous_loss, MovingAverageType::Simple)?,
             ),
             ConstantModelType::SmoothedMovingAverage => (
-                moving_average(&previous_gains, MovingAverageType::Smoothed),
-                moving_average(&previous_loss, MovingAverageType::Smoothed),
+                moving_average(&previous_gains, MovingAverageType::Smoothed)?,
+                moving_average(&previous_loss, MovingAverageType::Smoothed)?,
             ),
             ConstantModelType::ExponentialMovingAverage => (
-                moving_average(&previous_gains, MovingAverageType::Exponential),
-                moving_average(&previous_loss, MovingAverageType::Exponential),
+                moving_average(&previous_gains, MovingAverageType::Exponential)?,
+                moving_average(&previous_loss, MovingAverageType::Exponential)?,
             ),
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -149,26 +149,26 @@ pub mod single {
                         alpha_num,
                         alpha_den,
                     },
-                ),
+                )?,
                 moving_average(
                     &previous_loss,
                     MovingAverageType::Personalised {
                         alpha_num,
                         alpha_den,
                     },
-                ),
+                )?,
             ),
             ConstantModelType::SimpleMovingMedian => {
-                (median(&previous_gains), median(&previous_loss))
+                (median(&previous_gains)?, median(&previous_loss)?)
             }
-            ConstantModelType::SimpleMovingMode => (mode(&previous_gains), mode(&previous_loss)),
-            _ => unsupported_type("ConstantModelType"),
+            ConstantModelType::SimpleMovingMode => (mode(&previous_gains)?, mode(&previous_loss)?),
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         if previous_average_loss == 0.0 {
-            0.0
+            Ok(0.0)
         } else {
-            100.0 - (100.0 / (1.0 + (previous_average_gains / previous_average_loss)))
+            Ok(100.0 - (100.0 / (1.0 + (previous_average_gains / previous_average_loss))))
         }
     }
 
@@ -182,21 +182,21 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns error if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
     /// let stochastic_oscillator =
-    ///     centaur_technical_indicators::momentum_indicators::single::stochastic_oscillator(&prices);
+    ///     centaur_technical_indicators::momentum_indicators::single::stochastic_oscillator(&prices).unwrap();
     /// assert_eq!(0.0, stochastic_oscillator);
     /// ```
     #[inline]
-    pub fn stochastic_oscillator(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
+    pub fn stochastic_oscillator(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
         let mut ordered_prices = prices
             .iter()
             .filter_map(|f| if f.is_nan() { None } else { Some(*f) })
@@ -204,7 +204,7 @@ pub mod single {
         ordered_prices.sort_by(cmp_f64);
         let min = ordered_prices[0];
         let max = ordered_prices.last().unwrap();
-        100.0 * ((prices.last().unwrap() - min) / (max - min))
+        Ok(100.0 * ((prices.last().unwrap() - min) / (max - min)))
     }
 
     /// Calculates the slow stochastic
@@ -218,9 +218,9 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `stochastics.is_empty()`
+    /// Returns error if `stochastics.is_empty()`
     ///
     /// # Examples
     ///
@@ -231,26 +231,26 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::slow_stochastic(
     ///         &stochstic_oscillators,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(50.0, simple_ma_slow_stochastic);
     ///
     /// let sma_slow_stochastic =
     ///     centaur_technical_indicators::momentum_indicators::single::slow_stochastic(
     ///         &stochstic_oscillators,
     ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(63.15789473684211, sma_slow_stochastic);
     ///
     /// let median_slow_stochastic =
     ///     centaur_technical_indicators::momentum_indicators::single::slow_stochastic(
     ///         &stochstic_oscillators,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(50.0, median_slow_stochastic);
     /// ```
     #[inline]
-    pub fn slow_stochastic(stochastics: &[f64], constant_model_type: ConstantModelType) -> f64 {
-        assert_non_empty("stochastics", stochastics);
+    pub fn slow_stochastic(stochastics: &[f64], constant_model_type: ConstantModelType) -> crate::Result<f64> {
+        assert_non_empty("stochastics", stochastics)?;
 
         match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -274,7 +274,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(stochastics),
             ConstantModelType::SimpleMovingMode => mode(stochastics),
-            _ => unsupported_type("ConstantModelType"),
+            _ => return Err(unsupported_type("ConstantModelType")),
         }
     }
 
@@ -285,9 +285,9 @@ pub mod single {
     /// * `slow_stochastics` - Slice of slow stochastics
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `slow_stochastics.is_empty()`
+    /// Returns error if `slow_stochastics.is_empty()`
     ///
     /// # Examples
     ///
@@ -298,29 +298,29 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::slowest_stochastic(
     ///         &slow_stochstic,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(20.0, simple_ma_slowest_stochastic);
     ///
     /// let sma_slowest_stochastic =
     ///     centaur_technical_indicators::momentum_indicators::single::slowest_stochastic(
     ///         &slow_stochstic,
     ///         centaur_technical_indicators::ConstantModelType::SmoothedMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(17.368421052631582, sma_slowest_stochastic);
     ///
     /// let median_slowest_stochastic =
     ///     centaur_technical_indicators::momentum_indicators::single::slowest_stochastic(
     ///         &slow_stochstic,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(20.0, median_slowest_stochastic);
     /// ```
     #[inline]
     pub fn slowest_stochastic(
         slow_stochastics: &[f64],
         constant_model_type: ConstantModelType,
-    ) -> f64 {
-        assert_non_empty("slow_stochastics", slow_stochastics);
+    ) -> crate::Result<f64> {
+        assert_non_empty("slow_stochastics", slow_stochastics)?;
 
         match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -344,7 +344,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(slow_stochastics),
             ConstantModelType::SimpleMovingMode => mode(slow_stochastics),
-            _ => unsupported_type("ConstantModelType"),
+            _ => return Err(unsupported_type("ConstantModelType")),
         }
     }
 
@@ -360,9 +360,9 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns error if:
     /// * `highs.is_empty()` or `lows.is_empty()`
     /// * `highs.len()` != `lows.len()`
     ///
@@ -377,16 +377,16 @@ pub mod single {
     ///         &highs,
     ///         &lows,
     ///         close
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-57.49999999999999, williams_percent_r);
     /// ```
     #[inline]
-    pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> f64 {
-        assert_same_len(&[("highs", highs), ("lows", lows)]);
-        assert_non_empty("highs", highs);
-        let max_high = max(highs);
-        let min_low = min(lows);
-        -100.0_f64 * ((max_high - close) / (max_high - min_low))
+    pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> crate::Result<f64> {
+        assert_same_len(&[("highs", highs), ("lows", lows)])?;
+        assert_non_empty("highs", highs)?;
+        let max_high = max(highs)?;
+        let min_low = min(lows)?;
+        Ok(-100.0_f64 * ((max_high - close) / (max_high - min_low)))
     }
 
     /// Calculates the Money Flow Index (MFI)
@@ -400,9 +400,9 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns error if:
     /// * `prices.is_empty()` or `volume.is_empty()`
     /// * `prices.len()` != `volume.len()`
     ///
@@ -415,15 +415,15 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::money_flow_index(
     ///         &prices,
     ///         &volume
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(56.771463119709786, money_flow_index);
     /// ```
     #[inline]
-    pub fn money_flow_index(prices: &[f64], volume: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
-        assert_non_empty("volume", volume);
+    pub fn money_flow_index(prices: &[f64], volume: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
+        assert_non_empty("volume", volume)?;
         let length = prices.len();
-        assert_same_len(&[("prices", prices), ("volume", volume)]);
+        assert_same_len(&[("prices", prices), ("volume", volume)])?;
 
         let mut raw_money_flow = Vec::with_capacity(length);
         for i in 0..length {
@@ -442,9 +442,9 @@ pub mod single {
         }
 
         if negative_money_flow == 0.0 {
-            100.0
+            Ok(100.0)
         } else {
-            100.0 - (100.0 / (1.0 + (positive_money_flow / negative_money_flow)))
+            Ok(100.0 - (100.0 / (1.0 + (positive_money_flow / negative_money_flow))))
         }
     }
 
@@ -468,7 +468,7 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::rate_of_change(
     ///         current_price,
     ///         previous_price
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(20.0, rate_of_change);
     ///
     /// let current_price = 100.0;
@@ -477,12 +477,12 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::rate_of_change(
     ///         current_price,
     ///         previous_price
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-16.666666666666664, rate_of_change);
     /// ```
     #[inline]
-    pub fn rate_of_change(current_price: f64, previous_price: f64) -> f64 {
-        ((current_price - previous_price) / previous_price) * 100.0
+    pub fn rate_of_change(current_price: f64, previous_price: f64) -> crate::Result<f64> {
+        Ok(((current_price - previous_price) / previous_price) * 100.0)
     }
 
     /// Calculates the on balance volume (OBV)
@@ -509,7 +509,7 @@ pub mod single {
     ///         previous_price,
     ///         current_volume,
     ///         0.0
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(1500.0 ,on_balance_volume);
     ///
     /// let current_price = 100.0;
@@ -520,7 +520,7 @@ pub mod single {
     ///         current_price,
     ///         previous_price,
     ///         current_volume,
-    ///         1500.0);
+    ///         1500.0).unwrap();
     /// assert_eq!(500.0, on_balance_volume);
     /// ```
     #[inline]
@@ -529,14 +529,14 @@ pub mod single {
         previous_price: f64,
         current_volume: f64,
         previous_on_balance_volume: f64,
-    ) -> f64 {
+    ) -> crate::Result<f64> {
         let mut volume = 0.0;
         if current_price > previous_price {
             volume += current_volume;
         } else if current_price < previous_price {
             volume -= current_volume;
         };
-        previous_on_balance_volume + volume
+        Ok(previous_on_balance_volume + volume)
     }
 
     /// Calculates the Commodity Channel Index (CCI)
@@ -548,9 +548,9 @@ pub mod single {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `constant_multiplier` - Scale factor (Usually 0.015)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -564,7 +564,7 @@ pub mod single {
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-111.11111111111111, default_cci);
     ///
     /// let ema_sd_cci =
@@ -573,7 +573,7 @@ pub mod single {
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         constant_multiplier
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-75.96091804215764, ema_sd_cci);
     ///
     /// let median_mad_cci =
@@ -582,7 +582,7 @@ pub mod single {
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian,
     ///         centaur_technical_indicators::DeviationModel::MedianAbsoluteDeviation,
     ///         constant_multiplier
-    ///     );  
+    ///     ).unwrap();  
     /// assert_eq!(-133.33333333333334, median_mad_cci);
     /// ```
     #[inline]
@@ -591,18 +591,18 @@ pub mod single {
         constant_model_type: ConstantModelType,
         deviation_model: DeviationModel,
         constant_multiplier: f64,
-    ) -> f64 {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
 
         let moving_constant = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(prices, MovingAverageType::Simple)
+                moving_average(prices, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(prices, MovingAverageType::Smoothed)
+                moving_average(prices, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(prices, MovingAverageType::Exponential)
+                moving_average(prices, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -613,57 +613,57 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(prices),
-            ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(prices)?,
+            ConstantModelType::SimpleMovingMode => mode(prices)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let deviation = match deviation_model {
-            DeviationModel::StandardDeviation => standard_deviation(prices),
+            DeviationModel::StandardDeviation => standard_deviation(prices)?,
             DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mean,
                     aggregate: DeviationAggregate::Mean,
                 },
-            ),
+            )?,
             DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Median,
                     aggregate: DeviationAggregate::Median,
                 },
-            ),
+            )?,
             DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mode,
                     aggregate: DeviationAggregate::Mode,
                 },
-            ),
+            )?,
             DeviationModel::CustomAbsoluteDeviation { config } => {
-                absolute_deviation(prices, config)
+                absolute_deviation(prices, config)?
             }
-            DeviationModel::UlcerIndex => ulcer_index(prices),
-            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
-            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
-            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
-            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::UlcerIndex => ulcer_index(prices)?,
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices)?,
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df)?,
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices)?,
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices)?,
             DeviationModel::EmpiricalQuantileRange {
                 low,
                 high,
                 precision,
             } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
                 prices, precision, low, high,
-            ),
+            )?,
             #[allow(unreachable_patterns)]
-            _ => unsupported_type("DeviationModel"),
+            _ => return Err(unsupported_type("DeviationModel")),
         };
         if deviation == 0.0 {
-            0.0
+            Ok(0.0)
         } else {
-            (prices.last().unwrap() - moving_constant) / (constant_multiplier * deviation)
+            Ok((prices.last().unwrap() - moving_constant) / (constant_multiplier * deviation))
         }
     }
 
@@ -676,9 +676,9 @@ pub mod single {
     /// * `deviation_model` - Variant of [`DeviationModel`]
     /// * `constant_multiplier` - Scale factor. Normally 0.015
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -692,7 +692,7 @@ pub mod single {
     ///         0.0,
     ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((0.0, 99.0), mcginley_cci);
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
@@ -702,7 +702,7 @@ pub mod single {
     ///         mcginley_cci.1,
     ///         centaur_technical_indicators::DeviationModel::MeanAbsoluteDeviation,
     ///         constant_multiplier
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((146.8770632107927, 99.53246533805869), mcginley_cci);
     /// ```
     #[inline]
@@ -711,62 +711,62 @@ pub mod single {
         previous_mcginley_dynamic: f64,
         deviation_model: DeviationModel,
         constant_multiplier: f64,
-    ) -> (f64, f64) {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<(f64, f64)> {
+        assert_non_empty("prices", prices)?;
 
         let last_price = prices.last().copied().unwrap();
 
         let mcginley_dynamic =
-            mcginley_dynamic(last_price, previous_mcginley_dynamic, prices.len());
+            mcginley_dynamic(last_price, previous_mcginley_dynamic, prices.len())?;
 
         let deviation = match deviation_model {
-            DeviationModel::StandardDeviation => standard_deviation(prices),
+            DeviationModel::StandardDeviation => standard_deviation(prices)?,
             DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mean,
                     aggregate: DeviationAggregate::Mean,
                 },
-            ),
+            )?,
             DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Median,
                     aggregate: DeviationAggregate::Median,
                 },
-            ),
+            )?,
             DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
                 prices,
                 AbsDevConfig {
                     center: CentralPoint::Mode,
                     aggregate: DeviationAggregate::Mode,
                 },
-            ),
+            )?,
             DeviationModel::CustomAbsoluteDeviation { config } => {
-                absolute_deviation(prices, config)
+                absolute_deviation(prices, config)?
             }
-            DeviationModel::UlcerIndex => ulcer_index(prices),
-            DeviationModel::LogStandardDeviation => log_standard_deviation(prices),
-            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df),
-            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices),
-            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices),
+            DeviationModel::UlcerIndex => ulcer_index(prices)?,
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices)?,
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices, df)?,
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices)?,
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices)?,
             DeviationModel::EmpiricalQuantileRange {
                 low,
                 high,
                 precision,
             } => crate::basic_indicators::single::empirical_quantile_range_from_distribution(
                 prices, precision, low, high,
-            ),
+            )?,
             #[allow(unreachable_patterns)]
-            _ => unsupported_type("DeviationModel"),
+            _ => return Err(unsupported_type("DeviationModel")),
         };
         if deviation == 0.0 {
-            (0.0, mcginley_dynamic)
+            Ok((0.0, mcginley_dynamic))
         } else {
-            (
+            Ok((
                 (last_price - mcginley_dynamic) / (constant_multiplier * deviation),
                 mcginley_dynamic,
-            )
+            ))
         }
     }
 
@@ -779,9 +779,9 @@ pub mod single {
     /// * `short_period_model` - Variant of [`ConstantModelType`]
     /// * `long_period_model` - Variant of [`ConstantModelType`]
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// `macd_line` will panic if:
+    /// Returns error if:
     /// * `prices.is_empty()`
     /// * `short_period` >= `prices.len()`
     ///
@@ -796,7 +796,7 @@ pub mod single {
     ///         3_usize,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-0.46851726472581845, macd);
     ///
     /// let macd =
@@ -805,7 +805,7 @@ pub mod single {
     ///         3_usize,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(0.0, macd);
     /// ```
     #[inline]
@@ -814,21 +814,21 @@ pub mod single {
         short_period: usize,
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
-    ) -> f64 {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
         let length = prices.len();
-        assert_period(short_period, length);
+        assert_period(short_period, length)?;
 
         let short_period_slice = &prices[length - short_period..];
         let short_period_average = match short_period_model {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(short_period_slice, MovingAverageType::Simple)
+                moving_average(short_period_slice, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(short_period_slice, MovingAverageType::Smoothed)
+                moving_average(short_period_slice, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(short_period_slice, MovingAverageType::Exponential)
+                moving_average(short_period_slice, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -839,21 +839,21 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(short_period_slice),
-            ConstantModelType::SimpleMovingMode => mode(short_period_slice),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(short_period_slice)?,
+            ConstantModelType::SimpleMovingMode => mode(short_period_slice)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let long_period_average = match long_period_model {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(prices, MovingAverageType::Simple)
+                moving_average(prices, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(prices, MovingAverageType::Smoothed)
+                moving_average(prices, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(prices, MovingAverageType::Exponential)
+                moving_average(prices, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -864,12 +864,12 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(prices),
-            ConstantModelType::SimpleMovingMode => mode(prices),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(prices)?,
+            ConstantModelType::SimpleMovingMode => mode(prices)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
-        short_period_average - long_period_average
+        Ok(short_period_average - long_period_average)
     }
 
     /// Calculates the MACD signal line
@@ -883,9 +883,9 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `macds.is_empty()`
+    /// Returns error if `macds.is_empty()`
     ///
     /// # Examples
     ///
@@ -896,19 +896,19 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::signal_line(
     ///         &macds,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-0.011764193829181728, ema_signal_line);
     ///
     /// let median_signal_line =
     ///     centaur_technical_indicators::momentum_indicators::single::signal_line(
     ///         &macds,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(-0.0224170616113781, median_signal_line);
     /// ```
     #[inline]
-    pub fn signal_line(macds: &[f64], constant_model_type: ConstantModelType) -> f64 {
-        assert_non_empty("macds", macds);
+    pub fn signal_line(macds: &[f64], constant_model_type: ConstantModelType) -> crate::Result<f64> {
+        assert_non_empty("macds", macds)?;
         match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
                 moving_average(macds, MovingAverageType::Simple)
@@ -931,7 +931,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(macds),
             ConstantModelType::SimpleMovingMode => mode(macds),
-            _ => unsupported_type("ConstantModelType"),
+            _ => return Err(unsupported_type("ConstantModelType")),
         }
     }
 
@@ -944,9 +944,9 @@ pub mod single {
     /// * `previous_short_mcginley` - Previous McGinley dynamic for the short model.
     /// * `previous_long_mcginley` - Previous McGinley dynamic for the long model.
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns error if:
     /// * `prices.is_empty()`
     /// * `short_period` >= `prices.len()`
     ///
@@ -962,7 +962,7 @@ pub mod single {
     ///         short_period,
     ///         0.0,
     ///         0.0
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((0.0, 99.0, 99.0), mcginley_dynamic_macd);
     ///
     /// let prices = vec![102.0, 103.0, 101.0, 99.0, 102.0];
@@ -971,7 +971,7 @@ pub mod single {
     ///         &prices,
     ///         short_period,
     ///         mcginley_dynamic_macd.1,
-    ///         mcginley_dynamic_macd.2);
+    ///         mcginley_dynamic_macd.2).unwrap();
     /// assert_eq!((0.35497689203913296, 99.88744223009782, 99.53246533805869), mcginley_dynamic_macd);
     /// ```
     #[inline]
@@ -980,20 +980,20 @@ pub mod single {
         short_period: usize,
         previous_short_mcginley: f64,
         previous_long_mcginley: f64,
-    ) -> (f64, f64, f64) {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<(f64, f64, f64)> {
+        assert_non_empty("prices", prices)?;
 
-        assert_period(short_period, prices.len() - 1);
+        assert_period(short_period, prices.len() - 1)?;
 
         let latest_price = *prices.last().unwrap();
         if previous_short_mcginley == 0.0 && previous_long_mcginley == 0.0 {
-            return (0.0, latest_price, latest_price);
+            return Ok((0.0, latest_price, latest_price));
         };
 
-        let long_mcginley = mcginley_dynamic(latest_price, previous_long_mcginley, prices.len());
-        let short_mcginley = mcginley_dynamic(latest_price, previous_short_mcginley, short_period);
+        let long_mcginley = mcginley_dynamic(latest_price, previous_long_mcginley, prices.len())?;
+        let short_mcginley = mcginley_dynamic(latest_price, previous_short_mcginley, short_period)?;
         let macd = short_mcginley - long_mcginley;
-        (macd, short_mcginley, long_mcginley)
+        Ok((macd, short_mcginley, long_mcginley))
     }
 
     /// Calculates the Chaikin Oscillator
@@ -1013,9 +1013,9 @@ pub mod single {
     ///
     /// A tuple containing (chaikin_oscillator, accumulation_distribution)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns error if:
     /// * `highs.len()` != `lows.len()` != `close.len()` != `volume.len()`
     /// * If lengths <= `short_period`
     ///
@@ -1039,7 +1039,7 @@ pub mod single {
     ///         previous,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((-179.95937711577525, -760.0), chaikin_oscillator);
     ///
     /// let previous = 500.0;
@@ -1053,7 +1053,7 @@ pub mod single {
     ///         previous,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingMedian
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!((-333.3333333333333, -260.0), chaikin_oscillator);
     /// ```
     pub fn chaikin_oscillator(
@@ -1065,10 +1065,10 @@ pub mod single {
         previous_accumulation_distribution: f64,
         short_period_model: ConstantModelType,
         long_period_model: ConstantModelType,
-    ) -> (f64, f64) {
+    ) -> crate::Result<(f64, f64)> {
         let long_period = highs.len();
-        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close), ("volume", volume)]);
-        assert_period(short_period, long_period);
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close), ("volume", volume)])?;
+        assert_period(short_period, long_period)?;
 
         let mut ad = Vec::with_capacity(long_period);
         ad.push(accumulation_distribution(
@@ -1091,13 +1091,13 @@ pub mod single {
 
         let short_period_average = match short_period_model {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(short_period_slice, MovingAverageType::Simple)
+                moving_average(short_period_slice, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(short_period_slice, MovingAverageType::Smoothed)
+                moving_average(short_period_slice, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(short_period_slice, MovingAverageType::Exponential)
+                moving_average(short_period_slice, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -1108,21 +1108,21 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(short_period_slice),
-            ConstantModelType::SimpleMovingMode => mode(short_period_slice),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(short_period_slice)?,
+            ConstantModelType::SimpleMovingMode => mode(short_period_slice)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let long_period_average = match long_period_model {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(&ad, MovingAverageType::Simple)
+                moving_average(&ad, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(&ad, MovingAverageType::Smoothed)
+                moving_average(&ad, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(&ad, MovingAverageType::Exponential)
+                moving_average(&ad, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -1133,13 +1133,13 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(&ad),
-            ConstantModelType::SimpleMovingMode => mode(&ad),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(&ad)?,
+            ConstantModelType::SimpleMovingMode => mode(&ad)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
-        (short_period_average - long_period_average, ad[ad.len() - 1])
+        Ok((short_period_average - long_period_average, ad[ad.len() - 1]))
     }
 
     /// Calculates the Percentage Price Oscillator (PPO)
@@ -1150,9 +1150,9 @@ pub mod single {
     /// * `short_period` - Length of short period
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns error if:
     /// *  `prices.is_empty()`
     /// * `prices.len()` <= `short_period`
     ///
@@ -1167,7 +1167,7 @@ pub mod single {
     ///         &prices,
     ///         short_period,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(-1.0681349863189704 , percentage_price_oscillator);
     /// ```
@@ -1176,24 +1176,24 @@ pub mod single {
         prices: &[f64],
         short_period: usize,
         constant_model_type: ConstantModelType,
-    ) -> f64 {
-        assert_non_empty("prices", prices);
+    ) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
         let long_period = prices.len();
-        assert_period(short_period, long_period);
+        assert_period(short_period, long_period)?;
 
         let short_period_slice = &prices[long_period - short_period..];
         let (short_period, long_period) = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => (
-                moving_average(short_period_slice, MovingAverageType::Simple),
-                moving_average(prices, MovingAverageType::Simple),
+                moving_average(short_period_slice, MovingAverageType::Simple)?,
+                moving_average(prices, MovingAverageType::Simple)?,
             ),
             ConstantModelType::SmoothedMovingAverage => (
-                moving_average(short_period_slice, MovingAverageType::Smoothed),
-                moving_average(prices, MovingAverageType::Smoothed),
+                moving_average(short_period_slice, MovingAverageType::Smoothed)?,
+                moving_average(prices, MovingAverageType::Smoothed)?,
             ),
             ConstantModelType::ExponentialMovingAverage => (
-                moving_average(short_period_slice, MovingAverageType::Exponential),
-                moving_average(prices, MovingAverageType::Exponential),
+                moving_average(short_period_slice, MovingAverageType::Exponential)?,
+                moving_average(prices, MovingAverageType::Exponential)?,
             ),
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -1205,21 +1205,21 @@ pub mod single {
                         alpha_num,
                         alpha_den,
                     },
-                ),
+                )?,
                 moving_average(
                     prices,
                     MovingAverageType::Personalised {
                         alpha_num,
                         alpha_den,
                     },
-                ),
+                )?,
             ),
-            ConstantModelType::SimpleMovingMedian => (median(short_period_slice), median(prices)),
-            ConstantModelType::SimpleMovingMode => (mode(short_period_slice), mode(prices)),
-            _ => unsupported_type("ConstantModelType"),
+            ConstantModelType::SimpleMovingMedian => (median(short_period_slice)?, median(prices)?),
+            ConstantModelType::SimpleMovingMode => (mode(short_period_slice)?, mode(prices)?),
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
-        ((short_period - long_period) / long_period) * 100.0
+        Ok(((short_period - long_period) / long_period) * 100.0)
     }
 
     /// Calculates the Chande Momentum Oscillator
@@ -1232,36 +1232,36 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns error if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 103.0, 106.0, 100.0, 97.0];
     /// let chande_momentum_oscillator =
-    ///     centaur_technical_indicators::momentum_indicators::single::chande_momentum_oscillator(&prices);
+    ///     centaur_technical_indicators::momentum_indicators::single::chande_momentum_oscillator(&prices).unwrap();
     /// assert_eq!(-20.0, chande_momentum_oscillator)
     /// ```
     #[inline]
-    pub fn chande_momentum_oscillator(prices: &[f64]) -> f64 {
-        let (previous_gains, previous_loss) = previous_gains_loss(prices);
+    pub fn chande_momentum_oscillator(prices: &[f64]) -> crate::Result<f64> {
+        let (previous_gains, previous_loss) = previous_gains_loss(prices)?;
         if previous_gains.is_empty() {
-            return -100.0;
+            return Ok(-100.0);
         }
         if previous_loss.is_empty() {
-            return 100.0;
+            return Ok(100.0);
         }
 
         let gains_sum: f64 = previous_gains.iter().sum();
         let loss_sum: f64 = previous_loss.iter().sum();
-        ((gains_sum - loss_sum) / (gains_sum + loss_sum)) * 100.0
+        Ok(((gains_sum - loss_sum) / (gains_sum + loss_sum)) * 100.0)
     }
 
     #[inline]
-    fn previous_gains_loss(prices: &[f64]) -> (Vec<f64>, Vec<f64>) {
-        assert_non_empty("prices", prices);
+    fn previous_gains_loss(prices: &[f64]) -> crate::Result<(Vec<f64>, Vec<f64>)> {
+        assert_non_empty("prices", prices)?;
         let len = prices.len();
         let mut previous_gains = Vec::with_capacity(len - 1);
         let mut previous_loss = Vec::with_capacity(len - 1);
@@ -1273,7 +1273,7 @@ pub mod single {
                 previous_loss.push(prices[i - 1] - prices[i]);
             };
         }
-        (previous_gains, previous_loss)
+        Ok((previous_gains, previous_loss))
     }
 
     #[inline]
