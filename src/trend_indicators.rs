@@ -1980,7 +1980,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 5_usize,
                 crate::ConstantModelType::SimpleMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -1994,7 +1994,7 @@ mod tests {
                 crate::ConstantModelType::SmoothedMovingAverage,
                 5_usize,
                 crate::ConstantModelType::SmoothedMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -2008,7 +2008,7 @@ mod tests {
                 crate::ConstantModelType::ExponentialMovingAverage,
                 5_usize,
                 crate::ConstantModelType::ExponentialMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -2028,7 +2028,7 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            )
+            ).unwrap()
         );
     }
 
@@ -2042,7 +2042,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMedian,
                 5_usize,
                 crate::ConstantModelType::SimpleMovingMedian
-            )
+            ).unwrap()
         );
     }
 
@@ -2053,35 +2053,35 @@ mod tests {
             0.0,
             single::true_strength_index(
                 &prices,
-                crate::ConstantModelType::SimpleMovingMode,
+                crate::ConstantModelType::SimpleMovingMedian,
                 5_usize,
                 crate::ConstantModelType::SimpleMovingMode
-            )
+            ).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn single_true_strength_index_panic_length() {
         let prices = vec![100.14, 98.98, 99.07, 100.1, 99.96];
-        single::true_strength_index(
+        let result = single::true_strength_index(
             &prices,
             crate::ConstantModelType::SimpleMovingMode,
             5_usize,
             crate::ConstantModelType::SimpleMovingMode,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_true_strength_index_panic_empty() {
         let prices = Vec::new();
-        single::true_strength_index(
+        let result = single::true_strength_index(
             &prices,
             crate::ConstantModelType::SimpleMovingMode,
             5_usize,
             crate::ConstantModelType::SimpleMovingMode,
         );
+        assert!(result.is_err());
     }
 
     #[test]
