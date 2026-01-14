@@ -65,21 +65,21 @@ pub mod single {
     ///
     /// The mean (average) value of the prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let mean = centaur_technical_indicators::basic_indicators::single::mean(&prices);
+    /// let mean = centaur_technical_indicators::basic_indicators::single::mean(&prices).unwrap();
     /// assert_eq!(101.5, mean);
     /// ```
     #[inline]
-    pub fn mean(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
-        prices.iter().sum::<f64>() / prices.len() as f64
+    pub fn mean(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
+        Ok(prices.iter().sum::<f64>() / prices.len() as f64)
     }
 
     /// Calculates the median (middle value) of a slice of prices.
@@ -94,35 +94,35 @@ pub mod single {
     ///
     /// The median value of the prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// // Odd number of prices
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-    /// let median = centaur_technical_indicators::basic_indicators::single::median(&prices);
+    /// let median = centaur_technical_indicators::basic_indicators::single::median(&prices).unwrap();
     /// assert_eq!(101.0, median);
     ///
     /// // Even number of prices
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let median = centaur_technical_indicators::basic_indicators::single::median(&prices);
+    /// let median = centaur_technical_indicators::basic_indicators::single::median(&prices).unwrap();
     /// assert_eq!(101.5, median);
     /// ```
     #[inline]
-    pub fn median(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
+    pub fn median(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
 
         let mut values: Vec<f64> = prices.iter().copied().filter(|f| !f.is_nan()).collect();
         values.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
         let mid = values.len() / 2;
 
         if values.len() % 2 == 0 {
-            (values[mid - 1] + values[mid]) / 2.0
+            Ok((values[mid - 1] + values[mid]) / 2.0)
         } else {
-            values[mid]
+            Ok(values[mid])
         }
     }
 
@@ -139,24 +139,24 @@ pub mod single {
     ///
     /// The mode (most common value) of the prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 101.0, 101.0, 100.0];
-    /// let mode = centaur_technical_indicators::basic_indicators::single::mode(&prices);
+    /// let mode = centaur_technical_indicators::basic_indicators::single::mode(&prices).unwrap();
     /// assert_eq!(100.5, mode); // 100.0 and 101.0 occur equally often, so average is 100.5
     ///
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 100.0];
-    /// let mode = centaur_technical_indicators::basic_indicators::single::mode(&prices);
+    /// let mode = centaur_technical_indicators::basic_indicators::single::mode(&prices).unwrap();
     /// assert_eq!(100.0, mode); // 100.0 occurs most often
     /// ```
     #[inline]
-    pub fn mode(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
+    pub fn mode(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
         let mut frequency: HashMap<i64, usize> = HashMap::new();
         for &price in prices {
             *frequency.entry(price.round() as i64).or_insert(0) += 1;
@@ -173,7 +173,7 @@ pub mod single {
             })
             .collect();
 
-        modes.iter().sum::<i64>() as f64 / modes.len() as f64
+        Ok(modes.iter().sum::<i64>() as f64 / modes.len() as f64)
     }
 
     /// Calculates the difference between the natural logarithm at t and t-1
@@ -187,26 +187,27 @@ pub mod single {
     ///
     /// The logarithmic difference between the two prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// If `price_t` or `price_t_1` is <= 0.0
+    /// Returns `TechnicalIndicatorError::InvalidValue` if `price_t` or `price_t_1` is <= 0.0
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let log_difference = centaur_technical_indicators::basic_indicators::single::log_difference(prices[3], prices[2]);
+    /// let log_difference = centaur_technical_indicators::basic_indicators::single::log_difference(prices[3], prices[2]).unwrap();
     /// assert_eq!(-0.01960847138837618, log_difference);
     /// ```
     #[inline]
-    pub fn log_difference(price_t: f64, price_t_1: f64) -> f64 {
+    pub fn log_difference(price_t: f64, price_t_1: f64) -> crate::Result<f64> {
         if price_t <= 0.0 || price_t_1 <= 0.0 {
-            panic!(
-                "price_t ({}) and price_t_1 ({}) need to be greater than 0.0",
-                price_t, price_t_1
-            );
+            return Err(crate::TechnicalIndicatorError::InvalidValue {
+                name: "price".to_string(),
+                value: if price_t <= 0.0 { price_t } else { price_t_1 },
+                reason: "price_t and price_t_1 must be greater than 0.0".to_string(),
+            });
         }
-        price_t.ln() - price_t_1.ln()
+        Ok(price_t.ln() - price_t_1.ln())
     }
 
     /// Calculates the variance of a slice of prices
@@ -221,21 +222,21 @@ pub mod single {
     ///
     /// The variance of the prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let variance = centaur_technical_indicators::basic_indicators::single::variance(&prices);
+    /// let variance = centaur_technical_indicators::basic_indicators::single::variance(&prices).unwrap();
     /// assert_eq!(1.25, variance);
     /// ```
     #[inline]
-    pub fn variance(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
-        let prices_mean = mean(prices);
+    pub fn variance(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
+        let prices_mean = mean(prices)?;
         let mean_diff_sq: Vec<f64> = prices.iter().map(|x| (x - prices_mean).powi(2)).collect();
         mean(&mean_diff_sq)
     }
@@ -252,20 +253,20 @@ pub mod single {
     ///
     /// The standard deviation of the prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```
     /// let prices = vec![100.0, 102.0, 103.0, 101.0];
-    /// let standard_deviation = centaur_technical_indicators::basic_indicators::single::standard_deviation(&prices);
+    /// let standard_deviation = centaur_technical_indicators::basic_indicators::single::standard_deviation(&prices).unwrap();
     /// assert_eq!(1.118033988749895, standard_deviation);
     /// ```
     #[inline]
-    pub fn standard_deviation(prices: &[f64]) -> f64 {
-        variance(prices).sqrt()
+    pub fn standard_deviation(prices: &[f64]) -> crate::Result<f64> {
+        Ok(variance(prices)?.sqrt())
     }
 
     /// Calculates the absolute deviation from the mean, median, or mode.
@@ -279,9 +280,10 @@ pub mod single {
     ///
     /// The absolute deviation value based on the specified configuration
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::UnsupportedType` for unsupported central point types
     ///
     /// # Examples
     ///
@@ -291,7 +293,7 @@ pub mod single {
     ///     centaur_technical_indicators::basic_indicators::single::absolute_deviation(
     ///         &prices,
     ///         centaur_technical_indicators::AbsDevConfig{ center: centaur_technical_indicators::CentralPoint::Mean, aggregate: centaur_technical_indicators::DeviationAggregate::Mean }
-    ///     );
+    ///     ).unwrap();
     /// // The answer is `1.04` but `f64` implementation we get `1.0400000000000005`
     /// assert_eq!(1.0400000000000005, mean_absolute_deviation);
     ///
@@ -299,24 +301,24 @@ pub mod single {
     ///     centaur_technical_indicators::basic_indicators::single::absolute_deviation(
     ///         &prices,
     ///         centaur_technical_indicators::AbsDevConfig{ center: centaur_technical_indicators::CentralPoint::Median, aggregate: centaur_technical_indicators::DeviationAggregate::Median }
-    ///    );
+    ///    ).unwrap();
     /// assert_eq!(1.0, median_absolute_deviation);
     ///
     /// let mode_absolute_deviation =
     ///     centaur_technical_indicators::basic_indicators::single::absolute_deviation(
     ///         &prices,
     ///         centaur_technical_indicators::AbsDevConfig{ center: centaur_technical_indicators::CentralPoint::Mode, aggregate: centaur_technical_indicators::DeviationAggregate::Mode }
-    ///   );
+    ///   ).unwrap();
     /// assert_eq!(0.0, mode_absolute_deviation);
     /// ```
     #[inline]
-    pub fn absolute_deviation(prices: &[f64], config: AbsDevConfig) -> f64 {
-        assert_non_empty("prices", prices);
+    pub fn absolute_deviation(prices: &[f64], config: AbsDevConfig) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
         let mid_point = match config.center {
-            CentralPoint::Mean => mean(prices),
-            CentralPoint::Median => median(prices),
-            CentralPoint::Mode => mode(prices),
-            _ => unsupported_type("CentralPoint"),
+            CentralPoint::Mean => mean(prices)?,
+            CentralPoint::Median => median(prices)?,
+            CentralPoint::Mode => mode(prices)?,
+            _ => return Err(unsupported_type("CentralPoint")),
         };
 
         let devs: Vec<f64> = prices.iter().map(|&x| (x - mid_point).abs()).collect();
@@ -341,27 +343,30 @@ pub mod single {
     ///
     /// The standard deviation of the log-transformed prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `prices.is_empty()`
-    /// * Any price is <= 0
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::InvalidValue` if any price is <= 0
     ///
     /// # Examples
     ///
     /// ```rust
     /// use std::f64::consts::E;
     /// let prices = vec![1.0, E, E.powi(2)];
-    /// let log_std = centaur_technical_indicators::basic_indicators::single::log_standard_deviation(&prices);
+    /// let log_std = centaur_technical_indicators::basic_indicators::single::log_standard_deviation(&prices).unwrap();
     /// assert!(log_std > 0.0);
     /// ```
     #[inline]
-    pub fn log_standard_deviation(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
+    pub fn log_standard_deviation(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
         let mut logs = Vec::with_capacity(prices.len());
         for &x in prices {
             if x <= 0.0 {
-                panic!("prices requires all positive values; found {}", x);
+                return Err(crate::TechnicalIndicatorError::InvalidValue {
+                    name: "prices".to_string(),
+                    value: x,
+                    reason: "requires all positive values".to_string(),
+                });
             }
             logs.push(x.ln());
         }
@@ -382,22 +387,23 @@ pub mod single {
     ///
     /// The Student's t-adjusted standard deviation
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `df` <= 2.0
+    /// Returns `TechnicalIndicatorError::InvalidValue` if `df` <= 2.0
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![1.0, 2.0, 3.0];
-    /// let student_std = centaur_technical_indicators::basic_indicators::single::student_t_adjusted_std(&prices, 5.0);
+    /// let student_std = centaur_technical_indicators::basic_indicators::single::student_t_adjusted_std(&prices, 5.0).unwrap();
     /// assert!(student_std > 0.0);
     /// ```
     #[inline]
-    pub fn student_t_adjusted_std(prices: &[f64], df: f64) -> f64 {
-        assert_min_value("degrees_of_freedom", df, 2.0);
-        let s = standard_deviation(prices);
-        s * (df / (df - 2.0)).sqrt()
+    pub fn student_t_adjusted_std(prices: &[f64], df: f64) -> crate::Result<f64> {
+        assert_min_value("degrees_of_freedom", df, 2.0)?;
+        let s = standard_deviation(prices)?;
+        Ok(s * (df / (df - 2.0)).sqrt())
     }
 
     /// Calculates the Laplace standard deviation equivalent.
@@ -413,19 +419,19 @@ pub mod single {
     ///
     /// The Laplace standard deviation equivalent
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-    /// let laplace_std = centaur_technical_indicators::basic_indicators::single::laplace_std_equivalent(&prices);
+    /// let laplace_std = centaur_technical_indicators::basic_indicators::single::laplace_std_equivalent(&prices).unwrap();
     /// assert!(laplace_std > 0.0);
     /// ```
     #[inline]
-    pub fn laplace_std_equivalent(prices: &[f64]) -> f64 {
+    pub fn laplace_std_equivalent(prices: &[f64]) -> crate::Result<f64> {
         // b_hat = MAD about median; σ_laplace = sqrt(2) * b
         let mad = absolute_deviation(
             prices,
@@ -433,8 +439,8 @@ pub mod single {
                 center: CentralPoint::Median,
                 aggregate: DeviationAggregate::Median,
             },
-        );
-        mad * 2.0f64.sqrt()
+        )?;
+        Ok(mad * 2.0f64.sqrt())
     }
 
     /// Calculates the Cauchy IQR-based scale parameter.
@@ -705,27 +711,25 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` == 0
-    /// * `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 103.0, 101.0];
-    /// let mean = centaur_technical_indicators::basic_indicators::bulk::mean(&prices, 3);
+    /// let mean = centaur_technical_indicators::basic_indicators::bulk::mean(&prices, 3).unwrap();
     /// assert_eq!(vec![102.0, 102.0], mean);
     /// ```
     #[inline]
-    pub fn mean(prices: &[f64], period: usize) -> Vec<f64> {
-        assert_period(period, prices.len());
+    pub fn mean(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::mean(window))
+            result.push(single::mean(window)?)
         }
-        result
+        Ok(result)
     }
 
     /// Calculates the median (middle value) of a slice of prices over a given periods.
@@ -741,27 +745,25 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` == 0
-    /// * `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 103.0, 101.0];
-    /// let median = centaur_technical_indicators::basic_indicators::bulk::median(&prices, 3);
+    /// let median = centaur_technical_indicators::basic_indicators::bulk::median(&prices, 3).unwrap();
     /// assert_eq!(vec![102.0, 102.0], median);
     /// ```
     #[inline]
-    pub fn median(prices: &[f64], period: usize) -> Vec<f64> {
-        assert_period(period, prices.len());
+    pub fn median(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::median(window))
+            result.push(single::median(window)?)
         }
-        result
+        Ok(result)
     }
 
     /// Calculates the mode (most common price) of a slice of prices over a given period.
@@ -778,27 +780,25 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `period` == 0
-    /// * `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` == 0 or `period` > `prices.len()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 101.0, 102.0];
-    /// let mode = centaur_technical_indicators::basic_indicators::bulk::mode(&prices, 3);
+    /// let mode = centaur_technical_indicators::basic_indicators::bulk::mode(&prices, 3).unwrap();
     /// assert_eq!(vec![101.0, 102.0], mode);
     /// ```
     #[inline]
-    pub fn mode(prices: &[f64], period: usize) -> Vec<f64> {
-        assert_period(period, prices.len());
+    pub fn mode(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
+        assert_period(period, prices.len())?;
         let mut result = Vec::with_capacity(prices.len());
         for window in prices.windows(period) {
-            result.push(single::mode(window))
+            result.push(single::mode(window)?)
         }
-        result
+        Ok(result)
     }
 
     /// Calculates the natural logarithm of slice of prices
@@ -811,24 +811,24 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty.()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices.is_empty()`
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![101.0, 102.0, 103.0, 101.0];
-    /// let log = centaur_technical_indicators::basic_indicators::bulk::log(&prices);
+    /// let log = centaur_technical_indicators::basic_indicators::bulk::log(&prices).unwrap();
     /// assert_eq!(
     ///     vec![4.61512051684126, 4.624972813284271, 4.634728988229636, 4.61512051684126],
     ///     log
     /// );
     /// ```
     #[inline]
-    pub fn log(prices: &[f64]) -> Vec<f64> {
-        assert_non_empty("prices", prices);
-        prices.iter().map(|&p| p.ln()).collect()
+    pub fn log(prices: &[f64]) -> crate::Result<Vec<f64>> {
+        assert_non_empty("prices", prices)?;
+        Ok(prices.iter().map(|&p| p.ln()).collect())
     }
 
     /// Calculates the difference between the natural logarithm at t and t-1
