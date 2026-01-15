@@ -37,7 +37,7 @@ pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
     use crate::validation::{
-        assert_min_period, assert_non_empty, assert_period, assert_same_len, unsupported_type,
+        assert_min_period, assert_non_empty, assert_same_len, unsupported_type,
     };
     use crate::{ConstantModelType, MovingAverageType, Result};
 
@@ -801,7 +801,8 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -819,7 +820,8 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SmoothedMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -837,7 +839,8 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::ExponentialMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -858,7 +861,8 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -876,7 +880,8 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingMedian
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -894,7 +899,8 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingMode
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -912,7 +918,8 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1027,7 +1034,8 @@ mod tests {
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage,
                 6_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1048,7 +1056,8 @@ mod tests {
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage,
                 6_usize
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 

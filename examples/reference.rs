@@ -484,7 +484,8 @@ fn main() {
             &stochastic_oscillator_unwrapped,
             *model,
             period,
-        ).unwrap();
+        )
+        .unwrap();
         println!("Slow Stochastic {:?}: {:?}", model, slow_so);
 
         for slowest_model in &available_models {
@@ -493,7 +494,8 @@ fn main() {
                     &slow_so,
                     *slowest_model,
                     period,
-                ).unwrap();
+                )
+                .unwrap();
             println!("Slowest Stochastic {:?}: {:?}", slowest_model, slowest_so);
         }
     }
@@ -560,7 +562,8 @@ fn main() {
                     &macd_unwrapped,
                     *signal_model,
                     period,
-                ).unwrap();
+                )
+                .unwrap();
                 println!("Signal line {:?}: {:?}", signal_model, signal);
             }
         }
@@ -612,7 +615,8 @@ fn main() {
                 &ppo_unwrapped,
                 *moving_average,
                 period,
-            ).unwrap();
+            )
+            .unwrap();
             println!("{:?} Signal Line: {:?}", moving_average, signal);
         }
     }
@@ -687,14 +691,16 @@ fn main() {
     for model in &available_models {
         let rvi = centaur_technical_indicators::strength_indicators::bulk::relative_vigor_index(
             &open, &high, &low, &close, *model, period,
-        ).unwrap();
+        )
+        .unwrap();
         println!("{:?} Relative Vigor Index: {:?}", model, rvi);
         for signal_model in &available_moving_averages {
             let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
                 &rvi,
                 *signal_model,
                 period,
-            ).unwrap();
+            )
+            .unwrap();
             println!("{:?} Signal Line: {:?}", signal_model, signal);
         }
     }
@@ -748,7 +754,8 @@ fn main() {
                     &tsi_unwrapped,
                     *signal_model,
                     period,
-                ).unwrap();
+                )
+                .unwrap();
                 println!("{:?} Signal Line: {:?}", signal_model, signal);
             }
         }

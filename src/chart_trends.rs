@@ -29,7 +29,7 @@
 //! ---
 
 use crate::basic_indicators::single::{max, mean, min};
-use crate::validation::{assert_non_empty, assert_period, assert_same_len};
+use crate::validation::{assert_non_empty, assert_period};
 
 /// Calculates all peaks over a given period
 ///
@@ -314,16 +314,16 @@ pub fn overall_trend(prices: &[f64]) -> crate::Result<(f64, f64)> {
 ///
 /// # Fields
 /// * `max_outliers` - Consecutive candidate break points allowed to be treated as outliers
-///     (skipped) before a segment is forcibly split.
+///   (skipped) before a segment is forcibly split.
 /// * `soft_adj_r_squared_minimum` - Below this adjusted R² (AND with other soft conditions),
-///     a *soft* break is considered.
+///   a *soft* break is considered.
 /// * `hard_adj_r_squared_minimum` - Below this adjusted R² alone triggers a *hard* break.
 /// * `soft_rmse_multiplier` - Relative RMSE growth factor (vs previous accepted RMSE)
-///     required (with other soft factors) to flag a soft break.
+///   required (with other soft factors) to flag a soft break.
 /// * `hard_rmse_multiplier` - Larger deterioration factor that alone helps force a hard break.
 /// * `soft_durbin_watson_min` / `soft_durbin_watson_max` - Soft residual autocorrelation band.
 /// * `hard_durbin_watson_min` / `hard_durbin_watson_max` - Hard residual autocorrelation band.
-///     Values far from 2.0 imply structured residuals (model misspecification).
+///   Values far from 2.0 imply structured residuals (model misspecification).
 ///
 /// # Notes
 /// - Adjust `max_outliers` to tolerate transient spikes without fragmenting segments.

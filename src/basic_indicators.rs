@@ -48,8 +48,7 @@
 /// **single**: Functions that return a single value for a slice of prices
 pub mod single {
     use crate::validation::{
-        assert_min_length, assert_min_period, assert_min_value, assert_non_empty, assert_positive,
-        unsupported_type,
+        assert_min_length, assert_min_value, assert_non_empty, assert_positive, unsupported_type,
     };
     use crate::{AbsDevConfig, CentralPoint, DeviationAggregate};
     use std::cmp::Ordering;
@@ -119,7 +118,7 @@ pub mod single {
         values.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
         let mid = values.len() / 2;
 
-        if values.len() % 2 == 0 {
+        if values.len().is_multiple_of(2) {
             Ok((values[mid - 1] + values[mid]) / 2.0)
         } else {
             Ok(values[mid])
@@ -475,7 +474,7 @@ pub mod single {
         v.sort_by(|a, b| a.partial_cmp(b).unwrap());
         let n = v.len();
         let mid = n / 2;
-        let (lower, upper) = if n % 2 == 0 {
+        let (lower, upper) = if n.is_multiple_of(2) {
             (&v[..mid], &v[mid..])
         } else {
             (&v[..mid], &v[mid + 1..])
@@ -583,7 +582,7 @@ pub mod single {
     /// ```rust
     /// let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
     /// let distribution = centaur_technical_indicators::basic_indicators::single::price_distribution(&prices, 1.0);
-    /// assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
+    /// assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution.unwrap());
     /// ```
     #[inline]
     pub fn price_distribution(prices: &[f64], precision: f64) -> crate::Result<Vec<(f64, usize)>> {
@@ -1228,7 +1227,7 @@ pub mod bulk {
     /// // IQR for [1,2,3,4] at precision 1.0 is 3.25 - 1.75 = 1.5
     /// let prices = vec![1.0, 2.0, 3.0, 4.0];
     /// let iqr = centaur_technical_indicators::basic_indicators::bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
-    /// assert_eq!(vec![1.0, 1.0], iqr);
+    /// assert_eq!(vec![1.0, 1.0], iqr.unwrap());
     /// ```
     #[inline]
     pub fn empirical_quantile_range_from_distribution(
@@ -1322,7 +1321,10 @@ mod tests {
     fn bulk_median() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 3;
-        assert_eq!(vec![100.46, 100.46, 100.38], bulk::median(&prices, period).unwrap());
+        assert_eq!(
+            vec![100.46, 100.46, 100.38],
+            bulk::median(&prices, period).unwrap()
+        );
     }
 
     #[test]
@@ -1370,7 +1372,10 @@ mod tests {
     fn bulk_mode() {
         let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
         let period: usize = 3;
-        assert_eq!(vec![100.0, 101.0, 101.0], bulk::mode(&prices, period).unwrap());
+        assert_eq!(
+            vec![100.0, 101.0, 101.0],
+            bulk::mode(&prices, period).unwrap()
+        );
     }
 
     #[test]
@@ -1496,7 +1501,10 @@ mod tests {
     #[test]
     fn single_standard_deviation() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(0.1367333170810967, single::standard_deviation(&prices).unwrap());
+        assert_eq!(
+            0.1367333170810967,
+            single::standard_deviation(&prices).unwrap()
+        );
     }
 
     #[test]
@@ -1547,7 +1555,8 @@ mod tests {
                     center: crate::CentralPoint::Mean,
                     aggregate: crate::DeviationAggregate::Mean
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
         assert_eq!(
             0.15000000000000568,
@@ -1557,7 +1566,8 @@ mod tests {
                     center: crate::CentralPoint::Median,
                     aggregate: crate::DeviationAggregate::Median
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
         assert_eq!(
             0.0,
@@ -1567,7 +1577,8 @@ mod tests {
                     center: crate::CentralPoint::Mode,
                     aggregate: crate::DeviationAggregate::Mode
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1601,7 +1612,8 @@ mod tests {
                     center: crate::CentralPoint::Mean,
                     aggregate: crate::DeviationAggregate::Mean
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
         assert_eq!(
             vec![
@@ -1616,7 +1628,8 @@ mod tests {
                     center: crate::CentralPoint::Median,
                     aggregate: crate::DeviationAggregate::Median
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
         assert_eq!(
             vec![0.0, 0.0, 0.0],
@@ -1627,7 +1640,8 @@ mod tests {
                     center: crate::CentralPoint::Mode,
                     aggregate: crate::DeviationAggregate::Mode
                 }
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1733,8 +1747,14 @@ mod tests {
             vec![(5900.0, 1)],
             single::price_distribution(&prices, 100.0).unwrap()
         );
-        assert_eq!(vec![(5950.0, 1)], single::price_distribution(&prices, 10.0).unwrap());
-        assert_eq!(vec![(5949.0, 1)], single::price_distribution(&prices, 1.0).unwrap());
+        assert_eq!(
+            vec![(5950.0, 1)],
+            single::price_distribution(&prices, 10.0).unwrap()
+        );
+        assert_eq!(
+            vec![(5949.0, 1)],
+            single::price_distribution(&prices, 1.0).unwrap()
+        );
         assert_eq!(
             vec![(5949.400000000001, 1)],
             single::price_distribution(&prices, 0.1).unwrap()
@@ -1975,14 +1995,16 @@ mod tests {
     fn single_empirical_quantile_range_from_distribution_simple() {
         // For [1,2,3,4] with precision 1.0, q25=1.75, q75=3.25 => IQR=1.5 (linear interpolation)
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let iqr = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75).unwrap();
+        let iqr =
+            single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75).unwrap();
         assert_eq!(2.0, iqr,);
     }
 
     #[test]
     fn bulk_empirical_quantile_range_from_distribution() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let v = bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75).unwrap();
+        let v =
+            bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75).unwrap();
         // windows: [1,2,3] -> IQR=1.0; [2,3,4] -> IQR=1.0
         assert_eq!(vec![1.0, 1.0], v);
     }

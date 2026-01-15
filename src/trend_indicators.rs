@@ -1031,7 +1031,7 @@ pub mod bulk {
                 data_len: adx.len(),
                 reason: "period + 1 cannot be longer than data length".to_string(),
             }
-            .into());
+            );
         }
         let mut adxr = Vec::with_capacity(adx.len() - period - 1);
         for i in period..=adx.len() {
@@ -1105,14 +1105,21 @@ pub mod bulk {
         assert_non_empty("volumes", volumes)?;
         assert_non_empty("prices", prices)?;
         let length = volumes.len();
-        if prices.len() == 0 || length != prices.len() - 1 {
+        if prices.is_empty() || length != prices.len() - 1 {
             return Err(TechnicalIndicatorError::MismatchedLength {
                 names: vec![
                     ("volumes".to_string(), length),
-                    ("prices - 1".to_string(), if prices.len() > 0 { prices.len() - 1 } else { 0 }),
+                    (
+                        "prices - 1".to_string(),
+                        if !prices.is_empty() {
+                            prices.len() - 1
+                        } else {
+                            0
+                        },
+                    ),
                 ],
             }
-            .into());
+            );
         }
         let mut vpts = Vec::with_capacity(length);
         let mut vpt = single::volume_price_trend(
@@ -1405,7 +1412,8 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1423,7 +1431,8 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 0.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1441,7 +1450,8 @@ mod tests {
                 0.02,
                 crate::Position::Short,
                 102.39
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1459,7 +1469,8 @@ mod tests {
                 0.02,
                 crate::Position::Short,
                 0.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1477,7 +1488,8 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1495,7 +1507,8 @@ mod tests {
                 0.02,
                 crate::Position::Short,
                 102.39
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1510,10 +1523,9 @@ mod tests {
             0.2,
             0.02,
             crate::Position::Long,
-            90.58
+            90.58,
         );
         assert!(result.is_err());
-
     }
 
     #[test]
@@ -1527,10 +1539,9 @@ mod tests {
             0.2,
             0.02,
             crate::Position::Long,
-            90.58
+            90.58,
         );
         assert!(result.is_err());
-
     }
 
     #[test]
@@ -1544,10 +1555,9 @@ mod tests {
             0.2,
             0.02,
             crate::Position::Long,
-            90.58
+            90.58,
         );
         assert!(result.is_err());
-
     }
 
     #[test]
@@ -1561,10 +1571,9 @@ mod tests {
             0.2,
             0.02,
             crate::Position::Long,
-            90.58
+            90.58,
         );
         assert!(result.is_err());
-
     }
 
     #[test]

@@ -95,7 +95,7 @@ pub mod single {
             ("prices_asset_a", prices_asset_a),
             ("prices_asset_b", prices_asset_b),
         ])?;
-        assert_non_empty(&"prices_asset_a", prices_asset_a)?;
+        assert_non_empty("prices_asset_a", prices_asset_a)?;
 
         let asset_a_average = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
@@ -249,7 +249,7 @@ pub mod single {
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::correlation_indicators::single;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
+    use crate::validation::{assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the correlation between two asset prices over a period

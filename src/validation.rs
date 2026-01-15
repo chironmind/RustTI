@@ -33,12 +33,6 @@ pub fn assert_non_empty<T>(name: &str, slice: &[T]) -> crate::Result<()> {
 /// # Errors
 ///
 /// Returns `TechnicalIndicatorError::MismatchedLength` if slices have different lengths
-///
-/// # Example
-///
-/// ```ignore
-/// assert_same_len(&[("high", high), ("low", low), ("close", close)])?;
-/// ```
 #[inline]
 pub fn assert_same_len<T>(slices: &[(&str, &[T])]) -> crate::Result<()> {
     if slices.is_empty() {
@@ -113,30 +107,6 @@ pub fn assert_positive(name: &str, value: f64) -> crate::Result<()> {
     Ok(())
 }
 
-/// Validates that a value is within a specific range
-///
-/// # Arguments
-///
-/// * `name` - Human-readable name of the value
-/// * `value` - The value to validate
-/// * `min` - Minimum acceptable value (exclusive)
-/// * `max` - Maximum acceptable value (exclusive)
-///
-/// # Errors
-///
-/// Returns `TechnicalIndicatorError::InvalidValue` if the value is not in range
-#[inline]
-pub fn assert_range(name: &str, value: f64, min: f64, max: f64) -> crate::Result<()> {
-    if value <= min || value >= max || value.is_nan() {
-        return Err(crate::TechnicalIndicatorError::InvalidValue {
-            name: name.to_string(),
-            value,
-            reason: format!("must be in range ({}, {})", min, max),
-        });
-    }
-    Ok(())
-}
-
 /// Validates that a value is greater than a minimum
 ///
 /// # Arguments
@@ -156,30 +126,6 @@ pub fn assert_min_value(name: &str, value: f64, min: f64) -> crate::Result<()> {
             value,
             reason: format!("must be greater than {}", min),
         });
-    }
-    Ok(())
-}
-
-/// Validates that all values in a slice are positive
-///
-/// # Arguments
-///
-/// * `name` - Human-readable name of the data
-/// * `slice` - The slice to validate
-///
-/// # Errors
-///
-/// Returns `TechnicalIndicatorError::InvalidValue` with the first non-positive value found
-#[inline]
-pub fn assert_all_positive(name: &str, slice: &[f64]) -> crate::Result<()> {
-    for &value in slice {
-        if value <= 0.0 {
-            return Err(crate::TechnicalIndicatorError::InvalidValue {
-                name: name.to_string(),
-                value,
-                reason: "requires all positive values".to_string(),
-            });
-        }
     }
     Ok(())
 }
@@ -358,44 +304,6 @@ mod tests {
         match result {
             Err(crate::TechnicalIndicatorError::InvalidValue { name, value, .. }) => {
                 assert_eq!(name, "value");
-                assert_eq!(value, 0.0);
-            }
-            _ => panic!("Expected InvalidValue error"),
-        }
-    }
-
-    #[test]
-    fn test_assert_range_ok() {
-        assert!(assert_range("quantile", 0.5, 0.0, 1.0).is_ok());
-    }
-
-    #[test]
-    fn test_assert_range_at_min() {
-        let result = assert_range("quantile", 0.0, 0.0, 1.0);
-        assert!(result.is_err());
-        match result {
-            Err(crate::TechnicalIndicatorError::InvalidValue { name, value, .. }) => {
-                assert_eq!(name, "quantile");
-                assert_eq!(value, 0.0);
-            }
-            _ => panic!("Expected InvalidValue error"),
-        }
-    }
-
-    #[test]
-    fn test_assert_all_positive_ok() {
-        let positive = vec![1.0, 2.0, 3.0];
-        assert!(assert_all_positive("prices", &positive).is_ok());
-    }
-
-    #[test]
-    fn test_assert_all_positive_has_zero() {
-        let has_zero = vec![1.0, 0.0, 3.0];
-        let result = assert_all_positive("prices", &has_zero);
-        assert!(result.is_err());
-        match result {
-            Err(crate::TechnicalIndicatorError::InvalidValue { name, value, .. }) => {
-                assert_eq!(name, "prices");
                 assert_eq!(value, 0.0);
             }
             _ => panic!("Expected InvalidValue error"),

@@ -31,7 +31,7 @@
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
     use crate::basic_indicators::single::max;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::assert_non_empty;
 
     /// Calculates the Ulcer Index
     ///

@@ -38,7 +38,7 @@
 pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the final value and percentage return of a investment
@@ -183,7 +183,6 @@ pub mod single {
         lows: &[f64],
         constant_model_type: ConstantModelType,
     ) -> crate::Result<f64> {
-        let length = close.len();
         assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)])?;
         assert_non_empty("close", close)?;
 
@@ -216,7 +215,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&trs),
             ConstantModelType::SimpleMovingMode => mode(&trs),
-            _ => return Err(unsupported_type("ConstantModelType")),
+            _ => Err(unsupported_type("ConstantModelType")),
         }
     }
 

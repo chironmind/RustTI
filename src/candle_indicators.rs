@@ -426,7 +426,7 @@ pub mod single {
     /// Returns an error if:
     /// * `high.len()` != `low.len()` != `close.len()`
     /// * `conversion_period`, `base_period`, `span_b_period` >
-    ///         `high.len()`, `low.len()`, `close.len()`
+    ///   `high.len()`, `low.len()`, `close.len()`
     ///
     /// # Examples
     ///
@@ -1253,7 +1253,8 @@ mod tests {
                 &prices,
                 crate::ConstantModelType::SimpleMovingAverage,
                 3.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1266,7 +1267,8 @@ mod tests {
                 &prices,
                 crate::ConstantModelType::SmoothedMovingAverage,
                 3.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1279,7 +1281,8 @@ mod tests {
                 &prices,
                 crate::ConstantModelType::ExponentialMovingAverage,
                 3.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1295,7 +1298,8 @@ mod tests {
                     alpha_den: 4.0
                 },
                 3.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1308,7 +1312,8 @@ mod tests {
                 &prices,
                 crate::ConstantModelType::SimpleMovingMedian,
                 3.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1321,14 +1326,19 @@ mod tests {
                 &prices,
                 crate::ConstantModelType::SimpleMovingMode,
                 3.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
     #[test]
     fn single_moving_constant_envelope_panic() {
         let prices = Vec::new();
-        let result = single::moving_constant_envelopes(&prices, crate::ConstantModelType::SimpleMovingMode, 3.0);
+        let result = single::moving_constant_envelopes(
+            &prices,
+            crate::ConstantModelType::SimpleMovingMode,
+            3.0,
+        );
         assert!(result.is_err());
     }
 
@@ -1429,7 +1439,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::StandardDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1443,7 +1454,8 @@ mod tests {
                 crate::ConstantModelType::SmoothedMovingAverage,
                 crate::DeviationModel::StandardDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1457,7 +1469,8 @@ mod tests {
                 crate::ConstantModelType::ExponentialMovingAverage,
                 crate::DeviationModel::StandardDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1474,7 +1487,8 @@ mod tests {
                 },
                 crate::DeviationModel::StandardDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1488,7 +1502,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMedian,
                 crate::DeviationModel::StandardDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1502,7 +1517,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMode,
                 crate::DeviationModel::StandardDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1516,7 +1532,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::MeanAbsoluteDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1530,7 +1547,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::MedianAbsoluteDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1544,7 +1562,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::ModeAbsoluteDeviation,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1558,7 +1577,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::UlcerIndex,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1616,7 +1636,8 @@ mod tests {
                 crate::DeviationModel::StandardDeviation,
                 2.0,
                 0.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1630,7 +1651,8 @@ mod tests {
                 crate::DeviationModel::MeanAbsoluteDeviation,
                 2.0,
                 0.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1644,7 +1666,8 @@ mod tests {
                 crate::DeviationModel::MedianAbsoluteDeviation,
                 2.0,
                 0.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1658,7 +1681,8 @@ mod tests {
                 crate::DeviationModel::ModeAbsoluteDeviation,
                 2.0,
                 0.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1667,7 +1691,8 @@ mod tests {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         assert_eq!(
             (99.77367826122627, 100.21, 100.64632173877372),
-            single::mcginley_dynamic_bands(&prices, crate::DeviationModel::UlcerIndex, 2.0, 0.0).unwrap()
+            single::mcginley_dynamic_bands(&prices, crate::DeviationModel::UlcerIndex, 2.0, 0.0)
+                .unwrap()
         );
     }
 
@@ -1681,14 +1706,20 @@ mod tests {
                 crate::DeviationModel::StandardDeviation,
                 2.0,
                 100.21
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
     #[test]
     fn single_mcginley_bands_panic() {
         let prices = Vec::new();
-        let result = single::mcginley_dynamic_bands(&prices, crate::DeviationModel::StandardDeviation, 2.0, 0.0);
+        let result = single::mcginley_dynamic_bands(
+            &prices,
+            crate::DeviationModel::StandardDeviation,
+            2.0,
+            0.0,
+        );
         assert!(result.is_err());
     }
 
@@ -1959,7 +1990,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1977,7 +2009,8 @@ mod tests {
                 crate::ConstantModelType::SmoothedMovingAverage,
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -1995,7 +2028,8 @@ mod tests {
                 crate::ConstantModelType::ExponentialMovingAverage,
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2016,7 +2050,8 @@ mod tests {
                 },
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2034,7 +2069,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMedian,
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2052,7 +2088,8 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMode,
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2238,7 +2275,8 @@ mod tests {
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage,
                 2.0
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 
@@ -2406,7 +2444,8 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::LogStandardDeviation,
             2.0,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!((100.97199217847599, 101.0, 101.02800782152401), result);
     }
 
@@ -2418,7 +2457,8 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StudentT { df: 5.0 },
             2.0,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!((97.34851628329889, 101.0, 104.65148371670111), result);
     }
 
@@ -2430,7 +2470,8 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::LaplaceStdEquivalent,
             2.0,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!((98.17157287525382, 101.0, 103.82842712474618), result);
     }
 
@@ -2442,7 +2483,8 @@ mod tests {
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::CauchyIQRScale,
             2.0,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!((98.0, 101.0, 104.0), result);
     }
 
@@ -2454,7 +2496,8 @@ mod tests {
             crate::DeviationModel::LogStandardDeviation,
             2.0,
             100.5,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(
             (100.15339294737205, 100.18140076889607, 100.20940859042008),
             result
