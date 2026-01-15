@@ -1191,14 +1191,14 @@ mod tests {
     #[test]
     fn single_aroon_up() {
         let highs = vec![101.26, 102.57, 102.32, 100.69];
-        assert_eq!(33.33333333333333, single::aroon_up(&highs));
+        assert_eq!(33.33333333333333, single::aroon_up(&highs).unwrap());
     }
 
     #[test]
     #[should_panic]
     fn singe_aroon_up_panic() {
         let highs = Vec::new();
-        single::aroon_up(&highs);
+        single::aroon_up(&highs).unwrap();
     }
 
     #[test]
@@ -1206,7 +1206,7 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         assert_eq!(
             vec![33.33333333333333, 0.0, 0.0, 100.0],
-            bulk::aroon_up(&highs, 4)
+            bulk::aroon_up(&highs, 4).unwrap()
         );
     }
 
@@ -1214,20 +1214,20 @@ mod tests {
     #[should_panic]
     fn bulk_aroon_up_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
-        bulk::aroon_up(&highs, 40);
+        bulk::aroon_up(&highs, 40).unwrap();
     }
 
     #[test]
     fn single_aroon_down() {
         let lows = vec![100.08, 98.75, 100.14, 98.98];
-        assert_eq!(33.33333333333333, single::aroon_down(&lows));
+        assert_eq!(33.33333333333333, single::aroon_down(&lows).unwrap());
     }
 
     #[test]
     #[should_panic]
     fn single_aroon_down_panic() {
         let lows = Vec::new();
-        single::aroon_down(&lows);
+        single::aroon_down(&lows).unwrap();
     }
 
     #[test]
@@ -1235,7 +1235,7 @@ mod tests {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         assert_eq!(
             vec![33.33333333333333, 0.0, 33.33333333333333, 0.0],
-            bulk::aroon_down(&lows, 4)
+            bulk::aroon_down(&lows, 4).unwrap()
         );
     }
 
@@ -1243,7 +1243,7 @@ mod tests {
     #[should_panic]
     fn bulk_aroon_down_panic() {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_down(&lows, 40);
+        bulk::aroon_down(&lows, 40).unwrap();
     }
 
     #[test]
@@ -1260,7 +1260,7 @@ mod tests {
         let aroon_down = vec![33.33333333333333, 0.0, 33.33333333333333, 0.0];
         assert_eq!(
             vec![0.0, 0.0, -33.33333333333333, 100.0],
-            bulk::aroon_oscillator(&aroon_up, &aroon_down)
+            bulk::aroon_oscillator(&aroon_up, &aroon_down).unwrap()
         );
     }
 
@@ -1286,7 +1286,7 @@ mod tests {
         let highs = vec![101.26, 102.57, 102.32, 100.69];
         assert_eq!(
             (33.33333333333333, 33.33333333333333, 0.0),
-            single::aroon_indicator(&highs, &lows)
+            single::aroon_indicator(&highs, &lows).unwrap()
         );
     }
 
@@ -1295,7 +1295,7 @@ mod tests {
     fn single_aroon_indicator_high_panic() {
         let lows = vec![100.08, 98.75, 100.14, 98.98];
         let highs = vec![101.26, 102.57, 102.32];
-        single::aroon_indicator(&highs, &lows);
+        single::aroon_indicator(&highs, &lows).unwrap();
     }
 
     #[test]
@@ -1303,7 +1303,7 @@ mod tests {
     fn single_aroon_indicator_low_panic() {
         let lows = vec![100.08, 98.75, 100.14];
         let highs = vec![101.26, 102.57, 102.32, 100.69];
-        single::aroon_indicator(&highs, &lows);
+        single::aroon_indicator(&highs, &lows).unwrap();
     }
 
     #[test]
@@ -1317,7 +1317,7 @@ mod tests {
                 (0.0, 33.33333333333333, -33.33333333333333),
                 (100.0, 0.0, 100.0)
             ],
-            bulk::aroon_indicator(&highs, &lows, 4)
+            bulk::aroon_indicator(&highs, &lows, 4).unwrap()
         );
     }
 
@@ -1326,7 +1326,7 @@ mod tests {
     fn bulk_aroon_indicator_high_panic() {
         let highs = vec![102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_indicator(&highs, &lows, 4);
+        bulk::aroon_indicator(&highs, &lows, 4).unwrap();
     }
 
     #[test]
@@ -1334,7 +1334,7 @@ mod tests {
     fn bulk_aroon_indicator_low_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_indicator(&highs, &lows, 4);
+        bulk::aroon_indicator(&highs, &lows, 4).unwrap();
     }
 
     #[test]
@@ -1342,7 +1342,7 @@ mod tests {
     fn bulk_aroon_indicator_period_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_indicator(&highs, &lows, 40);
+        bulk::aroon_indicator(&highs, &lows, 40).unwrap();
     }
 
     #[test]
@@ -1397,7 +1397,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            )
+            ).unwrap()
         );
     }
 
@@ -1415,7 +1415,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 0.0
-            )
+            ).unwrap()
         );
     }
 
@@ -1433,7 +1433,7 @@ mod tests {
                 0.02,
                 crate::Position::Short,
                 102.39
-            )
+            ).unwrap()
         );
     }
 
@@ -1451,7 +1451,7 @@ mod tests {
                 0.02,
                 crate::Position::Short,
                 0.0
-            )
+            ).unwrap()
         );
     }
 
@@ -1469,7 +1469,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            )
+            ).unwrap()
         );
     }
 
@@ -1487,7 +1487,7 @@ mod tests {
                 0.02,
                 crate::Position::Short,
                 102.39
-            )
+            ).unwrap()
         );
     }
 
@@ -1512,7 +1512,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            )
+            ).unwrap()
         );
     }
 
@@ -1537,7 +1537,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            )
+            ).unwrap()
         );
     }
 
@@ -1562,7 +1562,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            )
+            ).unwrap()
         );
     }
 
@@ -1587,7 +1587,7 @@ mod tests {
                 0.02,
                 crate::Position::Long,
                 90.58
-            )
+            ).unwrap()
         );
     }
 

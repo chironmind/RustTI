@@ -1254,13 +1254,13 @@ mod tests {
     #[test]
     fn single_mean() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(100.352, single::mean(&prices));
+        assert_eq!(100.352, single::mean(&prices).unwrap());
     }
 
     #[test]
     fn single_mean_identical_prices() {
         let prices = vec![100.0, 100.0, 100.0];
-        assert_eq!(100.0, single::mean(&prices));
+        assert_eq!(100.0, single::mean(&prices).unwrap());
     }
 
     #[test]
@@ -1276,7 +1276,7 @@ mod tests {
         let period: usize = 3;
         assert_eq!(
             vec![100.39666666666666, 100.45666666666666, 100.36666666666667],
-            bulk::mean(&prices, period)
+            bulk::mean(&prices, period).unwrap()
         );
     }
 
@@ -1299,7 +1299,7 @@ mod tests {
     #[test]
     fn single_median_odd() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(100.38, single::median(&prices));
+        assert_eq!(100.38, single::median(&prices).unwrap());
     }
 
     #[test]
@@ -1308,7 +1308,7 @@ mod tests {
         // Should be
         // assert_eq!(100.42, single::median(&prices));
         // but due to how floating points are calculated we have to assert on
-        assert_eq!(100.41999999999999, single::median(&prices));
+        assert_eq!(100.41999999999999, single::median(&prices).unwrap());
     }
 
     #[test]
@@ -1322,7 +1322,7 @@ mod tests {
     fn bulk_median() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 3;
-        assert_eq!(vec![100.46, 100.46, 100.38], bulk::median(&prices, period));
+        assert_eq!(vec![100.46, 100.46, 100.38], bulk::median(&prices, period).unwrap());
     }
 
     #[test]
@@ -1344,19 +1344,19 @@ mod tests {
     #[test]
     fn single_mode_round_up() {
         let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
-        assert_eq!(101.0, single::mode(&prices));
+        assert_eq!(101.0, single::mode(&prices).unwrap());
     }
 
     #[test]
     fn single_mode_round_down() {
         let prices = vec![100.2, 100.46, 100.35, 101.08, 101.19];
-        assert_eq!(100.0, single::mode(&prices));
+        assert_eq!(100.0, single::mode(&prices).unwrap());
     }
 
     #[test]
     fn single_mode_average() {
         let prices = vec![100.46, 100.35, 101.08, 101.19];
-        assert_eq!(100.5, single::mode(&prices));
+        assert_eq!(100.5, single::mode(&prices).unwrap());
     }
 
     #[test]
@@ -1370,7 +1370,7 @@ mod tests {
     fn bulk_mode() {
         let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
         let period: usize = 3;
-        assert_eq!(vec![100.0, 101.0, 101.0], bulk::mode(&prices, period));
+        assert_eq!(vec![100.0, 101.0, 101.0], bulk::mode(&prices, period).unwrap());
     }
 
     #[test]
@@ -1400,7 +1400,7 @@ mod tests {
                 4.608962984226787,
                 4.607068383271171
             ],
-            bulk::log(&prices)
+            bulk::log(&prices).unwrap()
         );
     }
 
@@ -1415,7 +1415,7 @@ mod tests {
     fn single_log_difference() {
         assert_eq!(
             -0.0018946009556159993,
-            single::log_difference(100.19, 100.38)
+            single::log_difference(100.19, 100.38).unwrap()
         );
     }
 
@@ -1441,7 +1441,7 @@ mod tests {
                 -0.0014932061905419403,
                 -0.0018946009556159993
             ],
-            bulk::log_difference(&prices)
+            bulk::log_difference(&prices).unwrap()
         );
     }
 
@@ -1454,7 +1454,7 @@ mod tests {
     #[test]
     fn single_variance() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(0.018695999999999734, single::variance(&prices));
+        assert_eq!(0.018695999999999734, single::variance(&prices).unwrap());
     }
 
     #[test]
@@ -1474,7 +1474,7 @@ mod tests {
                 0.0037555555555558295,
                 0.019355555555555907
             ],
-            bulk::variance(&prices, period)
+            bulk::variance(&prices, period).unwrap()
         );
     }
 
@@ -1497,7 +1497,7 @@ mod tests {
     #[test]
     fn single_standard_deviation() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(0.1367333170810967, single::standard_deviation(&prices));
+        assert_eq!(0.1367333170810967, single::standard_deviation(&prices).unwrap());
     }
 
     #[test]
@@ -1517,7 +1517,7 @@ mod tests {
                 0.06128258770283635,
                 0.13912424503139598
             ],
-            bulk::standard_deviation(&prices, period)
+            bulk::standard_deviation(&prices, period).unwrap()
         );
     }
 
@@ -1548,7 +1548,7 @@ mod tests {
                     center: crate::CentralPoint::Mean,
                     aggregate: crate::DeviationAggregate::Mean
                 }
-            )
+            ).unwrap()
         );
         assert_eq!(
             0.15000000000000568,
@@ -1558,7 +1558,7 @@ mod tests {
                     center: crate::CentralPoint::Median,
                     aggregate: crate::DeviationAggregate::Median
                 }
-            )
+            ).unwrap()
         );
         assert_eq!(
             0.0,
@@ -1568,7 +1568,7 @@ mod tests {
                     center: crate::CentralPoint::Mode,
                     aggregate: crate::DeviationAggregate::Mode
                 }
-            )
+            ).unwrap()
         );
     }
 
@@ -1603,7 +1603,7 @@ mod tests {
                     center: crate::CentralPoint::Mean,
                     aggregate: crate::DeviationAggregate::Mean
                 }
-            )
+            ).unwrap()
         );
         assert_eq!(
             vec![
@@ -1618,7 +1618,7 @@ mod tests {
                     center: crate::CentralPoint::Median,
                     aggregate: crate::DeviationAggregate::Median
                 }
-            )
+            ).unwrap()
         );
         assert_eq!(
             vec![0.0, 0.0, 0.0],
@@ -1629,7 +1629,7 @@ mod tests {
                     center: crate::CentralPoint::Mode,
                     aggregate: crate::DeviationAggregate::Mode
                 }
-            )
+            ).unwrap()
         );
     }
 
@@ -1666,40 +1666,40 @@ mod tests {
     #[test]
     fn single_max() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(100.53, single::max(&prices));
+        assert_eq!(100.53, single::max(&prices).unwrap());
     }
 
     #[test]
     #[should_panic]
     fn single_max_panic() {
         let prices = Vec::new();
-        single::max(&prices);
+        single::max(&prices).unwrap();
     }
 
     #[test]
     fn single_min() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
-        assert_eq!(100.19, single::min(&prices));
+        assert_eq!(100.19, single::min(&prices).unwrap());
     }
 
     #[test]
     #[should_panic]
     fn single_min_panic() {
         let prices = Vec::new();
-        single::min(&prices);
+        single::min(&prices).unwrap();
     }
 
     #[test]
     fn single_price_distribution() {
         let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0, 100.0];
-        let distribution = single::price_distribution(&prices, 1.0);
+        let distribution = single::price_distribution(&prices, 1.0).unwrap();
         assert_eq!(vec![(100.0, 3), (102.0, 2), (103.0, 1)], distribution);
     }
 
     #[test]
     fn single_price_distribution_unique() {
         let prices = vec![100.0, 101.0, 102.0, 103.0];
-        let distribution = single::price_distribution(&prices, 1.0);
+        let distribution = single::price_distribution(&prices, 1.0).unwrap();
         assert_eq!(
             vec![(100.0, 1), (101.0, 1), (102.0, 1), (103.0, 1)],
             distribution
@@ -1709,7 +1709,7 @@ mod tests {
     #[test]
     fn single_price_distribution_same() {
         let prices = vec![100.0, 100.0, 100.0];
-        let distribution = single::price_distribution(&prices, 1.0);
+        let distribution = single::price_distribution(&prices, 1.0).unwrap();
         assert_eq!(vec![(100.0, 3)], distribution);
     }
 
@@ -1717,13 +1717,13 @@ mod tests {
     #[should_panic]
     fn single_price_distribution_panic() {
         let prices = Vec::new();
-        single::price_distribution(&prices, 1.0);
+        single::price_distribution(&prices, 1.0).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn single_price_distribution_bad_precision() {
-        single::price_distribution(&[1.0], 0.0);
+        single::price_distribution(&[1.0], 0.0).unwrap();
     }
 
     #[test]
@@ -1731,17 +1731,17 @@ mod tests {
         let prices = vec![5949.41];
         assert_eq!(
             vec![(6000.0, 1)],
-            single::price_distribution(&prices, 1000.0)
+            single::price_distribution(&prices, 1000.0).unwrap()
         );
         assert_eq!(
             vec![(5900.0, 1)],
-            single::price_distribution(&prices, 100.0)
+            single::price_distribution(&prices, 100.0).unwrap()
         );
-        assert_eq!(vec![(5950.0, 1)], single::price_distribution(&prices, 10.0));
-        assert_eq!(vec![(5949.0, 1)], single::price_distribution(&prices, 1.0));
+        assert_eq!(vec![(5950.0, 1)], single::price_distribution(&prices, 10.0).unwrap());
+        assert_eq!(vec![(5949.0, 1)], single::price_distribution(&prices, 1.0).unwrap());
         assert_eq!(
             vec![(5949.400000000001, 1)],
-            single::price_distribution(&prices, 0.1)
+            single::price_distribution(&prices, 0.1).unwrap()
         );
     }
 
@@ -1751,12 +1751,12 @@ mod tests {
         // precision 1.0
         assert_eq!(
             vec![(100.0, 2), (101.0, 3)],
-            single::price_distribution(&prices, 1.0)
+            single::price_distribution(&prices, 1.0).unwrap()
         );
         // precision 0.5
         assert_eq!(
             vec![(100.0, 1), (100.5, 2), (101.0, 2)],
-            single::price_distribution(&prices, 0.5)
+            single::price_distribution(&prices, 0.5).unwrap()
         );
     }
 
@@ -1766,14 +1766,14 @@ mod tests {
         // precision 0.5 -> 100.0, 100.5 buckets
         assert_eq!(
             vec![(100.0, 1), (100.5, 3)],
-            single::price_distribution(&prices, 0.5)
+            single::price_distribution(&prices, 0.5).unwrap()
         );
     }
 
     #[test]
     fn bulk_price_distribution() {
         let prices = vec![100.0, 102.0, 100.0, 103.0, 102.0];
-        let distribution = bulk::price_distribution(&prices, 3, 1.0);
+        let distribution = bulk::price_distribution(&prices, 3, 1.0).unwrap();
         assert_eq!(
             vec![
                 vec![(100.0, 2), (102.0, 1)],
@@ -1791,7 +1791,7 @@ mod tests {
         // windows:
         // [100.2,100.46,100.53] -> 100.0 (1), 100.5 (2)
         // [100.46,100.53,101.08] -> 100.5 (2), 101.0 (1)
-        let distribution = bulk::price_distribution(&prices, 3, 0.5);
+        let distribution = bulk::price_distribution(&prices, 3, 0.5).unwrap();
         assert_eq!(
             vec![vec![(100.0, 1), (100.5, 2)], vec![(100.5, 2), (101.0, 1)],],
             distribution
@@ -1823,7 +1823,7 @@ mod tests {
     fn log_standard_deviation_simple_series() {
         // prices = [1, e, e^2] -> logs = [0, 1, 2], sample std = 1
         let prices = vec![1.0, E, E.powi(2)];
-        let s = single::log_standard_deviation(&prices);
+        let s = single::log_standard_deviation(&prices).unwrap();
         assert_eq!(0.816496580927726, s);
     }
 
@@ -1840,7 +1840,7 @@ mod tests {
         let prices = vec![1.0, 2.0, 3.0];
         // df = 5 => adjustment sqrt(df/(df-2)) = sqrt(5/3)
         let df = 5.0;
-        let s = single::student_t_adjusted_std(&prices, df);
+        let s = single::student_t_adjusted_std(&prices, df).unwrap();
         assert_eq!(1.0540925533894598, s);
     }
 
@@ -1855,7 +1855,7 @@ mod tests {
     fn laplace_std_equivalent_matches_sqrt2_mad() {
         // median = 1, deviations = [1,1,1,0,1,1,1], MAD = 1 => σ_laplace = √2
         let prices = vec![0.0, 0.0, 0.0, 1.0, 2.0, 2.0, 2.0];
-        let s = single::laplace_std_equivalent(&prices);
+        let s = single::laplace_std_equivalent(&prices).unwrap();
         let expected = 2.0_f64.sqrt();
         assert!(
             (s - expected).abs() < 1e-12,
@@ -1869,7 +1869,7 @@ mod tests {
     fn cauchy_iqr_scale_basic() {
         // [1,2,3,4], Q1 = 1.5, Q3 = 3.5 => IQR = 2 => gamma = 1
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let s = single::cauchy_iqr_scale(&prices);
+        let s = single::cauchy_iqr_scale(&prices).unwrap();
         assert!((s - 1.0).abs() < 1e-12, "expected 1.0, got {}", s);
     }
 
@@ -1885,7 +1885,7 @@ mod tests {
     #[test]
     fn bulk_log_standard_deviation() {
         let prices = vec![1.0, E, E.powi(2), E.powi(3), E.powi(4)];
-        let log_std = bulk::log_standard_deviation(&prices, 3);
+        let log_std = bulk::log_standard_deviation(&prices, 3).unwrap();
         assert_eq!(3, log_std.len());
         // Each window should have similar behavior to single version
         assert!(log_std[0] > 0.0);
@@ -1916,7 +1916,7 @@ mod tests {
     fn bulk_student_t_adjusted_std() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
         let df = 5.0;
-        let student_std = bulk::student_t_adjusted_std(&prices, 3, df);
+        let student_std = bulk::student_t_adjusted_std(&prices, 3, df).unwrap();
         assert_eq!(3, student_std.len());
         // Each value should be adjusted by sqrt(df/(df-2))
         assert!(student_std[0] > 0.0);
@@ -1946,7 +1946,7 @@ mod tests {
     #[test]
     fn bulk_laplace_std_equivalent() {
         let prices = vec![0.0, 1.0, 2.0, 3.0, 4.0];
-        let laplace_std = bulk::laplace_std_equivalent(&prices, 3);
+        let laplace_std = bulk::laplace_std_equivalent(&prices, 3).unwrap();
         assert_eq!(3, laplace_std.len());
         assert!(laplace_std[0] > 0.0);
     }
@@ -1968,7 +1968,7 @@ mod tests {
     #[test]
     fn bulk_cauchy_iqr_scale() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
-        let cauchy_scale = bulk::cauchy_iqr_scale(&prices, 4);
+        let cauchy_scale = bulk::cauchy_iqr_scale(&prices, 4).unwrap();
         assert_eq!(3, cauchy_scale.len());
         assert!(cauchy_scale[0] > 0.0);
     }
@@ -1977,27 +1977,27 @@ mod tests {
     #[should_panic]
     fn bulk_cauchy_iqr_scale_period_less_than_four() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
-        let _ = bulk::cauchy_iqr_scale(&prices, 3);
+        let _ = bulk::cauchy_iqr_scale(&prices, 3).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn bulk_cauchy_iqr_scale_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let _ = bulk::cauchy_iqr_scale(&prices, 5);
+        let _ = bulk::cauchy_iqr_scale(&prices, 5).unwrap();
     }
     #[test]
     fn single_empirical_quantile_range_from_distribution_simple() {
         // For [1,2,3,4] with precision 1.0, q25=1.75, q75=3.25 => IQR=1.5 (linear interpolation)
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let iqr = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75);
+        let iqr = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.25, 0.75).unwrap();
         assert_eq!(2.0, iqr,);
     }
 
     #[test]
     fn bulk_empirical_quantile_range_from_distribution() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let v = bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75);
+        let v = bulk::empirical_quantile_range_from_distribution(&prices, 3, 1.0, 0.25, 0.75).unwrap();
         // windows: [1,2,3] -> IQR=1.0; [2,3,4] -> IQR=1.0
         assert_eq!(vec![1.0, 1.0], v);
     }

@@ -540,9 +540,9 @@ pub mod bulk {
         assert_period(period, length)?;
         if period < 4 {
             return Err(crate::TechnicalIndicatorError::InvalidPeriod {
-                name: "period".to_string(),
-                value: period,
-                constraint: "needs to be greater or equal to 4".to_string(),
+                period,
+                data_len: length,
+                reason: "needs to be greater or equal to 4".to_string(),
             });
         }
 
@@ -801,7 +801,7 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -819,7 +819,7 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SmoothedMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -837,7 +837,7 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::ExponentialMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -858,7 +858,7 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            )
+            ).unwrap()
         );
     }
 
@@ -876,7 +876,7 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingMedian
-            )
+            ).unwrap()
         );
     }
 
@@ -894,7 +894,7 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingMode
-            )
+            ).unwrap()
         );
     }
 
@@ -912,7 +912,7 @@ mod tests {
                 &low,
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage
-            )
+            ).unwrap()
         );
     }
 
@@ -1027,7 +1027,7 @@ mod tests {
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage,
                 6_usize
-            )
+            ).unwrap()
         );
     }
 
@@ -1048,7 +1048,7 @@ mod tests {
                 &close,
                 crate::ConstantModelType::SimpleMovingAverage,
                 6_usize
-            )
+            ).unwrap()
         );
     }
 

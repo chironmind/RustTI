@@ -3438,17 +3438,15 @@ mod tests {
     #[test]
     fn bulk_commodity_channel_index_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
-        assert_eq!(
-            vec![-100.0, -100.00000000000804, -41.66666666666519],
+        assert!(
             bulk::commodity_channel_index(
                 &prices,
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::MeanAbsoluteDeviation,
                 0.015,
                 30_usize
-            ).unwrap()
-        )
-        .unwrap_err();
+            ).is_err()
+        );
     }
 
     #[test]
@@ -4428,7 +4426,7 @@ mod tests {
                     alpha_num: 5.0,
                     alpha_den: 4.0
                 }
-            )
+            ).unwrap()
         );
     }
 
