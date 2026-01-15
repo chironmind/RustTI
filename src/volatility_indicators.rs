@@ -31,7 +31,7 @@
 /// **single**: Functions that return a single value for a slice of prices.
 pub mod single {
     use crate::basic_indicators::single::max;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::assert_non_empty;
 
     /// Calculates the Ulcer Index
     ///
@@ -43,28 +43,28 @@ pub mod single {
     ///
     /// The calculated indicator value
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// `ulcer_index` will panic if `prices` is empty
+    /// Returns `TechnicalIndicatorError::EmptyData` if `prices` is empty
     ///
     /// # Examples
     ///
     /// ```rust
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0];
-    /// let ulcer_index = centaur_technical_indicators::volatility_indicators::single::ulcer_index(&prices);
+    /// let ulcer_index = centaur_technical_indicators::volatility_indicators::single::ulcer_index(&prices).unwrap();
     /// assert_eq!(1.9417475728155338, ulcer_index);
     /// ```
     #[inline]
-    pub fn ulcer_index(prices: &[f64]) -> f64 {
-        assert_non_empty("prices", prices);
+    pub fn ulcer_index(prices: &[f64]) -> crate::Result<f64> {
+        assert_non_empty("prices", prices)?;
 
         let mut sum_sq = 0.0;
         for (i, price) in prices.iter().enumerate().skip(1) {
-            let period_max = max(&prices[..=i]);
+            let period_max = max(&prices[..=i])?;
             let percentage_drawdown = ((price - period_max) / period_max) * 100.0;
             sum_sq += percentage_drawdown.powi(2);
         }
-        (sum_sq / prices.len() as f64).sqrt()
+        Ok((sum_sq / prices.len() as f64).sqrt())
     }
 }
 
@@ -88,9 +88,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `period` > `prices.len()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if `period` > `prices.len()`
     ///
     /// # Examples
     ///
@@ -98,22 +98,22 @@ pub mod bulk {
     /// let prices = vec![100.0, 102.0, 103.0, 101.0, 99.0, 99.0, 102.0];
     /// let period: usize = 5;
     /// let ulcer_index =
-    ///     centaur_technical_indicators::volatility_indicators::bulk::ulcer_index(&prices, period);
+    ///     centaur_technical_indicators::volatility_indicators::bulk::ulcer_index(&prices, period).unwrap();
     /// assert_eq!(
     ///     vec![1.9417475728155338, 2.6051277407764535, 2.641062234705911],
     ///     ulcer_index
     /// );
     /// ```
     #[inline]
-    pub fn ulcer_index(prices: &[f64], period: usize) -> Vec<f64> {
+    pub fn ulcer_index(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
         let length = prices.len();
-        assert_period(period, length);
+        assert_period(period, length)?;
 
         let mut ulcer_indexes = Vec::with_capacity(length - period + 1);
         for window in prices.windows(period) {
-            ulcer_indexes.push(single::ulcer_index(window));
+            ulcer_indexes.push(single::ulcer_index(window)?);
         }
-        ulcer_indexes
+        Ok(ulcer_indexes)
     }
 
     /// Calculates Welles volatility system
@@ -131,12 +131,11 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
-    /// * `close.len()` != `highs.len()` != `lows.len()`
-    /// * `close.is_empty()`
-    /// * lengths < `period`
+    /// Returns `TechnicalIndicatorError::InvalidLength` if `close.len()` != `highs.len()` != `lows.len()`
+    /// Returns `TechnicalIndicatorError::EmptyData` if `close.is_empty()`
+    /// Returns `TechnicalIndicatorError::InvalidPeriod` if lengths < `period`
     ///
     /// # Examples
     ///
@@ -179,7 +178,7 @@ pub mod bulk {
     ///         period,
     ///         constant_multiplier,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(
     ///     vec![
@@ -199,11 +198,11 @@ pub mod bulk {
         period: usize,
         constant_multiplier: f64,
         constant_model_type: ConstantModelType,
-    ) -> Vec<f64> {
+    ) -> crate::Result<Vec<f64>> {
         let length = close.len();
-        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
-        assert_non_empty("close", close);
-        assert_period(period, length);
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)])?;
+        assert_non_empty("close", close)?;
+        assert_period(period, length)?;
 
         let typical_price: Vec<f64> = (0..length)
             .map(|i| (highs[i] + lows[i] + close[i]) / 3.0)
@@ -214,17 +213,17 @@ pub mod bulk {
         let mut significant_close;
         let mut previous_period = period;
 
-        let trend = overall_trend(&typical_price[..previous_period]);
-        let atr = average_true_range(close, highs, lows, constant_model_type, period);
+        let trend = overall_trend(&typical_price[..previous_period])?;
+        let atr = average_true_range(close, highs, lows, constant_model_type, period)?;
         let arc: Vec<f64> = atr.iter().map(|x| x * constant_multiplier).collect();
 
         if trend.0 < 0.0 {
-            significant_close = min(&close[..previous_period]);
+            significant_close = min(&close[..previous_period])?;
             position = Position::Short;
             sars.push(significant_close + arc[0]);
             sars.push(significant_close + arc[1]);
         } else {
-            significant_close = max(&close[..previous_period]);
+            significant_close = max(&close[..previous_period])?;
             position = Position::Long;
             sars.push(significant_close - arc[0]);
             sars.push(significant_close - arc[1]);
@@ -235,7 +234,7 @@ pub mod bulk {
             if position == Position::Short {
                 if close[max_period] > sars[i - 1] {
                     position = Position::Long;
-                    significant_close = max(&close[previous_period..max_period]);
+                    significant_close = max(&close[previous_period..max_period])?;
                     previous_period = max_period;
                     sars.push(significant_close - arc[i]);
                 } else {
@@ -244,17 +243,17 @@ pub mod bulk {
             } else if position == Position::Long {
                 if close[max_period] < sars[i - 1] {
                     position = Position::Short;
-                    significant_close = min(&close[previous_period..max_period]);
+                    significant_close = min(&close[previous_period..max_period])?;
                     previous_period = max_period;
                     sars.push(significant_close + arc[i]);
                 } else {
                     sars.push(significant_close - arc[i]);
                 }
             } else {
-                unsupported_type("Position");
+                return Err(unsupported_type("Position"));
             }
         }
-        sars
+        Ok(sars)
     }
 }
 
@@ -265,14 +264,14 @@ mod tests {
     #[test]
     fn single_ulcer_index() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21];
-        assert_eq!(0.21816086938686668, single::ulcer_index(&prices));
+        assert_eq!(0.21816086938686668, single::ulcer_index(&prices).unwrap());
     }
 
     #[test]
-    #[should_panic]
     fn single_ucler_index_panic() {
         let prices = Vec::new();
-        single::ulcer_index(&prices);
+        let result = single::ulcer_index(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -280,15 +279,15 @@ mod tests {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         assert_eq!(
             vec![0.21816086938686668, 0.2373213243162752, 0.12490478596260104],
-            bulk::ulcer_index(&prices, 5_usize)
+            bulk::ulcer_index(&prices, 5_usize).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_ulcer_index_panic() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
-        bulk::ulcer_index(&prices, 50_usize);
+        let result = bulk::ulcer_index(&prices, 50_usize);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -307,6 +306,7 @@ mod tests {
                 2.0,
                 crate::ConstantModelType::SimpleMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -326,17 +326,17 @@ mod tests {
                 2.0,
                 crate::ConstantModelType::SimpleMovingAverage
             )
+            .unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_volatility_system_panic_high_length() {
         let highs = vec![101.27, 101.03, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.59, 100.68];
         let close = vec![101.14, 100.96, 100.88, 100.76, 101.37];
         let period: usize = 3;
-        bulk::volatility_system(
+        let result = bulk::volatility_system(
             &highs,
             &lows,
             &close,
@@ -344,16 +344,16 @@ mod tests {
             2.0,
             crate::ConstantModelType::SimpleMovingAverage,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_volatility_system_panic_low_length() {
         let highs = vec![101.27, 101.03, 100.91, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.68];
         let close = vec![101.14, 100.96, 100.88, 100.76, 101.37];
         let period: usize = 3;
-        bulk::volatility_system(
+        let result = bulk::volatility_system(
             &highs,
             &lows,
             &close,
@@ -361,16 +361,16 @@ mod tests {
             2.0,
             crate::ConstantModelType::SimpleMovingAverage,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_volatility_system_panic_close_length() {
         let highs = vec![101.27, 101.03, 100.91, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.59, 100.68];
         let close = vec![101.14, 100.96, 100.88, 101.37];
         let period: usize = 3;
-        bulk::volatility_system(
+        let result = bulk::volatility_system(
             &highs,
             &lows,
             &close,
@@ -378,16 +378,16 @@ mod tests {
             2.0,
             crate::ConstantModelType::SimpleMovingAverage,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_volatility_system_panic_empty() {
         let highs = Vec::new();
         let lows = Vec::new();
         let close = Vec::new();
         let period: usize = 3;
-        bulk::volatility_system(
+        let result = bulk::volatility_system(
             &highs,
             &lows,
             &close,
@@ -395,16 +395,16 @@ mod tests {
             2.0,
             crate::ConstantModelType::SimpleMovingAverage,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_volatility_system_panic_period() {
         let highs = vec![101.27, 101.03, 100.91, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.59, 100.68];
         let close = vec![101.14, 100.96, 100.88, 100.76, 101.37];
         let period: usize = 30;
-        bulk::volatility_system(
+        let result = bulk::volatility_system(
             &highs,
             &lows,
             &close,
@@ -412,5 +412,6 @@ mod tests {
             2.0,
             crate::ConstantModelType::SimpleMovingAverage,
         );
+        assert!(result.is_err());
     }
 }

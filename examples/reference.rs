@@ -478,12 +478,14 @@ fn main() {
         );
     println!("Stochastic Oscillator: {:?}", stochastic_oscillator);
 
+    let stochastic_oscillator_unwrapped = stochastic_oscillator.unwrap();
     for model in &available_models {
         let slow_so = centaur_technical_indicators::momentum_indicators::bulk::slow_stochastic(
-            &stochastic_oscillator,
+            &stochastic_oscillator_unwrapped,
             *model,
             period,
-        );
+        )
+        .unwrap();
         println!("Slow Stochastic {:?}: {:?}", model, slow_so);
 
         for slowest_model in &available_models {
@@ -492,7 +494,8 @@ fn main() {
                     &slow_so,
                     *slowest_model,
                     period,
-                );
+                )
+                .unwrap();
             println!("Slowest Stochastic {:?}: {:?}", slowest_model, slowest_so);
         }
     }
@@ -553,12 +556,14 @@ fn main() {
             );
             println!("MACD {:?} {:?}: {:?}", short_model, long_model, macd);
 
+            let macd_unwrapped = macd.unwrap();
             for signal_model in &available_models {
                 let signal = centaur_technical_indicators::momentum_indicators::bulk::signal_line(
-                    &macd,
+                    &macd_unwrapped,
                     *signal_model,
                     period,
-                );
+                )
+                .unwrap();
                 println!("Signal line {:?}: {:?}", signal_model, signal);
             }
         }
@@ -603,13 +608,15 @@ fn main() {
                 long_period,
                 *model,
             );
-        println!("PPO {:?}: {:?}", model, ppo);
+        let ppo_unwrapped = ppo.unwrap();
+        println!("PPO {:?}: {:?}", model, ppo_unwrapped);
         for moving_average in &available_moving_averages {
             let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
-                &ppo,
+                &ppo_unwrapped,
                 *moving_average,
                 period,
-            );
+            )
+            .unwrap();
             println!("{:?} Signal Line: {:?}", moving_average, signal);
         }
     }
@@ -684,14 +691,16 @@ fn main() {
     for model in &available_models {
         let rvi = centaur_technical_indicators::strength_indicators::bulk::relative_vigor_index(
             &open, &high, &low, &close, *model, period,
-        );
+        )
+        .unwrap();
         println!("{:?} Relative Vigor Index: {:?}", model, rvi);
         for signal_model in &available_moving_averages {
             let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
                 &rvi,
                 *signal_model,
                 period,
-            );
+            )
+            .unwrap();
             println!("{:?} Signal Line: {:?}", signal_model, signal);
         }
     }
@@ -739,12 +748,14 @@ fn main() {
                 "{:?} {:?} True Strength Index: {:?}",
                 first_model, second_model, tsi
             );
+            let tsi_unwrapped = tsi.unwrap();
             for signal_model in &available_moving_averages {
                 let signal = centaur_technical_indicators::moving_average::bulk::moving_average(
-                    &tsi,
+                    &tsi_unwrapped,
                     *signal_model,
                     period,
-                );
+                )
+                .unwrap();
                 println!("{:?} Signal Line: {:?}", signal_model, signal);
             }
         }

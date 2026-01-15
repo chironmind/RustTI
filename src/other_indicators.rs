@@ -38,7 +38,7 @@
 pub mod single {
     use crate::basic_indicators::single::{median, mode};
     use crate::moving_average::single::moving_average;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len, unsupported_type};
+    use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
     /// Calculates the final value and percentage return of a investment
@@ -145,9 +145,9 @@ pub mod single {
     /// * `lows` - Slice of lows
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `close.len()` != `highs.len()` !=  `lows.len()`
     /// * `close.is_empty()`
     ///
@@ -164,7 +164,7 @@ pub mod single {
     ///         &highs,
     ///         &lows,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(10.0, average_true_range);
     ///
     /// let exponential_atr =
@@ -173,7 +173,7 @@ pub mod single {
     ///         &highs,
     ///         &lows,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(10.0, exponential_atr);
     /// ```
     #[inline]
@@ -182,10 +182,9 @@ pub mod single {
         highs: &[f64],
         lows: &[f64],
         constant_model_type: ConstantModelType,
-    ) -> f64 {
-        let length = close.len();
-        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
-        assert_non_empty("close", close);
+    ) -> crate::Result<f64> {
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)])?;
+        assert_non_empty("close", close)?;
 
         let trs: Vec<f64> = close
             .iter()
@@ -216,7 +215,7 @@ pub mod single {
             ),
             ConstantModelType::SimpleMovingMedian => median(&trs),
             ConstantModelType::SimpleMovingMode => mode(&trs),
-            _ => unsupported_type("ConstantModelType"),
+            _ => Err(unsupported_type("ConstantModelType")),
         }
     }
 
@@ -272,9 +271,9 @@ pub mod bulk {
     ///
     /// A vector of tuples, each containing (final_investment_value, percent_return)
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if `prices.is_empty()`
+    /// Returns an error if `prices.is_empty()`
     ///
     /// # Examples
     ///
@@ -286,7 +285,7 @@ pub mod bulk {
     ///     centaur_technical_indicators::other_indicators::bulk::return_on_investment(
     ///         &prices,
     ///         initial_investment
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(
     ///     vec![
     ///         (1020.0, 2.0),
@@ -299,8 +298,8 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn return_on_investment(prices: &[f64], investment: f64) -> Vec<(f64, f64)> {
-        assert_non_empty("prices", prices);
+    pub fn return_on_investment(prices: &[f64], investment: f64) -> crate::Result<Vec<(f64, f64)>> {
+        assert_non_empty("prices", prices)?;
         let mut rois = Vec::with_capacity(prices.len() - 1);
         let mut roi = single::return_on_investment(prices[0], prices[1], investment);
         rois.push(roi);
@@ -308,7 +307,7 @@ pub mod bulk {
             roi = single::return_on_investment(prices[i - 1], prices[i], rois[i - 2].0);
             rois.push(roi);
         }
-        rois
+        Ok(rois)
     }
 
     /// Calculates the true range
@@ -323,9 +322,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `close.len()` != `highs.len()` != `lows.len()`
     /// * `close.is_empty()`
     ///
@@ -340,18 +339,18 @@ pub mod bulk {
     ///     &close,
     ///     &highs,
     ///     &lows
-    /// );
+    /// ).unwrap();
     /// assert_eq!(vec![10.0, 10.0, 10.0], true_range);
     /// ```
     #[inline]
-    pub fn true_range(close: &[f64], highs: &[f64], lows: &[f64]) -> Vec<f64> {
+    pub fn true_range(close: &[f64], highs: &[f64], lows: &[f64]) -> crate::Result<Vec<f64>> {
         let length = close.len();
-        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)]);
-        assert_non_empty("close", close);
+        assert_same_len(&[("close", close), ("highs", highs), ("lows", lows)])?;
+        assert_non_empty("close", close)?;
 
-        (0..length)
+        Ok((0..length)
             .map(|i| single::true_range(close[i], highs[i], lows[i]))
-            .collect()
+            .collect())
     }
 
     /// Calculates the Average True Range (ATR)
@@ -368,9 +367,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// `average_true_range` will panic if:
+    /// Returns an error if:
     /// * `close.len()` != `highs.len()` != `lows.len()`
     /// * `close.is_empty()`
     /// * `period.len()` > lengths
@@ -389,7 +388,7 @@ pub mod bulk {
     ///     &lows,
     ///     centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///     period
-    /// );
+    /// ).unwrap();
     /// assert_eq!(vec![10.0, 13.333333333333334, 13.333333333333334], average_true_range);
     ///
     /// let exponential_atr = centaur_technical_indicators::other_indicators::bulk::average_true_range(
@@ -398,7 +397,7 @@ pub mod bulk {
     ///     &lows,
     ///     centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///     period
-    /// );
+    /// ).unwrap();
     /// assert_eq!(vec![10.0, 15.714285714285714, 12.857142857142858], exponential_atr);
     /// ```
     #[inline]
@@ -408,11 +407,11 @@ pub mod bulk {
         lows: &[f64],
         constant_model_type: ConstantModelType,
         period: usize,
-    ) -> Vec<f64> {
+    ) -> crate::Result<Vec<f64>> {
         let length = close.len();
-        assert_period(period, length);
-        assert_same_len(&[("close", close), ("lows", lows), ("highs", highs)]);
-        assert_non_empty("close", close);
+        assert_period(period, length)?;
+        assert_same_len(&[("close", close), ("lows", lows), ("highs", highs)])?;
+        assert_non_empty("close", close)?;
 
         (0..=length - period)
             .map(|i| {
@@ -438,9 +437,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `highs.len()` != `lows.len()` != `close.len()`
     /// * `highs.is_empty()`
     ///
@@ -456,7 +455,7 @@ pub mod bulk {
     ///         &highs,
     ///         &lows,
     ///         &close
-    ///     );
+    ///     ).unwrap();
     ///
     /// assert_eq!(
     ///     vec![0.5, 1.0, 0.6666666666666666, 0.5, 0.33333333333333333],
@@ -464,14 +463,18 @@ pub mod bulk {
     /// );
     /// ```
     #[inline]
-    pub fn internal_bar_strength(highs: &[f64], lows: &[f64], close: &[f64]) -> Vec<f64> {
+    pub fn internal_bar_strength(
+        highs: &[f64],
+        lows: &[f64],
+        close: &[f64],
+    ) -> crate::Result<Vec<f64>> {
         let length = highs.len();
-        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)]);
-        assert_non_empty("highs", highs);
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)])?;
+        assert_non_empty("highs", highs)?;
 
-        (0..length)
+        Ok((0..length)
             .map(|i| single::internal_bar_strength(highs[i], lows[i], close[i]))
-            .collect()
+            .collect())
     }
 
     /// Calculates the positivity indicator and its signal line
@@ -483,9 +486,9 @@ pub mod bulk {
     /// * `signal_period` - Period yp calculate the signal
     /// * `constant_model_type` - Variant of [`ConstantModelType`]
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `open.len()` != `previous_close'len()`
     /// * `open.is_empty()`
     /// * `signal_period` is greater than length of prices
@@ -505,7 +508,7 @@ pub mod bulk {
     ///         &previous_close,
     ///         signal_period,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage
-    /// );
+    /// ).unwrap();
     ///
     /// assert_eq!(
     ///     vec![
@@ -520,11 +523,11 @@ pub mod bulk {
         previous_close: &[f64],
         signal_period: usize,
         constant_model_type: ConstantModelType,
-    ) -> Vec<(f64, f64)> {
+    ) -> crate::Result<Vec<(f64, f64)>> {
         let length = open.len();
-        assert_same_len(&[("open", open), ("previous_close", previous_close)]);
-        assert_non_empty("open", open);
-        assert_period(signal_period, length);
+        assert_same_len(&[("open", open), ("previous_close", previous_close)])?;
+        assert_non_empty("open", open)?;
+        assert_period(signal_period, length)?;
 
         let pis: Vec<f64> = (0..length)
             .map(|i| ((open[i] - previous_close[i]) / previous_close[i]) * 100.0)
@@ -532,13 +535,13 @@ pub mod bulk {
 
         let signal_line = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(&pis, MovingAverageType::Simple, signal_period)
+                moving_average(&pis, MovingAverageType::Simple, signal_period)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(&pis, MovingAverageType::Smoothed, signal_period)
+                moving_average(&pis, MovingAverageType::Smoothed, signal_period)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(&pis, MovingAverageType::Exponential, signal_period)
+                moving_average(&pis, MovingAverageType::Exponential, signal_period)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -550,17 +553,17 @@ pub mod bulk {
                     alpha_den,
                 },
                 signal_period,
-            ),
-            ConstantModelType::SimpleMovingMedian => median(&pis, signal_period),
-            ConstantModelType::SimpleMovingMode => mode(&pis, signal_period),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(&pis, signal_period)?,
+            ConstantModelType::SimpleMovingMode => mode(&pis, signal_period)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
-        signal_line
+        Ok(signal_line
             .iter()
             .enumerate()
             .map(|(i, &sig)| (pis[i + signal_period - 1], sig))
-            .collect()
+            .collect())
     }
 }
 
@@ -590,16 +593,15 @@ mod tests {
                 (997.3123631296038, -0.18928073321378402),
                 (997.5114473422257, 0.01996207206307317)
             ],
-            bulk::return_on_investment(&prices, investment)
+            bulk::return_on_investment(&prices, investment).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_return_on_investment_panic() {
         let prices = Vec::new();
         let investment = 1000.0;
-        bulk::return_on_investment(&prices, investment);
+        assert!(bulk::return_on_investment(&prices, investment).is_err());
     }
 
     #[test]
@@ -630,44 +632,40 @@ mod tests {
         let low = vec![100.29, 100.87, 99.94];
         assert_eq!(
             vec![0.8299999999999983, 0.769999999999996, 0.4399999999999977],
-            bulk::true_range(&close, &high, &low)
+            bulk::true_range(&close, &high, &low).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_true_range_close_length_panic() {
         let close = vec![100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
-        bulk::true_range(&close, &high, &low);
+        assert!(bulk::true_range(&close, &high, &low).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_true_range_high_length_panic() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 100.11];
         let low = vec![100.29, 100.87, 99.94];
-        bulk::true_range(&close, &high, &low);
+        assert!(bulk::true_range(&close, &high, &low).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_true_range_low_length_panic() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 99.94];
-        bulk::true_range(&close, &high, &low);
+        assert!(bulk::true_range(&close, &high, &low).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_true_range_empty_panic() {
         let close = Vec::new();
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
-        bulk::true_range(&close, &high, &low);
+        assert!(bulk::true_range(&close, &high, &low).is_err());
     }
 
     #[test]
@@ -683,6 +681,7 @@ mod tests {
                 &low,
                 crate::ConstantModelType::SimpleMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -699,6 +698,7 @@ mod tests {
                 &low,
                 crate::ConstantModelType::SmoothedMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -715,6 +715,7 @@ mod tests {
                 &low,
                 crate::ConstantModelType::ExponentialMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -734,6 +735,7 @@ mod tests {
                     alpha_den: 4.0
                 }
             )
+            .unwrap()
         );
     }
 
@@ -750,6 +752,7 @@ mod tests {
                 &low,
                 crate::ConstantModelType::SimpleMovingMedian
             )
+            .unwrap()
         );
     }
 
@@ -766,63 +769,64 @@ mod tests {
                 &low,
                 crate::ConstantModelType::SimpleMovingMode
             )
+            .unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn single_average_true_range_close_length_panic() {
         let close = vec![100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
-        single::average_true_range(
+        assert!(single::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_average_true_range_high_length_panic() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 100.11];
         let low = vec![100.29, 100.87, 99.94];
-        single::average_true_range(
+        assert!(single::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_average_true_range_low_length_panic() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 99.94];
-        single::average_true_range(
+        assert!(single::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_average_true_range_empty_panic() {
         let close = Vec::new();
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
-        single::average_true_range(
+        assert!(single::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 
     #[test]
@@ -840,87 +844,88 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 period
             )
+            .unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_average_true_range_panic_period() {
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
         let period: usize = 30;
-        bulk::average_true_range(
+        assert!(bulk::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_average_true_range_panic_close_length() {
         let close = vec![100.46, 100.53, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
         let period: usize = 3;
-        bulk::average_true_range(
+        assert!(bulk::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_average_true_range_panic_high_length() {
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
         let period: usize = 3;
-        bulk::average_true_range(
+        assert!(bulk::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_average_true_range_panic_low_length() {
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 99.94, 99.86, 99.91];
         let period: usize = 3;
-        bulk::average_true_range(
+        assert!(bulk::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_average_true_range_panic_empty() {
         let close = Vec::new();
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
         let period: usize = 3;
-        bulk::average_true_range(
+        assert!(bulk::average_true_range(
             &close,
             &high,
             &low,
             crate::ConstantModelType::SimpleMovingAverage,
             period,
-        );
+        )
+        .is_err());
     }
 
     #[test]
@@ -947,44 +952,40 @@ mod tests {
                 0.5521472392638039,
                 0.8780487804878055
             ],
-            bulk::internal_bar_strength(&high, &low, &close)
+            bulk::internal_bar_strength(&high, &low, &close).unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_internal_bar_strength_panic_close_length() {
         let close = vec![100.55, 99.01, 100.43, 101.0];
         let high = vec![102.32, 100.69, 100.83, 101.73, 102.01];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::internal_bar_strength(&high, &low, &close);
+        assert!(bulk::internal_bar_strength(&high, &low, &close).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_internal_bar_strength_panic_high_length() {
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::internal_bar_strength(&high, &low, &close);
+        assert!(bulk::internal_bar_strength(&high, &low, &close).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_internal_bar_strength_panic_low_length() {
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76];
         let high = vec![102.32, 100.69, 100.83, 101.73, 102.01];
         let low = vec![100.14, 98.98, 99.07, 100.1];
-        bulk::internal_bar_strength(&high, &low, &close);
+        assert!(bulk::internal_bar_strength(&high, &low, &close).is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_internal_bar_strength_panic_empty() {
         let close = Vec::new();
         let high = Vec::new();
         let low = Vec::new();
-        bulk::internal_bar_strength(&high, &low, &close);
+        assert!(bulk::internal_bar_strength(&high, &low, &close).is_err());
     }
 
     #[test]
@@ -1004,6 +1005,7 @@ mod tests {
                 signal_period,
                 crate::ConstantModelType::SimpleMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -1024,6 +1026,7 @@ mod tests {
                 signal_period,
                 crate::ConstantModelType::SmoothedMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -1044,6 +1047,7 @@ mod tests {
                 signal_period,
                 crate::ConstantModelType::ExponentialMovingAverage
             )
+            .unwrap()
         );
     }
 
@@ -1067,6 +1071,7 @@ mod tests {
                     alpha_den: 4.0
                 }
             )
+            .unwrap()
         );
     }
 
@@ -1087,6 +1092,7 @@ mod tests {
                 signal_period,
                 crate::ConstantModelType::SimpleMovingMedian
             )
+            .unwrap()
         );
     }
 
@@ -1107,48 +1113,49 @@ mod tests {
                 signal_period,
                 crate::ConstantModelType::SimpleMovingMode
             )
+            .unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_positivity_indicator_panic_length() {
         let open = vec![5278.24, 5314.48, 5343.81, 5341.22, 5353.0, 5409.13];
         let previous_close = vec![5283.4, 5291.34, 5354.03, 5352.96, 5346.99, 5360.79, 5375.32];
         let signal_period: usize = 5;
-        bulk::positivity_indicator(
+        assert!(bulk::positivity_indicator(
             &open,
             &previous_close,
             signal_period,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_positivity_indicator_panic_empty() {
         let open = Vec::new();
         let previous_close = Vec::new();
         let signal_period: usize = 5;
-        bulk::positivity_indicator(
+        assert!(bulk::positivity_indicator(
             &open,
             &previous_close,
             signal_period,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_positivity_indicator_panic_period() {
         let open = vec![5278.24, 5314.48, 5357.8, 5343.81, 5341.22, 5353.0, 5409.13];
         let previous_close = vec![5283.4, 5291.34, 5354.03, 5352.96, 5346.99, 5360.79, 5375.32];
         let signal_period: usize = 50;
-        bulk::positivity_indicator(
+        assert!(bulk::positivity_indicator(
             &open,
             &previous_close,
             signal_period,
             crate::ConstantModelType::SimpleMovingMode,
-        );
+        )
+        .is_err());
     }
 }

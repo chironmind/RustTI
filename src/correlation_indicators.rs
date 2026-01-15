@@ -54,9 +54,9 @@ pub mod single {
     ///
     /// The correlation coefficient between the two asset prices
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `prices_asset_a.is_empty()` or `prices_asset_b.is_empty()`
     /// * `prices_asset_a.len()` != `prices_asset_b.len()`
     ///
@@ -72,7 +72,7 @@ pub mod single {
     ///         &prices_b,
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::StandardDeviation
-    ///     );
+    ///     ).unwrap();
     /// // This should be 1.0 but due to how Rust calculates floats, this is close as we get
     /// assert_eq!(0.9999999999999998, correlation);
     ///
@@ -81,7 +81,7 @@ pub mod single {
     ///         &prices_a,
     ///         &prices_b,
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
-    ///         centaur_technical_indicators::DeviationModel::UlcerIndex);
+    ///         centaur_technical_indicators::DeviationModel::UlcerIndex).unwrap();
     /// assert_eq!(1.1410137845061807, correlation);
     /// ```
     pub fn correlate_asset_prices(
@@ -89,20 +89,23 @@ pub mod single {
         prices_asset_b: &[f64],
         constant_model_type: ConstantModelType,
         deviation_model: DeviationModel,
-    ) -> f64 {
+    ) -> crate::Result<f64> {
         let length = prices_asset_a.len();
-        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)]);
-        assert_non_empty(&"prices_asset_a", prices_asset_a);
+        assert_same_len(&[
+            ("prices_asset_a", prices_asset_a),
+            ("prices_asset_b", prices_asset_b),
+        ])?;
+        assert_non_empty("prices_asset_a", prices_asset_a)?;
 
         let asset_a_average = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(prices_asset_a, MovingAverageType::Simple)
+                moving_average(prices_asset_a, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(prices_asset_a, MovingAverageType::Smoothed)
+                moving_average(prices_asset_a, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(prices_asset_a, MovingAverageType::Exponential)
+                moving_average(prices_asset_a, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -113,21 +116,21 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(prices_asset_a),
-            ConstantModelType::SimpleMovingMode => mode(prices_asset_a),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(prices_asset_a)?,
+            ConstantModelType::SimpleMovingMode => mode(prices_asset_a)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let asset_b_average = match constant_model_type {
             ConstantModelType::SimpleMovingAverage => {
-                moving_average(prices_asset_b, MovingAverageType::Simple)
+                moving_average(prices_asset_b, MovingAverageType::Simple)?
             }
             ConstantModelType::SmoothedMovingAverage => {
-                moving_average(prices_asset_b, MovingAverageType::Smoothed)
+                moving_average(prices_asset_b, MovingAverageType::Smoothed)?
             }
             ConstantModelType::ExponentialMovingAverage => {
-                moving_average(prices_asset_b, MovingAverageType::Exponential)
+                moving_average(prices_asset_b, MovingAverageType::Exponential)?
             }
             ConstantModelType::PersonalisedMovingAverage {
                 alpha_num,
@@ -138,10 +141,10 @@ pub mod single {
                     alpha_num,
                     alpha_den,
                 },
-            ),
-            ConstantModelType::SimpleMovingMedian => median(prices_asset_b),
-            ConstantModelType::SimpleMovingMode => mode(prices_asset_b),
-            _ => unsupported_type("ConstantModelType"),
+            )?,
+            ConstantModelType::SimpleMovingMedian => median(prices_asset_b)?,
+            ConstantModelType::SimpleMovingMode => mode(prices_asset_b)?,
+            _ => return Err(unsupported_type("ConstantModelType")),
         };
 
         let joint_average_return: f64 = (0..length)
@@ -151,36 +154,36 @@ pub mod single {
         let covariance = joint_average_return / length as f64;
 
         let asset_a_deviation = match deviation_model {
-            DeviationModel::StandardDeviation => standard_deviation(prices_asset_a),
+            DeviationModel::StandardDeviation => standard_deviation(prices_asset_a)?,
             DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
                 prices_asset_a,
                 AbsDevConfig {
                     center: CentralPoint::Mean,
                     aggregate: DeviationAggregate::Mean,
                 },
-            ),
+            )?,
             DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
                 prices_asset_a,
                 AbsDevConfig {
                     center: CentralPoint::Median,
                     aggregate: DeviationAggregate::Median,
                 },
-            ),
+            )?,
             DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
                 prices_asset_a,
                 AbsDevConfig {
                     center: CentralPoint::Mode,
                     aggregate: DeviationAggregate::Mode,
                 },
-            ),
+            )?,
             DeviationModel::CustomAbsoluteDeviation { config } => {
-                absolute_deviation(prices_asset_a, config)
+                absolute_deviation(prices_asset_a, config)?
             }
-            DeviationModel::UlcerIndex => ulcer_index(prices_asset_a),
-            DeviationModel::LogStandardDeviation => log_standard_deviation(prices_asset_a),
-            DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_a, df),
-            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_a),
-            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_a),
+            DeviationModel::UlcerIndex => ulcer_index(prices_asset_a)?,
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices_asset_a)?,
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_a, df)?,
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_a)?,
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_a)?,
             DeviationModel::EmpiricalQuantileRange {
                 low,
                 high,
@@ -190,42 +193,42 @@ pub mod single {
                 precision,
                 low,
                 high,
-            ),
+            )?,
             #[allow(unreachable_patterns)]
-            _ => unsupported_type("DeviationModel"),
+            _ => return Err(unsupported_type("DeviationModel")),
         };
 
         let asset_b_deviation = match deviation_model {
-            DeviationModel::StandardDeviation => standard_deviation(prices_asset_b),
+            DeviationModel::StandardDeviation => standard_deviation(prices_asset_b)?,
             DeviationModel::MeanAbsoluteDeviation => absolute_deviation(
                 prices_asset_b,
                 AbsDevConfig {
                     center: CentralPoint::Mean,
                     aggregate: DeviationAggregate::Mean,
                 },
-            ),
+            )?,
             DeviationModel::MedianAbsoluteDeviation => absolute_deviation(
                 prices_asset_b,
                 AbsDevConfig {
                     center: CentralPoint::Median,
                     aggregate: DeviationAggregate::Median,
                 },
-            ),
+            )?,
             DeviationModel::ModeAbsoluteDeviation => absolute_deviation(
                 prices_asset_b,
                 AbsDevConfig {
                     center: CentralPoint::Mode,
                     aggregate: DeviationAggregate::Mode,
                 },
-            ),
+            )?,
             DeviationModel::CustomAbsoluteDeviation { config } => {
-                absolute_deviation(prices_asset_b, config)
+                absolute_deviation(prices_asset_b, config)?
             }
-            DeviationModel::UlcerIndex => ulcer_index(prices_asset_b),
-            DeviationModel::LogStandardDeviation => log_standard_deviation(prices_asset_b),
-            DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_b, df),
-            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_b),
-            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_b),
+            DeviationModel::UlcerIndex => ulcer_index(prices_asset_b)?,
+            DeviationModel::LogStandardDeviation => log_standard_deviation(prices_asset_b)?,
+            DeviationModel::StudentT { df } => student_t_adjusted_std(prices_asset_b, df)?,
+            DeviationModel::LaplaceStdEquivalent => laplace_std_equivalent(prices_asset_b)?,
+            DeviationModel::CauchyIQRScale => cauchy_iqr_scale(prices_asset_b)?,
             DeviationModel::EmpiricalQuantileRange {
                 low,
                 high,
@@ -235,18 +238,18 @@ pub mod single {
                 precision,
                 low,
                 high,
-            ),
+            )?,
             #[allow(unreachable_patterns)]
-            _ => unsupported_type("DeviationModel"),
+            _ => return Err(unsupported_type("DeviationModel")),
         };
-        covariance / (asset_a_deviation * asset_b_deviation)
+        Ok(covariance / (asset_a_deviation * asset_b_deviation))
     }
 }
 
 /// **bulk**: Functions that compute values of a slice of prices over a period and return a vector.
 pub mod bulk {
     use crate::correlation_indicators::single;
-    use crate::validation::{assert_non_empty, assert_period, assert_same_len};
+    use crate::validation::{assert_period, assert_same_len};
     use crate::{ConstantModelType, DeviationModel};
 
     /// Calculates the correlation between two asset prices over a period
@@ -263,9 +266,9 @@ pub mod bulk {
     ///
     /// A vector of calculated values
     ///
-    /// # Panics
+    /// # Errors
     ///
-    /// Panics if:
+    /// Returns an error if:
     /// * `prices_asset_a.len()` != `prices_asset_b.len()`
     /// * `period` > `slices.len()`
     ///
@@ -283,7 +286,7 @@ pub mod bulk {
     ///         centaur_technical_indicators::ConstantModelType::SimpleMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::StandardDeviation,
     ///         period
-    ///     );
+    ///     ).unwrap();
     /// // The first result  should be 1.0 but due to how Rust calculates floats, this is close as we get
     /// assert_eq!(vec![0.9999999999999998, 0.9340577351598457, 0.34094365457352693], correlation);
     ///
@@ -294,7 +297,7 @@ pub mod bulk {
     ///         centaur_technical_indicators::ConstantModelType::ExponentialMovingAverage,
     ///         centaur_technical_indicators::DeviationModel::UlcerIndex,
     ///         period
-    ///     );
+    ///     ).unwrap();
     /// assert_eq!(vec![1.1410137845061807, 0.9904422924841779, 0.2785701491571082], correlation);
     /// ```
     #[inline]
@@ -304,10 +307,13 @@ pub mod bulk {
         constant_model_type: ConstantModelType,
         deviation_model: DeviationModel,
         period: usize,
-    ) -> Vec<f64> {
+    ) -> crate::Result<Vec<f64>> {
         let length = prices_asset_a.len();
-        assert_same_len(&[("prices_asset_a", prices_asset_a), ("prices_asset_b", prices_asset_b)]);
-        assert_period(period, length);
+        assert_same_len(&[
+            ("prices_asset_a", prices_asset_a),
+            ("prices_asset_b", prices_asset_b),
+        ])?;
+        assert_period(period, length)?;
 
         (0..=length - period)
             .map(|i| {
@@ -338,6 +344,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::StandardDeviation
             )
+            .unwrap()
         );
     }
 
@@ -353,6 +360,7 @@ mod tests {
                 crate::ConstantModelType::SmoothedMovingAverage,
                 crate::DeviationModel::StandardDeviation
             )
+            .unwrap()
         );
     }
 
@@ -368,6 +376,7 @@ mod tests {
                 crate::ConstantModelType::ExponentialMovingAverage,
                 crate::DeviationModel::StandardDeviation
             )
+            .unwrap()
         );
     }
 
@@ -386,6 +395,7 @@ mod tests {
                 },
                 crate::DeviationModel::StandardDeviation
             )
+            .unwrap()
         );
     }
 
@@ -401,6 +411,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMedian,
                 crate::DeviationModel::StandardDeviation
             )
+            .unwrap()
         );
     }
 
@@ -416,6 +427,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingMode,
                 crate::DeviationModel::StandardDeviation
             )
+            .unwrap()
         );
     }
 
@@ -431,6 +443,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::MeanAbsoluteDeviation
             )
+            .unwrap()
         );
     }
 
@@ -446,6 +459,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::MedianAbsoluteDeviation
             )
+            .unwrap()
         );
     }
 
@@ -461,6 +475,7 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::ModeAbsoluteDeviation
             )
+            .unwrap()
         );
     }
 
@@ -476,59 +491,60 @@ mod tests {
                 crate::ConstantModelType::SimpleMovingAverage,
                 crate::DeviationModel::UlcerIndex
             )
+            .unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn single_correlation_empty_a_panic() {
         let prices_a = vec![];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92];
-        single::correlate_asset_prices(
+        let result = single::correlate_asset_prices(
             &prices_a,
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StandardDeviation,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_correlation_empty_b_panic() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let prices_b = Vec::new();
-        single::correlate_asset_prices(
+        let result = single::correlate_asset_prices(
             &prices_a,
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StandardDeviation,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_correlation_a_length_panic() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92];
-        single::correlate_asset_prices(
+        let result = single::correlate_asset_prices(
             &prices_a,
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StandardDeviation,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_correlation_b_length_panic() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6];
-        single::correlate_asset_prices(
+        let result = single::correlate_asset_prices(
             &prices_a,
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StandardDeviation,
         );
+        assert!(result.is_err());
     }
 
     #[test]
@@ -544,58 +560,50 @@ mod tests {
                 crate::DeviationModel::StandardDeviation,
                 5_usize
             )
+            .unwrap()
         );
     }
 
     #[test]
-    #[should_panic]
     fn bulk_correlation_period_panic() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92, 69.54, 73.81];
-        assert_eq!(
-            vec![0.9042213658878326, 0.9268640506930989, 0.5300870380836703],
-            bulk::correlate_asset_prices(
-                &prices_a,
-                &prices_b,
-                crate::ConstantModelType::SimpleMovingAverage,
-                crate::DeviationModel::StandardDeviation,
-                50_usize
-            )
+        let result = bulk::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StandardDeviation,
+            50_usize,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_correlation_size_a_panic() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92, 69.54, 73.81];
-        assert_eq!(
-            vec![0.9042213658878326, 0.9268640506930989, 0.5300870380836703],
-            bulk::correlate_asset_prices(
-                &prices_a,
-                &prices_b,
-                crate::ConstantModelType::SimpleMovingAverage,
-                crate::DeviationModel::StandardDeviation,
-                5_usize
-            )
+        let result = bulk::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StandardDeviation,
+            5_usize,
         );
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_correlation_size_b_panic() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92, 69.54];
-        assert_eq!(
-            vec![0.9042213658878326, 0.9268640506930989, 0.5300870380836703],
-            bulk::correlate_asset_prices(
-                &prices_a,
-                &prices_b,
-                crate::ConstantModelType::SimpleMovingAverage,
-                crate::DeviationModel::StandardDeviation,
-                5_usize
-            )
+        let result = bulk::correlate_asset_prices(
+            &prices_a,
+            &prices_b,
+            crate::ConstantModelType::SimpleMovingAverage,
+            crate::DeviationModel::StandardDeviation,
+            5_usize,
         );
+        assert!(result.is_err());
     }
 
     // Tests for new deviation models
@@ -608,7 +616,8 @@ mod tests {
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::LogStandardDeviation,
-        );
+        )
+        .unwrap();
         // Just verify it produces a finite result
         assert_eq!(10299.383075453763, result);
     }
@@ -622,7 +631,8 @@ mod tests {
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::StudentT { df: 5.0 },
-        );
+        )
+        .unwrap();
         assert_eq!(0.6, result);
     }
 
@@ -635,7 +645,8 @@ mod tests {
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::LaplaceStdEquivalent,
-        );
+        )
+        .unwrap();
         assert_eq!(0.9999999999999998, result);
     }
 
@@ -648,7 +659,8 @@ mod tests {
             &prices_b,
             crate::ConstantModelType::SimpleMovingAverage,
             crate::DeviationModel::CauchyIQRScale,
-        );
+        )
+        .unwrap();
         assert_eq!(0.8888888888888888, result);
     }
 }

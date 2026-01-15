@@ -2,7 +2,7 @@
 //!
 //! This module provides centralized validation functions to ensure consistent
 //! error messages and behavior across all technical indicator calculations.
-//! These helpers panic with uniform error messages when validation fails.
+//! These helpers return Results with uniform error messages when validation fails.
 
 /// Validates that a slice is not empty
 ///
@@ -11,14 +11,17 @@
 /// * `name` - Human-readable name of the data (e.g., "prices", "highs", "lows")
 /// * `slice` - The slice to validate
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if the slice is empty with a consistent error message
+/// Returns `TechnicalIndicatorError::EmptyData` if the slice is empty
 #[inline]
-pub fn assert_non_empty<T>(name: &str, slice: &[T]) {
+pub fn assert_non_empty<T>(name: &str, slice: &[T]) -> crate::Result<()> {
     if slice.is_empty() {
-        panic!("{} cannot be empty", name);
+        return Err(crate::TechnicalIndicatorError::EmptyData {
+            name: name.to_string(),
+        });
     }
+    Ok(())
 }
 
 /// Validates that multiple slices have the same length
@@ -27,34 +30,29 @@ pub fn assert_non_empty<T>(name: &str, slice: &[T]) {
 ///
 /// * `slices` - Array of tuples containing (name, slice) pairs
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if slices have mismatched lengths
-///
-/// # Example
-///
-/// ```ignore
-/// assert_same_len(&[("high", high), ("low", low), ("close", close)]);
-/// ```
+/// Returns `TechnicalIndicatorError::MismatchedLength` if slices have different lengths
 #[inline]
-pub fn assert_same_len<T>(slices: &[(&str, &[T])]) {
+pub fn assert_same_len<T>(slices: &[(&str, &[T])]) -> crate::Result<()> {
     if slices.is_empty() {
-        return;
+        return Ok(());
     }
 
     let expected_len = slices[0].1.len();
 
-    for (name, slice) in slices {
+    for (_name, slice) in slices {
         let len = slice.len();
         if len != expected_len {
-            // Build error message with all lengths
-            let lengths: Vec<String> = slices
+            // Build error info with all lengths
+            let names: Vec<(String, usize)> = slices
                 .iter()
-                .map(|(n, s)| format!("{}={}", n, s.len()))
+                .map(|(n, s)| (n.to_string(), s.len()))
                 .collect();
-            panic!("Mismatched lengths: {}", lengths.join(", "));
+            return Err(crate::TechnicalIndicatorError::MismatchedLength { names });
         }
     }
+    Ok(())
 }
 
 /// Validates that a period is valid for the given data length
@@ -64,21 +62,27 @@ pub fn assert_same_len<T>(slices: &[(&str, &[T])]) {
 /// * `period` - The period parameter
 /// * `data_len` - Length of the data slice
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if period is 0 or greater than data_len
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if period is 0 or greater than data_len
 #[inline]
-pub fn assert_period(period: usize, data_len: usize) {
+pub fn assert_period(period: usize, data_len: usize) -> crate::Result<()> {
     if period == 0 {
-        panic!("Period ({}) must be greater than 0", period);
+        return Err(crate::TechnicalIndicatorError::InvalidPeriod {
+            period,
+            data_len,
+            reason: "must be greater than 0".to_string(),
+        });
     }
 
     if period > data_len {
-        panic!(
-            "Period ({}) cannot be longer than the length of provided data ({})",
-            period, data_len
-        );
+        return Err(crate::TechnicalIndicatorError::InvalidPeriod {
+            period,
+            data_len,
+            reason: "cannot be longer than data length".to_string(),
+        });
     }
+    Ok(())
 }
 
 /// Validates that a value is positive (> 0)
@@ -88,33 +92,19 @@ pub fn assert_period(period: usize, data_len: usize) {
 /// * `name` - Human-readable name of the value
 /// * `value` - The value to validate
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if the value is not positive
+/// Returns `TechnicalIndicatorError::InvalidValue` if the value is not positive
 #[inline]
-pub fn assert_positive(name: &str, value: f64) {
+pub fn assert_positive(name: &str, value: f64) -> crate::Result<()> {
     if value <= 0.0 || value.is_nan() {
-        panic!("{} ({}) must be greater than 0", name, value);
+        return Err(crate::TechnicalIndicatorError::InvalidValue {
+            name: name.to_string(),
+            value,
+            reason: "must be greater than 0".to_string(),
+        });
     }
-}
-
-/// Validates that a value is within a specific range
-///
-/// # Arguments
-///
-/// * `name` - Human-readable name of the value
-/// * `value` - The value to validate
-/// * `min` - Minimum acceptable value (exclusive)
-/// * `max` - Maximum acceptable value (exclusive)
-///
-/// # Panics
-///
-/// Panics if the value is not in range
-#[inline]
-pub fn assert_range(name: &str, value: f64, min: f64, max: f64) {
-    if value <= min || value >= max || value.is_nan() {
-        panic!("{} ({}) must be in range ({}, {})", name, value, min, max);
-    }
+    Ok(())
 }
 
 /// Validates that a value is greater than a minimum
@@ -125,33 +115,19 @@ pub fn assert_range(name: &str, value: f64, min: f64, max: f64) {
 /// * `value` - The value to validate
 /// * `min` - Minimum acceptable value (exclusive)
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if value <= min
+/// Returns `TechnicalIndicatorError::InvalidValue` if value <= min
 #[inline]
-pub fn assert_min_value(name: &str, value: f64, min: f64) {
+pub fn assert_min_value(name: &str, value: f64, min: f64) -> crate::Result<()> {
     if value <= min || value.is_nan() {
-        panic!("{} ({}) must be greater than {}", name, value, min);
+        return Err(crate::TechnicalIndicatorError::InvalidValue {
+            name: name.to_string(),
+            value,
+            reason: format!("must be greater than {}", min),
+        });
     }
-}
-
-/// Validates that all values in a slice are positive
-///
-/// # Arguments
-///
-/// * `name` - Human-readable name of the data
-/// * `slice` - The slice to validate
-///
-/// # Panics
-///
-/// Panics with the first non-positive value found
-#[inline]
-pub fn assert_all_positive(name: &str, slice: &[f64]) {
-    for &value in slice {
-        if value <= 0.0 {
-            panic!("{} requires all positive values; found {}", name, value);
-        }
-    }
+    Ok(())
 }
 
 /// Validates that a period is at least a minimum value
@@ -162,16 +138,21 @@ pub fn assert_all_positive(name: &str, slice: &[f64]) {
 /// * `min_period` - Minimum acceptable period
 /// * `data_len` - Length of the data slice
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if period < min_period or period > data_len
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if period < min_period or period > data_len
 #[inline]
-pub fn assert_min_period(period: usize, min_period: usize, data_len: usize) {
+pub fn assert_min_period(period: usize, min_period: usize, data_len: usize) -> crate::Result<()> {
     if period < min_period {
-        panic!("Period ({}) must be at least {}", period, min_period);
+        return Err(crate::TechnicalIndicatorError::InvalidPeriod {
+            period,
+            data_len,
+            reason: format!("must be at least {}", min_period),
+        });
     }
 
-    assert_period(period, data_len);
+    assert_period(period, data_len)?;
+    Ok(())
 }
 
 /// Validates that a slice has a minimum length
@@ -182,17 +163,19 @@ pub fn assert_min_period(period: usize, min_period: usize, data_len: usize) {
 /// * `min_length` - Minimum required length
 /// * `actual_length` - Actual length of the data
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if actual_length < min_length
+/// Returns `TechnicalIndicatorError::InvalidPeriod` if actual_length < min_length
 #[inline]
-pub fn assert_min_length(name: &str, min_length: usize, actual_length: usize) {
+pub fn assert_min_length(name: &str, min_length: usize, actual_length: usize) -> crate::Result<()> {
     if actual_length < min_length {
-        panic!(
-            "{} must be at least {} in length; received {}",
-            name, min_length, actual_length
-        );
+        return Err(crate::TechnicalIndicatorError::InvalidPeriod {
+            period: min_length,
+            data_len: actual_length,
+            reason: format!("{} must be at least {} in length", name, min_length),
+        });
     }
+    Ok(())
 }
 
 /// Validates that a usize value is positive (> 0)
@@ -202,28 +185,35 @@ pub fn assert_min_length(name: &str, min_length: usize, actual_length: usize) {
 /// * `name` - Human-readable name of the value
 /// * `value` - The value to validate
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if the value is 0
+/// Returns `TechnicalIndicatorError::InvalidValue` if the value is 0
 #[inline]
-pub fn assert_positive_usize(name: &str, value: usize) {
+pub fn assert_positive_usize(name: &str, value: usize) -> crate::Result<()> {
     if value == 0 {
-        panic!("{} ({}) must be greater than 0", name, value);
+        return Err(crate::TechnicalIndicatorError::InvalidValue {
+            name: name.to_string(),
+            value: value as f64,
+            reason: "must be greater than 0".to_string(),
+        });
     }
+    Ok(())
 }
 
-/// Validates that a type variant is supported
+/// Returns an error indicating that a type variant is not supported
 ///
 /// # Arguments
 ///
 /// * `type_name` - Name of the type/variant
 ///
-/// # Panics
+/// # Returns
 ///
-/// Always panics with unsupported type message
+/// Always returns `TechnicalIndicatorError::UnsupportedType`
 #[inline]
-pub fn unsupported_type(type_name: &str) -> ! {
-    panic!("Unsupported type: {}", type_name);
+pub fn unsupported_type(type_name: &str) -> crate::TechnicalIndicatorError {
+    crate::TechnicalIndicatorError::UnsupportedType {
+        type_name: type_name.to_string(),
+    }
 }
 
 #[cfg(test)]
@@ -233,91 +223,107 @@ mod tests {
     #[test]
     fn test_assert_non_empty_ok() {
         let non_empty = vec![1.0, 2.0, 3.0];
-        assert_non_empty("prices", &non_empty); // Should not panic
+        assert!(assert_non_empty("prices", &non_empty).is_ok());
     }
 
     #[test]
-    #[should_panic(expected = "prices cannot be empty")]
     fn test_assert_non_empty_fail() {
         let empty: Vec<f64> = vec![];
-        assert_non_empty("prices", &empty);
+        let result = assert_non_empty("prices", &empty);
+        assert!(result.is_err());
+        match result {
+            Err(crate::TechnicalIndicatorError::EmptyData { name }) => {
+                assert_eq!(name, "prices");
+            }
+            _ => panic!("Expected EmptyData error"),
+        }
     }
 
     #[test]
     fn test_assert_same_len_ok() {
         let a = vec![1.0, 2.0, 3.0];
         let b = vec![4.0, 5.0, 6.0];
-        assert_same_len(&[("a", &a), ("b", &b)]); // Should not panic
+        assert!(assert_same_len(&[("a", &a), ("b", &b)]).is_ok());
     }
 
     #[test]
-    #[should_panic(expected = "Mismatched lengths")]
     fn test_assert_same_len_fail() {
         let a = vec![1.0, 2.0, 3.0];
         let c = vec![7.0, 8.0];
-        assert_same_len(&[("a", &a), ("c", &c)]);
+        let result = assert_same_len(&[("a", &a), ("c", &c)]);
+        assert!(result.is_err());
+        match result {
+            Err(crate::TechnicalIndicatorError::MismatchedLength { names }) => {
+                assert_eq!(names.len(), 2);
+            }
+            _ => panic!("Expected MismatchedLength error"),
+        }
     }
 
     #[test]
     fn test_assert_period_ok() {
-        assert_period(5, 10); // Should not panic
+        assert!(assert_period(5, 10).is_ok());
     }
 
     #[test]
-    #[should_panic(expected = "Period (0) must be greater than 0")]
     fn test_assert_period_zero() {
-        assert_period(0, 10);
+        let result = assert_period(0, 10);
+        assert!(result.is_err());
+        match result {
+            Err(crate::TechnicalIndicatorError::InvalidPeriod { period, .. }) => {
+                assert_eq!(period, 0);
+            }
+            _ => panic!("Expected InvalidPeriod error"),
+        }
     }
 
     #[test]
-    #[should_panic(expected = "Period (11) cannot be longer")]
     fn test_assert_period_too_long() {
-        assert_period(11, 10);
+        let result = assert_period(11, 10);
+        assert!(result.is_err());
+        match result {
+            Err(crate::TechnicalIndicatorError::InvalidPeriod {
+                period, data_len, ..
+            }) => {
+                assert_eq!(period, 11);
+                assert_eq!(data_len, 10);
+            }
+            _ => panic!("Expected InvalidPeriod error"),
+        }
     }
 
     #[test]
     fn test_assert_positive_ok() {
-        assert_positive("value", 1.0); // Should not panic
+        assert!(assert_positive("value", 1.0).is_ok());
     }
 
     #[test]
-    #[should_panic(expected = "value (0) must be greater than 0")]
     fn test_assert_positive_zero() {
-        assert_positive("value", 0.0);
-    }
-
-    #[test]
-    fn test_assert_range_ok() {
-        assert_range("quantile", 0.5, 0.0, 1.0); // Should not panic
-    }
-
-    #[test]
-    #[should_panic(expected = "quantile (0) must be in range (0, 1)")]
-    fn test_assert_range_at_min() {
-        assert_range("quantile", 0.0, 0.0, 1.0);
-    }
-
-    #[test]
-    fn test_assert_all_positive_ok() {
-        let positive = vec![1.0, 2.0, 3.0];
-        assert_all_positive("prices", &positive); // Should not panic
-    }
-
-    #[test]
-    #[should_panic(expected = "prices requires all positive values; found 0")]
-    fn test_assert_all_positive_has_zero() {
-        let has_zero = vec![1.0, 0.0, 3.0];
-        assert_all_positive("prices", &has_zero);
+        let result = assert_positive("value", 0.0);
+        assert!(result.is_err());
+        match result {
+            Err(crate::TechnicalIndicatorError::InvalidValue { name, value, .. }) => {
+                assert_eq!(name, "value");
+                assert_eq!(value, 0.0);
+            }
+            _ => panic!("Expected InvalidValue error"),
+        }
     }
 
     #[test]
     fn test_assert_min_period_ok() {
-        assert_min_period(4, 4, 10); // Should not panic
+        assert!(assert_min_period(4, 4, 10).is_ok());
     }
 
     #[test]
-    #[should_panic(expected = "Period (3) must be at least 4")]
     fn test_assert_min_period_too_small() {
-        assert_min_period(3, 4, 10);
+        let result = assert_min_period(3, 4, 10);
+        assert!(result.is_err());
+        match result {
+            Err(crate::TechnicalIndicatorError::InvalidPeriod { period, .. }) => {
+                assert_eq!(period, 3);
+            }
+            _ => panic!("Expected InvalidPeriod error"),
+        }
     }
 }
