@@ -1029,9 +1029,8 @@ pub mod bulk {
             return Err(TechnicalIndicatorError::InvalidPeriod {
                 period,
                 data_len: adx.len(),
-                reason: "period + 1 cannot be longer than data length".to_string(),
-            }
-            );
+                reason: "insufficient data length for ADXR calculation: requires at least period + 1 elements".to_string(),
+            });
         }
         let mut adxr = Vec::with_capacity(adx.len() - period - 1);
         for i in period..=adx.len() {
@@ -1105,21 +1104,13 @@ pub mod bulk {
         assert_non_empty("volumes", volumes)?;
         assert_non_empty("prices", prices)?;
         let length = volumes.len();
-        if prices.is_empty() || length != prices.len() - 1 {
+        if length != prices.len() - 1 {
             return Err(TechnicalIndicatorError::MismatchedLength {
                 names: vec![
                     ("volumes".to_string(), length),
-                    (
-                        "prices - 1".to_string(),
-                        if !prices.is_empty() {
-                            prices.len() - 1
-                        } else {
-                            0
-                        },
-                    ),
+                    ("prices - 1".to_string(), prices.len() - 1),
                 ],
-            }
-            );
+            });
         }
         let mut vpts = Vec::with_capacity(length);
         let mut vpt = single::volume_price_trend(
