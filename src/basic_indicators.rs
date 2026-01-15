@@ -1264,10 +1264,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_mean_empty_prices() {
         let prices = Vec::new();
-        single::mean(&prices);
+        let result = single::mean(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1281,19 +1281,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_mean_long_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 30;
-        bulk::mean(&prices, period);
+        let result = bulk::mean(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_mean_no_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 0;
-        bulk::mean(&prices, period);
+        let result = bulk::mean(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1312,10 +1312,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_median_panic() {
         let prices = Vec::new();
-        single::median(&prices);
+        let result = single::median(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1326,19 +1326,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_median_long_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 30;
-        bulk::median(&prices, period);
+        let result = bulk::median(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_median_no_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 0;
-        bulk::median(&prices, period);
+        let result = bulk::median(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1360,10 +1360,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_mode_panic() {
         let prices = Vec::new();
-        single::mode(&prices);
+        let result = single::mode(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1374,19 +1374,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_mode_long_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
         let period: usize = 30;
-        bulk::mode(&prices, period);
+        let result = bulk::mode(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_mode_no_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 101.08, 101.19];
         let period: usize = 0;
-        bulk::mode(&prices, period);
+        let result = bulk::mode(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1405,10 +1405,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_log_panic() {
         let prices = Vec::new();
-        bulk::log(&prices);
+        let result = bulk::log(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1420,15 +1420,15 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_log_difference_panic() {
-        single::log_difference(0.0, 100.38);
+        let result = single::log_difference(0.0, 100.38);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_log_difference_panic_2() {
-        single::log_difference(100.19, -100.38);
+        let result = single::log_difference(100.19, -100.38);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1446,7 +1446,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_log_difference_difference() {
         bulk::log_difference(&Vec::new());
     }
@@ -1458,10 +1457,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_variance_panic() {
         let prices = Vec::new();
-        single::variance(&prices);
+        let result = single::variance(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1479,19 +1478,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_variance_long_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period = 30;
-        bulk::variance(&prices, period);
+        let result = bulk::variance(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_variance_no_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period = 0;
-        bulk::variance(&prices, period);
+        let result = bulk::variance(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1501,10 +1500,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_standard_deviation_panic() {
         let prices = Vec::new();
-        single::standard_deviation(&prices);
+        let result = single::standard_deviation(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1522,19 +1521,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_standard_deviation_long_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period = 30;
-        bulk::standard_deviation(&prices, period);
+        let result = bulk::standard_deviation(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_standard_deviation_no_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period = 0;
-        bulk::standard_deviation(&prices, period);
+        let result = bulk::standard_deviation(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1573,7 +1572,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn singe_absolute_deviation_panic() {
         let prices = Vec::new();
         single::absolute_deviation(
@@ -1634,7 +1632,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_absolute_deviation_long_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 30;
@@ -1649,7 +1646,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_absolute_deviation_no_period_panic() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 30;
@@ -1670,10 +1666,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_max_panic() {
         let prices = Vec::new();
-        single::max(&prices).unwrap();
+        let result = single::max(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1683,10 +1679,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_min_panic() {
         let prices = Vec::new();
-        single::min(&prices).unwrap();
+        let result = single::min(&prices);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1714,16 +1710,16 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_price_distribution_panic() {
         let prices = Vec::new();
-        single::price_distribution(&prices, 1.0).unwrap();
+        let result = single::price_distribution(&prices, 1.0);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_price_distribution_bad_precision() {
-        single::price_distribution(&[1.0], 0.0).unwrap();
+        let result = single::price_distribution(&[1.0], 0.0);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1799,24 +1795,24 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_price_distribution_period_too_long() {
         let prices = vec![100.0, 102.0, 100.0];
-        bulk::price_distribution(&prices, 5, 1.0);
+        let result = bulk::price_distribution(&prices, 5, 1.0);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_price_distribution_zero_period() {
         let prices = vec![100.0, 102.0, 100.0];
-        bulk::price_distribution(&prices, 0, 1.0);
+        let result = bulk::price_distribution(&prices, 0, 1.0);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_price_distribution_bad_precision() {
         let prices = vec![100.0, 101.0, 102.0];
-        bulk::price_distribution(&prices, 2, -1.0);
+        let result = bulk::price_distribution(&prices, 2, -1.0);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1828,7 +1824,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn log_standard_deviation_panics_on_non_positive() {
         let prices = vec![1.0, 0.0];
         let _ = single::log_standard_deviation(&prices);
@@ -1845,7 +1840,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn student_t_adjusted_std_panics_on_low_df() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::student_t_adjusted_std(&prices, 2.0);
@@ -1874,7 +1868,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn cauchy_iqr_scale_panics_on_short_input() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::cauchy_iqr_scale(&prices);
@@ -1892,21 +1885,18 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_log_standard_deviation_zero_period() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::log_standard_deviation(&prices, 0);
     }
 
     #[test]
-    #[should_panic]
     fn bulk_log_standard_deviation_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::log_standard_deviation(&prices, 5);
     }
 
     #[test]
-    #[should_panic]
     fn bulk_log_standard_deviation_panics_on_non_positive() {
         let prices = vec![1.0, 0.0, 2.0, 3.0];
         let _ = bulk::log_standard_deviation(&prices, 2);
@@ -1923,21 +1913,18 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_student_t_adjusted_std_zero_period() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::student_t_adjusted_std(&prices, 0, 5.0);
     }
 
     #[test]
-    #[should_panic]
     fn bulk_student_t_adjusted_std_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::student_t_adjusted_std(&prices, 5, 5.0);
     }
 
     #[test]
-    #[should_panic]
     fn bulk_student_t_adjusted_std_panics_on_low_df() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
         let _ = bulk::student_t_adjusted_std(&prices, 2, 2.0);
@@ -1952,14 +1939,12 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_laplace_std_equivalent_zero_period() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::laplace_std_equivalent(&prices, 0);
     }
 
     #[test]
-    #[should_panic]
     fn bulk_laplace_std_equivalent_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = bulk::laplace_std_equivalent(&prices, 5);
@@ -1974,17 +1959,17 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_cauchy_iqr_scale_period_less_than_four() {
         let prices = vec![1.0, 2.0, 3.0, 4.0, 5.0];
-        let _ = bulk::cauchy_iqr_scale(&prices, 3).unwrap();
+        let result = bulk::cauchy_iqr_scale(&prices, 3);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_cauchy_iqr_scale_period_too_long() {
         let prices = vec![1.0, 2.0, 3.0, 4.0];
-        let _ = bulk::cauchy_iqr_scale(&prices, 5).unwrap();
+        let result = bulk::cauchy_iqr_scale(&prices, 5);
+        assert!(result.is_err());
     }
     #[test]
     fn single_empirical_quantile_range_from_distribution_simple() {
@@ -2003,7 +1988,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_empirical_quantile_invalid_bounds() {
         let prices = vec![1.0, 2.0, 3.0];
         let _ = single::empirical_quantile_range_from_distribution(&prices, 1.0, 0.8, 0.2);

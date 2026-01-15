@@ -1326,10 +1326,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_moving_constant_envelope_panic() {
         let prices = Vec::new();
-        single::moving_constant_envelopes(&prices, crate::ConstantModelType::SimpleMovingMode, 3.0);
+        let result = single::moving_constant_envelopes(&prices, crate::ConstantModelType::SimpleMovingMode, 3.0);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1382,10 +1382,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_mcginley_envelope_panic() {
         let prices = Vec::new();
-        single::mcginley_dynamic_envelopes(&prices, 3.0, 0.0);
+        let result = single::mcginley_dynamic_envelopes(&prices, 3.0, 0.0);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1563,7 +1563,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_constant_bands_panic() {
         let prices = Vec::new();
         single::moving_constant_bands(
@@ -1687,10 +1686,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_mcginley_bands_panic() {
         let prices = Vec::new();
-        single::mcginley_dynamic_bands(&prices, crate::DeviationModel::StandardDeviation, 2.0, 0.0);
+        let result = single::mcginley_dynamic_bands(&prices, crate::DeviationModel::StandardDeviation, 2.0, 0.0);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1757,57 +1756,57 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_ichimoku_high_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
-        single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 7_usize).unwrap();
+        let result = single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 7_usize);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_ichimoku_low_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
-        single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 7_usize).unwrap();
+        let result = single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 7_usize);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_ichimoku_close_size_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32];
-        single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 7_usize).unwrap();
+        let result = single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 7_usize);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_ichimoku_conversion_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
-        single::ichimoku_cloud(&highs, &lows, &close, 30_usize, 5_usize, 7_usize).unwrap();
+        let result = single::ichimoku_cloud(&highs, &lows, &close, 30_usize, 5_usize, 7_usize);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_ichimoku_base_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
-        single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 50_usize, 7_usize).unwrap();
+        let result = single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 50_usize, 7_usize);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_ichimoku_span_b_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
-        single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 70_usize).unwrap();
+        let result = single::ichimoku_cloud(&highs, &lows, &close, 3_usize, 5_usize, 70_usize);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1896,19 +1895,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_donchian_channel_length_panic() {
         let highs = vec![101.26, 102.57, 100.69, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07];
-        single::donchian_channels(&highs, &lows).unwrap();
+        let result = single::donchian_channels(&highs, &lows);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_donchian_channel_empty_panic() {
         let highs = Vec::new();
         let lows = Vec::new();
-        single::donchian_channels(&highs, &lows).unwrap();
+        let result = single::donchian_channels(&highs, &lows);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -2058,7 +2057,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_keltner_channel_panic_high_length() {
         let highs = vec![101.26, 102.57, 102.32, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07];
@@ -2074,7 +2072,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_keltner_channel_panic_low_length() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 99.07];
@@ -2090,7 +2087,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_keltner_channel_panic_close_length() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07];
@@ -2106,7 +2102,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_keltner_channel_panic_empty() {
         let highs = Vec::new();
         let lows = Vec::new();
@@ -2248,7 +2243,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_supertrend_panic_high_length() {
         let highs = vec![101.26, 102.57, 102.32, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07];
@@ -2263,7 +2257,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_supertrend_panic_low_length() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 99.07];
@@ -2278,7 +2271,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_supertrend_panic_close_length() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07];
@@ -2293,7 +2285,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_supertrend_panic_empty() {
         let highs = Vec::new();
         let lows = Vec::new();

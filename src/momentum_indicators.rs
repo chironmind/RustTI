@@ -2184,7 +2184,7 @@ pub mod bulk {
         long_period_model: ConstantModelType,
     ) -> crate::Result<Vec<(f64, f64)>> {
         let length = highs.len();
-        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close)])?;
+        assert_same_len(&[("highs", highs), ("lows", lows), ("close", close), ("volume", volume)])?;
         assert_period(short_period, long_period)?;
         assert_period(long_period, length)?;
 
@@ -2623,7 +2623,8 @@ mod tests {
             100.2, 100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28,
         ];
         let period: usize = 50;
-        bulk::stochastic_oscillator(&prices, period).unwrap();
+        let result = bulk::stochastic_oscillator(&prices, period);
+        assert!(result.is_err());
     }
 
     #[test]

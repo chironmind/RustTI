@@ -1025,6 +1025,14 @@ pub mod bulk {
             _ => return Err(unsupported_type("ConstantModelType")),
         };
 
+        if adx.len() < period + 1 {
+            return Err(TechnicalIndicatorError::InvalidPeriod {
+                period,
+                data_len: adx.len(),
+                reason: "period + 1 cannot be longer than data length".to_string(),
+            }
+            .into());
+        }
         let mut adxr = Vec::with_capacity(adx.len() - period - 1);
         for i in period..=adx.len() {
             adxr.push((adx[i - period] + adx[i - 1]) / 2.0);
@@ -1094,18 +1102,18 @@ pub mod bulk {
         volumes: &[f64],
         previous_volume_price_trend: f64,
     ) -> crate::Result<Vec<f64>> {
+        assert_non_empty("volumes", volumes)?;
+        assert_non_empty("prices", prices)?;
         let length = volumes.len();
-        if length != prices.len() - 1 {
+        if prices.len() == 0 || length != prices.len() - 1 {
             return Err(TechnicalIndicatorError::MismatchedLength {
                 names: vec![
                     ("volumes".to_string(), length),
-                    ("prices - 1".to_string(), prices.len() - 1),
+                    ("prices - 1".to_string(), if prices.len() > 0 { prices.len() - 1 } else { 0 }),
                 ],
             }
             .into());
         }
-        assert_non_empty("volumes", volumes)?;
-        assert_non_empty("prices", prices)?;
         let mut vpts = Vec::with_capacity(length);
         let mut vpt = single::volume_price_trend(
             prices[1],
@@ -1195,10 +1203,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn singe_aroon_up_panic() {
         let highs = Vec::new();
-        single::aroon_up(&highs).unwrap();
+        let result = single::aroon_up(&highs);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1211,10 +1219,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_up_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
-        bulk::aroon_up(&highs, 40).unwrap();
+        let result = bulk::aroon_up(&highs, 40);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1224,10 +1232,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_aroon_down_panic() {
         let lows = Vec::new();
-        single::aroon_down(&lows).unwrap();
+        let result = single::aroon_down(&lows);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1240,10 +1248,10 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_down_panic() {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_down(&lows, 40).unwrap();
+        let result = bulk::aroon_down(&lows, 40);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1265,19 +1273,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_oscillator_up_panic() {
         let aroon_up = vec![33.33333333333333, 0.0, 0.0];
         let aroon_down = vec![33.33333333333333, 0.0, 33.33333333333333, 0.0];
-        bulk::aroon_oscillator(&aroon_up, &aroon_down);
+        let result = bulk::aroon_oscillator(&aroon_up, &aroon_down);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_oscillator_down_panic() {
         let aroon_up = vec![33.33333333333333, 0.0, 0.0, 100.0];
         let aroon_down = vec![33.33333333333333, 0.0, 33.33333333333333];
-        bulk::aroon_oscillator(&aroon_up, &aroon_down);
+        let result = bulk::aroon_oscillator(&aroon_up, &aroon_down);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1291,19 +1299,19 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn single_aroon_indicator_high_panic() {
         let lows = vec![100.08, 98.75, 100.14, 98.98];
         let highs = vec![101.26, 102.57, 102.32];
-        single::aroon_indicator(&highs, &lows).unwrap();
+        let result = single::aroon_indicator(&highs, &lows);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn single_aroon_indicator_low_panic() {
         let lows = vec![100.08, 98.75, 100.14];
         let highs = vec![101.26, 102.57, 102.32, 100.69];
-        single::aroon_indicator(&highs, &lows).unwrap();
+        let result = single::aroon_indicator(&highs, &lows);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1322,27 +1330,27 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_indicator_high_panic() {
         let highs = vec![102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_indicator(&highs, &lows, 4).unwrap();
+        let result = bulk::aroon_indicator(&highs, &lows, 4);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_indicator_low_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_indicator(&highs, &lows, 4).unwrap();
+        let result = bulk::aroon_indicator(&highs, &lows, 4);
+        assert!(result.is_err());
     }
 
     #[test]
-    #[should_panic]
     fn bulk_aroon_indicator_period_panic() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
-        bulk::aroon_indicator(&highs, &lows, 40).unwrap();
+        let result = bulk::aroon_indicator(&highs, &lows, 40);
+        assert!(result.is_err());
     }
 
     #[test]
@@ -1492,103 +1500,71 @@ mod tests {
     }
 
     #[test]
-    #[should_panic]
     fn bulk_parabolic_time_price_system_panic_high_empty() {
         let highs = Vec::new();
         let lows = vec![95.92, 96.77, 95.84, 91.22, 89.12];
-        assert_eq!(
-            vec![
-                90.7812,
-                91.245552,
-                91.69132992,
-                102.1666,
-                101.64473600000001
-            ],
-            bulk::parabolic_time_price_system(
-                &highs,
-                &lows,
-                0.02,
-                0.2,
-                0.02,
-                crate::Position::Long,
-                90.58
-            ).unwrap()
+        let result = bulk::parabolic_time_price_system(
+            &highs,
+            &lows,
+            0.02,
+            0.2,
+            0.02,
+            crate::Position::Long,
+            90.58
         );
+        assert!(result.is_err());
+
     }
 
     #[test]
-    #[should_panic]
     fn bulk_parabolic_time_price_system_panic_low_empty() {
         let highs = vec![99.48, 96.93, 94.66, 102.79, 105.81];
         let lows = Vec::new();
-        assert_eq!(
-            vec![
-                90.7812,
-                91.245552,
-                91.69132992,
-                102.1666,
-                101.64473600000001
-            ],
-            bulk::parabolic_time_price_system(
-                &highs,
-                &lows,
-                0.02,
-                0.2,
-                0.02,
-                crate::Position::Long,
-                90.58
-            ).unwrap()
+        let result = bulk::parabolic_time_price_system(
+            &highs,
+            &lows,
+            0.02,
+            0.2,
+            0.02,
+            crate::Position::Long,
+            90.58
         );
+        assert!(result.is_err());
+
     }
 
     #[test]
-    #[should_panic]
     fn bulk_parabolic_time_price_system_panic_high_length() {
-        let highs = vec![99.48, 96.93, 94.66, 102.79];
+        let highs = vec![99.48, 96.93, 94.66];
         let lows = vec![95.92, 96.77, 95.84, 91.22, 89.12];
-        assert_eq!(
-            vec![
-                90.7812,
-                91.245552,
-                91.69132992,
-                102.1666,
-                101.64473600000001
-            ],
-            bulk::parabolic_time_price_system(
-                &highs,
-                &lows,
-                0.02,
-                0.2,
-                0.02,
-                crate::Position::Long,
-                90.58
-            ).unwrap()
+        let result = bulk::parabolic_time_price_system(
+            &highs,
+            &lows,
+            0.02,
+            0.2,
+            0.02,
+            crate::Position::Long,
+            90.58
         );
+        assert!(result.is_err());
+
     }
 
     #[test]
-    #[should_panic]
     fn bulk_parabolic_time_price_system_panic_low_length() {
         let highs = vec![99.48, 96.93, 94.66, 102.79, 105.81];
-        let lows = vec![95.92, 96.77, 95.84, 91.22];
-        assert_eq!(
-            vec![
-                90.7812,
-                91.245552,
-                91.69132992,
-                102.1666,
-                101.64473600000001
-            ],
-            bulk::parabolic_time_price_system(
-                &highs,
-                &lows,
-                0.02,
-                0.2,
-                0.02,
-                crate::Position::Long,
-                90.58
-            ).unwrap()
+        let lows = vec![95.92, 96.77, 95.84];
+        let result = bulk::parabolic_time_price_system(
+            &highs,
+            &lows,
+            0.02,
+            0.2,
+            0.02,
+            crate::Position::Long,
+            90.58
         );
+        assert!(result.is_err());
+
     }
 
     #[test]
