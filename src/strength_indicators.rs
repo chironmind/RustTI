@@ -606,7 +606,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_accumulation_distribution_panic_high_length() {
+    fn bulk_accumulation_distribution_error_high_length() {
         let highs = vec![100.53];
         let lows = vec![99.62, 99.97];
         let close = vec![100.01, 100.44];
@@ -615,7 +615,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_accumulation_distribution_panic_low_length() {
+    fn bulk_accumulation_distribution_error_low_length() {
         let highs = vec![100.53, 100.68];
         let lows = vec![99.62];
         let close = vec![100.01, 100.44];
@@ -624,7 +624,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_accumulation_distribution_panic_close_length() {
+    fn bulk_accumulation_distribution_error_close_length() {
         let highs = vec![100.53, 100.68];
         let lows = vec![99.62, 99.97];
         let close = vec![100.01];
@@ -633,7 +633,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_accumulation_distribution_panic_volume_length() {
+    fn bulk_accumulation_distribution_error_volume_length() {
         let highs = vec![100.53, 100.68];
         let lows = vec![99.62, 99.97];
         let close = vec![100.01, 100.44];
@@ -711,14 +711,14 @@ mod tests {
     }
 
     #[test]
-    fn bulk_positive_volume_index_panic_length() {
+    fn bulk_positive_volume_index_error_length() {
         let close = vec![100.14, 98.98, 100.1];
         let volume = vec![1000.0, 900.0, 800.0, 700.0];
         assert!(bulk::positive_volume_index(&close, &volume, 0.0).is_err());
     }
 
     #[test]
-    fn bulk_positive_volume_index_panic_empty() {
+    fn bulk_positive_volume_index_error_empty() {
         let close = Vec::new();
         let volume = Vec::new();
         assert!(bulk::positive_volume_index(&close, &volume, 0.0).is_err());
@@ -774,14 +774,14 @@ mod tests {
     }
 
     #[test]
-    fn bulk_negative_volume_index_panic_length() {
+    fn bulk_negative_volume_index_error_length() {
         let close = vec![100.14, 98.98, 100.1];
         let volume = vec![1000.0, 900.0, 800.0, 700.0];
         assert!(bulk::negative_volume_index(&close, &volume, 0.0).is_err());
     }
 
     #[test]
-    fn bulk_negative_volume_index_panic_empty() {
+    fn bulk_negative_volume_index_error_empty() {
         let close = Vec::new();
         let volume = Vec::new();
         assert!(bulk::negative_volume_index(&close, &volume, 0.0).is_err());
@@ -924,7 +924,7 @@ mod tests {
     }
 
     #[test]
-    fn single_relative_vigor_index_panic_length_open() {
+    fn single_relative_vigor_index_error_length_open() {
         let open = vec![100.73, 99.62, 99.82];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 99.07, 100.1];
@@ -940,7 +940,7 @@ mod tests {
     }
 
     #[test]
-    fn single_relative_vigor_index_panic_length_high() {
+    fn single_relative_vigor_index_error_length_high() {
         let open = vec![100.73, 99.62, 99.82, 100.38];
         let high = vec![102.32, 100.69, 100.83];
         let low = vec![100.14, 98.98, 99.07, 100.1];
@@ -956,7 +956,7 @@ mod tests {
     }
 
     #[test]
-    fn single_relative_vigor_index_panic_length_low() {
+    fn single_relative_vigor_index_error_length_low() {
         let open = vec![100.73, 99.62, 99.82, 100.38];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 100.1];
@@ -972,7 +972,7 @@ mod tests {
     }
 
     #[test]
-    fn single_relative_vigor_index_panic_length_close() {
+    fn single_relative_vigor_index_error_length_close() {
         let open = vec![100.73, 99.62, 99.82, 100.38];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 99.07, 100.1];
@@ -988,7 +988,7 @@ mod tests {
     }
 
     #[test]
-    fn single_relative_vigor_index_panic_length_overall() {
+    fn single_relative_vigor_index_error_length_overall() {
         let open = vec![100.73, 99.62, 99.82];
         let high = vec![102.32, 100.69, 100.83];
         let low = vec![100.14, 98.98, 99.07];
@@ -1004,7 +1004,7 @@ mod tests {
     }
 
     #[test]
-    fn single_relative_vigor_index_panic_empty() {
+    fn single_relative_vigor_index_error_empty() {
         let open = Vec::new();
         let high = Vec::new();
         let low = Vec::new();
@@ -1062,7 +1062,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_length_open() {
+    fn bulk_relative_vigor_index_error_length_open() {
         let open = vec![100.73, 99.62, 99.82, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
             102.32, 100.69, 100.83, 101.73, 102.01, 102.75, 103.04, 102.94,
@@ -1081,7 +1081,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_length_high() {
+    fn bulk_relative_vigor_index_error_length_high() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![102.32, 100.69, 100.83, 102.01, 102.75, 103.04, 102.94];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96, 100.55, 101.17, 100.38];
@@ -1098,7 +1098,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_length_low() {
+    fn bulk_relative_vigor_index_error_length_low() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
             102.32, 100.69, 100.83, 101.73, 102.01, 102.75, 103.04, 102.94,
@@ -1117,7 +1117,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_length_close() {
+    fn bulk_relative_vigor_index_error_length_close() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
             102.32, 100.69, 100.83, 101.73, 102.01, 102.75, 103.04, 102.94,
@@ -1136,7 +1136,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_period_high() {
+    fn bulk_relative_vigor_index_error_period_high() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
             102.32, 100.69, 100.83, 101.73, 102.01, 102.75, 103.04, 102.94,
@@ -1155,7 +1155,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_period_low() {
+    fn bulk_relative_vigor_index_error_period_low() {
         let open = vec![100.73, 99.62, 99.82, 100.38, 100.97, 101.81, 101.85, 102.09];
         let high = vec![
             102.32, 100.69, 100.83, 101.73, 102.01, 102.75, 103.04, 102.94,
@@ -1174,7 +1174,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_relative_vigor_index_panic_empty() {
+    fn bulk_relative_vigor_index_error_empty() {
         let open = Vec::new();
         let high = Vec::new();
         let low = Vec::new();

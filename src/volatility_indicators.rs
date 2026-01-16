@@ -268,7 +268,7 @@ mod tests {
     }
 
     #[test]
-    fn single_ucler_index_panic() {
+    fn single_ulcer_index_error() {
         let prices = Vec::new();
         let result = single::ulcer_index(&prices);
         assert!(result.is_err());
@@ -284,7 +284,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_ulcer_index_panic() {
+    fn bulk_ulcer_index_error() {
         let prices = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let result = bulk::ulcer_index(&prices, 50_usize);
         assert!(result.is_err());
@@ -331,7 +331,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volatility_system_panic_high_length() {
+    fn bulk_volatility_system_error_high_length() {
         let highs = vec![101.27, 101.03, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.59, 100.68];
         let close = vec![101.14, 100.96, 100.88, 100.76, 101.37];
@@ -348,7 +348,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volatility_system_panic_low_length() {
+    fn bulk_volatility_system_error_low_length() {
         let highs = vec![101.27, 101.03, 100.91, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.68];
         let close = vec![101.14, 100.96, 100.88, 100.76, 101.37];
@@ -365,7 +365,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volatility_system_panic_close_length() {
+    fn bulk_volatility_system_error_close_length() {
         let highs = vec![101.27, 101.03, 100.91, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.59, 100.68];
         let close = vec![101.14, 100.96, 100.88, 101.37];
@@ -382,7 +382,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volatility_system_panic_empty() {
+    fn bulk_volatility_system_error_empty() {
         let highs = Vec::new();
         let lows = Vec::new();
         let close = Vec::new();
@@ -399,7 +399,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volatility_system_panic_period() {
+    fn bulk_volatility_system_error_period() {
         let highs = vec![101.27, 101.03, 100.91, 100.83, 101.54];
         let lows = vec![100.91, 100.84, 100.72, 100.59, 100.68];
         let close = vec![101.14, 100.96, 100.88, 100.76, 101.37];

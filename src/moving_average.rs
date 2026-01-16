@@ -359,14 +359,14 @@ mod tests {
     }
 
     #[test]
-    fn single_moving_average_panic() {
+    fn single_moving_average_error() {
         let prices = Vec::new();
         let result = single::moving_average(&prices, crate::MovingAverageType::Simple);
         assert!(result.is_err());
     }
 
     #[test]
-    fn single_moving_average_personalised_ma_panic() {
+    fn single_moving_average_personalised_ma_error() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let result = single::moving_average(
             &prices,
@@ -434,7 +434,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_moving_average_panic() {
+    fn bulk_moving_average_error() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 30;
         let result = bulk::moving_average(&prices, crate::MovingAverageType::Simple, period);
@@ -454,7 +454,7 @@ mod tests {
     }
 
     #[test]
-    fn single_mcginley_dynamic_panic() {
+    fn single_mcginley_dynamic_error() {
         let result = single::mcginley_dynamic(100.0, 0.0_f64, 0_usize);
         assert!(result.is_err());
     }
@@ -474,7 +474,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_mcginley_dynamic_panic() {
+    fn bulk_mcginley_dynamic_error() {
         let prices = vec![100.2, 100.46, 100.53, 100.38, 100.19];
         let period: usize = 30;
         let result = bulk::mcginley_dynamic(&prices, 0.0_f64, period);

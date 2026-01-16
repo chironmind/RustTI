@@ -496,7 +496,7 @@ mod tests {
     }
 
     #[test]
-    fn single_correlation_empty_a_panic() {
+    fn single_correlation_empty_a_error() {
         let prices_a = vec![];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92];
         let result = single::correlate_asset_prices(
@@ -509,7 +509,7 @@ mod tests {
     }
 
     #[test]
-    fn single_correlation_empty_b_panic() {
+    fn single_correlation_empty_b_error() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let prices_b = Vec::new();
         let result = single::correlate_asset_prices(
@@ -522,7 +522,7 @@ mod tests {
     }
 
     #[test]
-    fn single_correlation_a_length_panic() {
+    fn single_correlation_a_length_error() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92];
         let result = single::correlate_asset_prices(
@@ -535,7 +535,7 @@ mod tests {
     }
 
     #[test]
-    fn single_correlation_b_length_panic() {
+    fn single_correlation_b_length_error() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6];
         let result = single::correlate_asset_prices(
@@ -565,7 +565,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_correlation_period_panic() {
+    fn bulk_correlation_period_error() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92, 69.54, 73.81];
         let result = bulk::correlate_asset_prices(
@@ -579,7 +579,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_correlation_size_a_panic() {
+    fn bulk_correlation_size_a_error() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92, 69.54, 73.81];
         let result = bulk::correlate_asset_prices(
@@ -593,7 +593,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_correlation_size_b_panic() {
+    fn bulk_correlation_size_b_error() {
         let prices_a = vec![100.46, 100.53, 100.38, 100.19, 100.21, 100.32, 100.28];
         let prices_b = vec![74.71, 71.98, 68.33, 63.6, 65.92, 69.54];
         let result = bulk::correlate_asset_prices(
