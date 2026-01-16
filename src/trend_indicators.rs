@@ -1201,7 +1201,7 @@ mod tests {
     }
 
     #[test]
-    fn singe_aroon_up_panic() {
+    fn singe_aroon_up_error() {
         let highs = Vec::new();
         let result = single::aroon_up(&highs);
         assert!(result.is_err());
@@ -1217,7 +1217,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_up_panic() {
+    fn bulk_aroon_up_error() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let result = bulk::aroon_up(&highs, 40);
         assert!(result.is_err());
@@ -1230,7 +1230,7 @@ mod tests {
     }
 
     #[test]
-    fn single_aroon_down_panic() {
+    fn single_aroon_down_error() {
         let lows = Vec::new();
         let result = single::aroon_down(&lows);
         assert!(result.is_err());
@@ -1246,7 +1246,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_down_panic() {
+    fn bulk_aroon_down_error() {
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let result = bulk::aroon_down(&lows, 40);
         assert!(result.is_err());
@@ -1271,7 +1271,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_oscillator_up_panic() {
+    fn bulk_aroon_oscillator_up_error() {
         let aroon_up = vec![33.33333333333333, 0.0, 0.0];
         let aroon_down = vec![33.33333333333333, 0.0, 33.33333333333333, 0.0];
         let result = bulk::aroon_oscillator(&aroon_up, &aroon_down);
@@ -1279,7 +1279,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_oscillator_down_panic() {
+    fn bulk_aroon_oscillator_down_error() {
         let aroon_up = vec![33.33333333333333, 0.0, 0.0, 100.0];
         let aroon_down = vec![33.33333333333333, 0.0, 33.33333333333333];
         let result = bulk::aroon_oscillator(&aroon_up, &aroon_down);
@@ -1297,7 +1297,7 @@ mod tests {
     }
 
     #[test]
-    fn single_aroon_indicator_high_panic() {
+    fn single_aroon_indicator_high_error() {
         let lows = vec![100.08, 98.75, 100.14, 98.98];
         let highs = vec![101.26, 102.57, 102.32];
         let result = single::aroon_indicator(&highs, &lows);
@@ -1305,7 +1305,7 @@ mod tests {
     }
 
     #[test]
-    fn single_aroon_indicator_low_panic() {
+    fn single_aroon_indicator_low_error() {
         let lows = vec![100.08, 98.75, 100.14];
         let highs = vec![101.26, 102.57, 102.32, 100.69];
         let result = single::aroon_indicator(&highs, &lows);
@@ -1328,7 +1328,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_indicator_high_panic() {
+    fn bulk_aroon_indicator_high_error() {
         let highs = vec![102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let result = bulk::aroon_indicator(&highs, &lows, 4);
@@ -1336,7 +1336,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_indicator_low_panic() {
+    fn bulk_aroon_indicator_low_error() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let result = bulk::aroon_indicator(&highs, &lows, 4);
@@ -1344,7 +1344,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_aroon_indicator_period_panic() {
+    fn bulk_aroon_indicator_period_error() {
         let highs = vec![101.26, 102.57, 102.32, 100.69, 100.83, 101.73, 102.01];
         let lows = vec![100.08, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let result = bulk::aroon_indicator(&highs, &lows, 40);
@@ -1504,7 +1504,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_parabolic_time_price_system_panic_high_empty() {
+    fn bulk_parabolic_time_price_system_error_high_empty() {
         let highs = Vec::new();
         let lows = vec![95.92, 96.77, 95.84, 91.22, 89.12];
         let result = bulk::parabolic_time_price_system(
@@ -1520,7 +1520,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_parabolic_time_price_system_panic_low_empty() {
+    fn bulk_parabolic_time_price_system_error_low_empty() {
         let highs = vec![99.48, 96.93, 94.66, 102.79, 105.81];
         let lows = Vec::new();
         let result = bulk::parabolic_time_price_system(
@@ -1536,7 +1536,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_parabolic_time_price_system_panic_high_length() {
+    fn bulk_parabolic_time_price_system_error_high_length() {
         let highs = vec![99.48, 96.93, 94.66];
         let lows = vec![95.92, 96.77, 95.84, 91.22, 89.12];
         let result = bulk::parabolic_time_price_system(
@@ -1552,7 +1552,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_parabolic_time_price_system_panic_low_length() {
+    fn bulk_parabolic_time_price_system_error_low_length() {
         let highs = vec![99.48, 96.93, 94.66, 102.79, 105.81];
         let lows = vec![95.92, 96.77, 95.84];
         let result = bulk::parabolic_time_price_system(
@@ -1784,7 +1784,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_directional_movement_system_panic_high_length() {
+    fn bulk_directional_movement_system_error_high_length() {
         let highs = vec![
             100.83, 100.91, 101.03, 101.27, 100.52, 101.03, 100.91, 100.83,
         ];
@@ -1806,7 +1806,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_directional_movement_system_panic_lows_length() {
+    fn bulk_directional_movement_system_error_lows_length() {
         let highs = vec![
             100.83, 100.91, 101.03, 101.27, 100.52, 101.27, 101.03, 100.91, 100.83,
         ];
@@ -1828,7 +1828,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_directional_movement_system_panic_close_length() {
+    fn bulk_directional_movement_system_error_close_length() {
         let highs = vec![
             100.83, 100.91, 101.03, 101.27, 100.52, 101.27, 101.03, 100.91, 100.83,
         ];
@@ -1850,7 +1850,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_directional_movement_system_panic_empty() {
+    fn bulk_directional_movement_system_error_empty() {
         let highs = Vec::new();
         let lows = Vec::new();
         let close = Vec::new();
@@ -1866,7 +1866,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_directional_movement_system_panic_period() {
+    fn bulk_directional_movement_system_error_period() {
         let highs = vec![
             100.83, 100.91, 101.03, 101.27, 100.52, 101.27, 101.03, 100.91,
         ];
@@ -1934,7 +1934,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volume_price_trend_panic_length() {
+    fn bulk_volume_price_trend_error_length() {
         let prices = vec![100.55, 99.01, 101.0, 101.76];
         let volume = vec![743.0, 1074.0, 861.0, 966.0];
         let result = bulk::volume_price_trend(&prices, &volume, 10.0);
@@ -1942,7 +1942,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volume_price_trend_panic_volume_empty() {
+    fn bulk_volume_price_trend_error_volume_empty() {
         let prices = vec![100.55, 99.01, 100.43, 101.0, 101.76];
         let volume = Vec::new();
         let result = bulk::volume_price_trend(&prices, &volume, 10.0);
@@ -1950,7 +1950,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_volume_price_trend_panic_prices_empty() {
+    fn bulk_volume_price_trend_error_prices_empty() {
         let prices = Vec::new();
         let volume = vec![743.0, 1074.0, 861.0, 966.0];
         let result = bulk::volume_price_trend(&prices, &volume, 10.0);
@@ -2054,7 +2054,7 @@ mod tests {
     }
 
     #[test]
-    fn single_true_strength_index_panic_length() {
+    fn single_true_strength_index_error_length() {
         let prices = vec![100.14, 98.98, 99.07, 100.1, 99.96];
         let result = single::true_strength_index(
             &prices,
@@ -2066,7 +2066,7 @@ mod tests {
     }
 
     #[test]
-    fn single_true_strength_index_panic_empty() {
+    fn single_true_strength_index_error_empty() {
         let prices = Vec::new();
         let result = single::true_strength_index(
             &prices,
@@ -2096,7 +2096,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_true_strength_index_panic_length() {
+    fn bulk_true_strength_index_error_length() {
         let prices = vec![100.14, 98.98, 99.07, 100.1, 99.96, 99.52, 101.16];
         let result = bulk::true_strength_index(
             &prices,
@@ -2109,7 +2109,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_true_strength_index_panic_empty() {
+    fn bulk_true_strength_index_error_empty() {
         let prices = Vec::new();
         let result = bulk::true_strength_index(
             &prices,

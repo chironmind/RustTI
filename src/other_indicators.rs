@@ -598,7 +598,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_return_on_investment_panic() {
+    fn bulk_return_on_investment_error() {
         let prices = Vec::new();
         let investment = 1000.0;
         assert!(bulk::return_on_investment(&prices, investment).is_err());
@@ -637,7 +637,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_true_range_close_length_panic() {
+    fn bulk_true_range_close_length_error() {
         let close = vec![100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
@@ -645,7 +645,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_true_range_high_length_panic() {
+    fn bulk_true_range_high_length_error() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 100.11];
         let low = vec![100.29, 100.87, 99.94];
@@ -653,7 +653,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_true_range_low_length_panic() {
+    fn bulk_true_range_low_length_error() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 99.94];
@@ -661,7 +661,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_true_range_empty_panic() {
+    fn bulk_true_range_empty_error() {
         let close = Vec::new();
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
@@ -774,7 +774,7 @@ mod tests {
     }
 
     #[test]
-    fn single_average_true_range_close_length_panic() {
+    fn single_average_true_range_close_length_error() {
         let close = vec![100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
@@ -788,7 +788,7 @@ mod tests {
     }
 
     #[test]
-    fn single_average_true_range_high_length_panic() {
+    fn single_average_true_range_high_length_error() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 100.11];
         let low = vec![100.29, 100.87, 99.94];
@@ -802,7 +802,7 @@ mod tests {
     }
 
     #[test]
-    fn single_average_true_range_low_length_panic() {
+    fn single_average_true_range_low_length_error() {
         let close = vec![100.46, 100.53, 100.38];
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 99.94];
@@ -816,7 +816,7 @@ mod tests {
     }
 
     #[test]
-    fn single_average_true_range_empty_panic() {
+    fn single_average_true_range_empty_error() {
         let close = Vec::new();
         let high = vec![101.12, 101.3, 100.11];
         let low = vec![100.29, 100.87, 99.94];
@@ -849,7 +849,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_average_true_range_panic_period() {
+    fn bulk_average_true_range_error_period() {
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
@@ -865,7 +865,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_average_true_range_panic_close_length() {
+    fn bulk_average_true_range_error_close_length() {
         let close = vec![100.46, 100.53, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
@@ -881,7 +881,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_average_true_range_panic_high_length() {
+    fn bulk_average_true_range_error_high_length() {
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
@@ -897,7 +897,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_average_true_range_panic_low_length() {
+    fn bulk_average_true_range_error_low_length() {
         let close = vec![100.46, 100.53, 100.38, 100.19, 100.21];
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 99.94, 99.86, 99.91];
@@ -913,7 +913,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_average_true_range_panic_empty() {
+    fn bulk_average_true_range_error_empty() {
         let close = Vec::new();
         let high = vec![101.12, 101.3, 100.11, 100.55, 100.43];
         let low = vec![100.29, 100.87, 99.94, 99.86, 99.91];
@@ -957,7 +957,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_internal_bar_strength_panic_close_length() {
+    fn bulk_internal_bar_strength_error_close_length() {
         let close = vec![100.55, 99.01, 100.43, 101.0];
         let high = vec![102.32, 100.69, 100.83, 101.73, 102.01];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96];
@@ -965,7 +965,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_internal_bar_strength_panic_high_length() {
+    fn bulk_internal_bar_strength_error_high_length() {
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76];
         let high = vec![102.32, 100.69, 100.83, 101.73];
         let low = vec![100.14, 98.98, 99.07, 100.1, 99.96];
@@ -973,7 +973,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_internal_bar_strength_panic_low_length() {
+    fn bulk_internal_bar_strength_error_low_length() {
         let close = vec![100.55, 99.01, 100.43, 101.0, 101.76];
         let high = vec![102.32, 100.69, 100.83, 101.73, 102.01];
         let low = vec![100.14, 98.98, 99.07, 100.1];
@@ -981,7 +981,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_internal_bar_strength_panic_empty() {
+    fn bulk_internal_bar_strength_error_empty() {
         let close = Vec::new();
         let high = Vec::new();
         let low = Vec::new();
@@ -1118,7 +1118,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_positivity_indicator_panic_length() {
+    fn bulk_positivity_indicator_error_length() {
         let open = vec![5278.24, 5314.48, 5343.81, 5341.22, 5353.0, 5409.13];
         let previous_close = vec![5283.4, 5291.34, 5354.03, 5352.96, 5346.99, 5360.79, 5375.32];
         let signal_period: usize = 5;
@@ -1132,7 +1132,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_positivity_indicator_panic_empty() {
+    fn bulk_positivity_indicator_error_empty() {
         let open = Vec::new();
         let previous_close = Vec::new();
         let signal_period: usize = 5;
@@ -1146,7 +1146,7 @@ mod tests {
     }
 
     #[test]
-    fn bulk_positivity_indicator_panic_period() {
+    fn bulk_positivity_indicator_error_period() {
         let open = vec![5278.24, 5314.48, 5357.8, 5343.81, 5341.22, 5353.0, 5409.13];
         let previous_close = vec![5283.4, 5291.34, 5354.03, 5352.96, 5346.99, 5360.79, 5375.32];
         let signal_period: usize = 50;

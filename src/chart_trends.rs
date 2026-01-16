@@ -575,7 +575,7 @@ mod tests {
     }
 
     #[test]
-    fn peaks_panic() {
+    fn peaks_error() {
         let highs = vec![101.26, 102.57, 102.57, 100.69, 100.83, 101.73, 102.01];
         let result = peaks(&highs, 40_usize, 1usize);
         assert!(result.is_err());
@@ -606,7 +606,7 @@ mod tests {
     }
 
     #[test]
-    fn valleys_panic() {
+    fn valleys_error() {
         let lows = vec![98.75, 98.75, 100.14, 98.98, 99.07, 100.1, 99.96];
         let result = valleys(&lows, 40_usize, 1usize);
         assert!(result.is_err());
