@@ -273,7 +273,7 @@ pub mod single {
     /// # Arguments
     ///
     /// * `prices` - Slice of prices
-    /// * `central_point` - Variant of [`CentralPoint`]
+    /// * `central_point` - Variant of [`crate::CentralPoint`]
     ///
     /// # Returns
     ///
@@ -950,7 +950,7 @@ pub mod bulk {
     ///
     /// * `prices` - Slice of prices
     /// * `period` - Period over which to calculate the standard deviation
-    /// * `central_point` - Variant of [`CentralPoint`]
+    /// * `central_point` - Variant of [`crate::CentralPoint`]
     ///
     /// # Returns
     ///
@@ -1211,7 +1211,7 @@ pub mod bulk {
     /// tick size to get a robust, distribution-free scale for each window or slice.
     ///
     /// - Histogram: prices are grouped to `precision` and counted by `price_distribution`.
-    /// - Quantiles: computed via [`empirical_quantile_from_distribution`] with linear interpolation.
+    /// - Quantiles: computed via internal helper function with linear interpolation.
     /// - Result: `q(high) - q(low)` as a width (not a variance-derived standard deviation).
     ///
     /// # Returns

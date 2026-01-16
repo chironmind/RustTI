@@ -6,7 +6,6 @@
 // Data is generated up front and reused across calls. Each function is called with representative arguments.
 // Output is printed directly for reference and exploration purposes.
 
-use centaur_technical_indicators;
 use centaur_technical_indicators::{AbsDevConfig, CentralPoint, DeviationAggregate};
 use std::time::Instant;
 
