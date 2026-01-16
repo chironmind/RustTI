@@ -268,7 +268,7 @@ mod tests {
     }
 
     #[test]
-    fn single_ucler_index_error() {
+    fn single_ulcer_index_error() {
         let prices = Vec::new();
         let result = single::ulcer_index(&prices);
         assert!(result.is_err());

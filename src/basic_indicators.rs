@@ -1583,7 +1583,7 @@ mod tests {
     }
 
     #[test]
-    fn singe_absolute_deviation_error() {
+    fn single_absolute_deviation_error() {
         let prices = Vec::new();
         single::absolute_deviation(
             &prices,

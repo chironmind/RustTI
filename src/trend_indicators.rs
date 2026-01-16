@@ -1201,7 +1201,7 @@ mod tests {
     }
 
     #[test]
-    fn singe_aroon_up_error() {
+    fn single_aroon_up_error() {
         let highs = Vec::new();
         let result = single::aroon_up(&highs);
         assert!(result.is_err());
