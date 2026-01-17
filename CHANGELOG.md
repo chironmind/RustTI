@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - This is a new package on crates.io with fresh versioning (1.0.0)
   - All functionality remains the same, only branding has changed
   - Updated repository and documentation URLs to reflect Centaur Labs branding
+- **BREAKING:** `panic!` replaced with `Result<>` types in several functions for better error handling
 
 ### Removed
 - Removed unused `deviation.rs` file
