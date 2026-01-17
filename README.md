@@ -13,14 +13,6 @@
 [![Tutorials](https://img.shields.io/badge/Tutorials-Available-brightgreen?style=flat&logo=book)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-tutorials)
 [![Benchmarks](https://img.shields.io/badge/Performance-Microsecond-blue?logo=zap)](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust-benchmarks)
 
-# 🦀 Meet the Centaur Technical Indicators Mascot
-
-Say hello to our clawed crusader of candlesticks, the battle-hardened mascot of Centaur Technical Indicators! 🦀📈
-
-Forged from rusted metal and born in the depths of the financial abyss, this crustacean doesn't just ride sideways markets — he lives for them. With a stack of notebooks, a thousand-yard stare, and more indicators on his screen than legs on his body, he's the ultimate trading companion. He reads charts, calculates MACD in his sleep, and isn’t afraid to pinch your code into shape.
-
-Welcome to Centaur Technical Indicators — powered by precision, performance, and one extremely serious crustacean from Centaur Labs.
-
 # Centaur Technical Indicators
 
 A highly configurable and high-performance technical indicators library written in pure Rust. 
