@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [Unreleased]
+### Added
+- Reference URLS to doc strings
+
 ## [1.0.0] - 2026-01-07
 ### Changed
 - **BREAKING:** Rebranded from RustTI to Centaur Technical Indicators
@@ -17,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 - Removed unused `deviation.rs` file
+
+---
+
+## Everything below this line is from RustTI changelog
 
 ## [2.2.0] - 2025-10-19
 ### Added

@@ -84,6 +84,11 @@ pub mod single {
     ///     );
     /// assert_eq!(0.0, accumulation_distribution);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/accumulation-distribution/>
     #[inline]
     pub fn accumulation_distribution(
         high: f64,
@@ -128,6 +133,12 @@ pub mod single {
     ///
     /// assert_eq!(0.051500000000000004, volume_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/positive-volume-index/>
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/negative-volume-index/>
     #[inline]
     pub fn volume_index(
         current_close: f64,
@@ -178,6 +189,11 @@ pub mod single {
     ///
     /// assert_eq!(0.10185185185185186, relative_vigor_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/relative-vigor-index/>
     pub fn relative_vigor_index(
         open: &[f64],
         high: &[f64],
@@ -307,6 +323,11 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![500.0, 0.0, 240.0], accumulation_distribution);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/accumulation-distribution/>
     #[inline]
     pub fn accumulation_distribution(
         high: &[f64],
@@ -383,6 +404,11 @@ pub mod bulk {
     ///
     /// assert_eq!(vec![0.177, 0.16684426229508195, 0.1740983606557377], positive_volume_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/positive-volume-index/>
     #[inline]
     pub fn positive_volume_index(
         close: &[f64],
@@ -456,6 +482,11 @@ pub mod bulk {
     ///     negative_volume_index
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/negative-volume-index/>
     #[inline]
     pub fn negative_volume_index(
         close: &[f64],
@@ -520,6 +551,11 @@ pub mod bulk {
     ///
     /// assert_eq!(vec![0.10185185185185186, -0.06611570247933886, -0.17037037037037037], relative_vigor_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/strength-indicators/relative-vigor-index/>
     #[inline]
     pub fn relative_vigor_index(
         open: &[f64],

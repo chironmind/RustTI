@@ -84,6 +84,11 @@ pub mod single {
     ///         centaur_technical_indicators::DeviationModel::UlcerIndex).unwrap();
     /// assert_eq!(1.1410137845061807, correlation);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/correlation-indicators/correlate-asset-prices/>
     pub fn correlate_asset_prices(
         prices_asset_a: &[f64],
         prices_asset_b: &[f64],
@@ -300,6 +305,11 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![1.1410137845061807, 0.9904422924841779, 0.2785701491571082], correlation);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/correlation-indicators/correlate-asset-prices/>
     #[inline]
     pub fn correlate_asset_prices(
         prices_asset_a: &[f64],

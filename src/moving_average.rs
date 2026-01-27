@@ -79,6 +79,11 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(101.11375535459305, smoothed_moving_average);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/moving-average/>
     #[inline]
     pub fn moving_average(
         prices: &[f64],
@@ -165,6 +170,11 @@ pub mod single {
     ///     centaur_technical_indicators::moving_average::single::mcginley_dynamic(99.0, mcginley_dynamic, period).unwrap();
     /// assert_eq!(99.79179592886295, next_mcginley_dynamic);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/mcginley-dynamic/>
     #[inline]
     pub fn mcginley_dynamic(
         latest_price: f64,
@@ -242,6 +252,11 @@ pub mod bulk {
     ///     smoothed_moving_average
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/moving-average/>
     #[inline]
     pub fn moving_average(
         prices: &[f64],
@@ -296,6 +311,11 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![102.2789387706985, 101.44764169058672], mcginley_dynamic);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/mcginley-dynamic/>
     #[inline]
     pub fn mcginley_dynamic(
         prices: &[f64],
