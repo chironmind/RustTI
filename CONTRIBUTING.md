@@ -23,9 +23,9 @@ See [open issues](https://github.com/ChironMind/CentaurTechnicalIndicators-Rust/
 ### New Indicator Ideas
 
 - McGinley dynamic versions of indicators using MA (Donchian, Keltner, Supertrend, PPO, RVI, etc.)?
-- Deprecate signal line for MACD. callers can call the MA functions they want
+- Deprecate signal line for MACD. Callers can call the MA functions they want
 - Same as above for slow and slowest stochastics
-- order list of indicators in each category alphabetically in docstring
+- Order list of indicators in each category alphabetically in docstrings
 
 ---
 

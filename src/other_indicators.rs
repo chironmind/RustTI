@@ -28,7 +28,7 @@
 //! - [`true_range`](bulk::true_range): True Range
 //! - [`average_true_range`](bulk::average_true_range): ATR
 //! - [`internal_bar_strength`](single::internal_bar_strength): Internal Bar Strength
-//! - [`positivity_indicator`](bulk::positivity_indicator): Positivity Indicator with Signal Line
+
 //!
 //! ## API Details
 //! - All functions operate on slices of `f64` prices (and sometimes highs/lows/closes).
