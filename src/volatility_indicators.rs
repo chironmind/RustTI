@@ -54,6 +54,11 @@ pub mod single {
     /// let ulcer_index = centaur_technical_indicators::volatility_indicators::single::ulcer_index(&prices).unwrap();
     /// assert_eq!(1.9417475728155338, ulcer_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/volatility-indicators/ulcer-index/>
     #[inline]
     pub fn ulcer_index(prices: &[f64]) -> crate::Result<f64> {
         assert_non_empty("prices", prices)?;
@@ -104,6 +109,11 @@ pub mod bulk {
     ///     ulcer_index
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/volatility-indicators/ulcer-index/>
     #[inline]
     pub fn ulcer_index(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
         let length = prices.len();
@@ -191,6 +201,11 @@ pub mod bulk {
     ///     ], volatility_system
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/volatility-indicators/volatility-system/>
     pub fn volatility_system(
         highs: &[f64],
         lows: &[f64],

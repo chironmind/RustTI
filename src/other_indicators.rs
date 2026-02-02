@@ -21,12 +21,14 @@
 //! - [`true_range`](bulk::true_range): Computes the True Range for each period
 //! - [`average_true_range`](bulk::average_true_range): Average True Range (ATR)
 //! - [`internal_bar_strength`](bulk::internal_bar_strength): Internal Bar Strength
+//! - [`positivity_indicator`](bulk::positivity_indicator): Positivity Indicator with Signal Line
 //!
 //! ### Single
 //! - [`return_on_investment`](single::return_on_investment): ROI
 //! - [`true_range`](bulk::true_range): True Range
 //! - [`average_true_range`](bulk::average_true_range): ATR
 //! - [`internal_bar_strength`](single::internal_bar_strength): Internal Bar Strength
+
 //!
 //! ## API Details
 //! - All functions operate on slices of `f64` prices (and sometimes highs/lows/closes).
@@ -41,7 +43,7 @@ pub mod single {
     use crate::validation::{assert_non_empty, assert_same_len, unsupported_type};
     use crate::{ConstantModelType, MovingAverageType};
 
-    /// Calculates the final value and percentage return of a investment
+    /// Calculates the final value and percentage return of an investment
     ///
     /// # Arguments
     ///
@@ -77,6 +79,11 @@ pub mod single {
     ///     );
     /// assert_eq!((980.0, -10.909090909090908), return_on_investment);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/return-on-investment/>
     #[inline]
     pub fn return_on_investment(start_price: f64, end_price: f64, investment: f64) -> (f64, f64) {
         let initial_investment = investment / start_price;
@@ -85,7 +92,7 @@ pub mod single {
         (final_investment_value, percent_return)
     }
 
-    /// Calculates the True Rangea (TR)
+    /// Calculates the True Range (TR)
     ///
     /// # Arguments
     ///
@@ -122,6 +129,11 @@ pub mod single {
     /// );
     /// assert_eq!(10.0, close_low_tr);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/true-range/>
     #[inline]
     pub fn true_range(close: f64, high: f64, low: f64) -> f64 {
         let h_l_tr = high - low;
@@ -176,6 +188,11 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(10.0, exponential_atr);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/average-true-range/>
     #[inline]
     pub fn average_true_range(
         close: &[f64],
@@ -246,6 +263,11 @@ pub mod single {
     ///
     /// assert_eq!(0.5, internal_bar_strength);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/internal-bar-strength/>
     #[inline]
     pub fn internal_bar_strength(high: f64, low: f64, close: f64) -> f64 {
         (close - low) / (high - low)
@@ -297,6 +319,11 @@ pub mod bulk {
     ///     ], return_on_investment
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/return-on-investment/>
     #[inline]
     pub fn return_on_investment(prices: &[f64], investment: f64) -> crate::Result<Vec<(f64, f64)>> {
         assert_non_empty("prices", prices)?;
@@ -342,6 +369,11 @@ pub mod bulk {
     /// ).unwrap();
     /// assert_eq!(vec![10.0, 10.0, 10.0], true_range);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/true-range/>
     #[inline]
     pub fn true_range(close: &[f64], highs: &[f64], lows: &[f64]) -> crate::Result<Vec<f64>> {
         let length = close.len();
@@ -400,6 +432,11 @@ pub mod bulk {
     /// ).unwrap();
     /// assert_eq!(vec![10.0, 15.714285714285714, 12.857142857142858], exponential_atr);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/average-true-range/>
     #[inline]
     pub fn average_true_range(
         close: &[f64],
@@ -462,6 +499,11 @@ pub mod bulk {
     ///     internal_bar_strength
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/other-indicators/internal-bar-strength/>
     #[inline]
     pub fn internal_bar_strength(
         highs: &[f64],

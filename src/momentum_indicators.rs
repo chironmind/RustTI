@@ -116,6 +116,11 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(42.857142857142854, moving_median_rsi);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/rsi/>
     #[inline]
     pub fn relative_strength_index(
         prices: &[f64],
@@ -197,6 +202,11 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::stochastic_oscillator(&prices).unwrap();
     /// assert_eq!(0.0, stochastic_oscillator);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/stochastic-oscillator/>
     #[inline]
     pub fn stochastic_oscillator(prices: &[f64]) -> crate::Result<f64> {
         assert_non_empty("prices", prices)?;
@@ -251,7 +261,12 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(50.0, median_slow_stochastic);
     /// ```
-    #[inline]
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/slow-stochastic-oscillator/>
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slow_stochastic(
         stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -321,7 +336,7 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(20.0, median_slowest_stochastic);
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slowest_stochastic(
         slow_stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -386,6 +401,11 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(-57.49999999999999, williams_percent_r);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/williams-percent-r/>
     #[inline]
     pub fn williams_percent_r(highs: &[f64], lows: &[f64], close: f64) -> crate::Result<f64> {
         assert_same_len(&[("highs", highs), ("lows", lows)])?;
@@ -424,6 +444,11 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(56.771463119709786, money_flow_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/money-flow-index/>
     #[inline]
     pub fn money_flow_index(prices: &[f64], volume: &[f64]) -> crate::Result<f64> {
         assert_non_empty("prices", prices)?;
@@ -912,7 +937,7 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(-0.0224170616113781, median_signal_line);
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the MACD values to get the signal line.")]
     pub fn signal_line(
         macds: &[f64],
         constant_model_type: ConstantModelType,
@@ -1185,6 +1210,11 @@ pub mod single {
     ///
     /// assert_eq!(-1.0681349863189704 , percentage_price_oscillator);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/percentage-price-oscillator/>
     #[inline]
     pub fn percentage_price_oscillator(
         prices: &[f64],
@@ -1258,6 +1288,11 @@ pub mod single {
     ///     centaur_technical_indicators::momentum_indicators::single::chande_momentum_oscillator(&prices).unwrap();
     /// assert_eq!(-20.0, chande_momentum_oscillator)
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/chande-momentum-oscillator/>
     #[inline]
     pub fn chande_momentum_oscillator(prices: &[f64]) -> crate::Result<f64> {
         let (previous_gains, previous_loss) = previous_gains_loss(prices)?;
@@ -1368,6 +1403,11 @@ pub mod bulk {
     ///     personalised_rsi
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/rsi/>
     #[inline]
     pub fn relative_strength_index(
         prices: &[f64],
@@ -1411,6 +1451,11 @@ pub mod bulk {
     ///     centaur_technical_indicators::momentum_indicators::bulk::stochastic_oscillator(&prices, period).unwrap();
     /// assert_eq!(vec![100.0, 0.0, 0.0], stochastic_oscillator);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/stochastic-oscillator/>
     #[inline]
     pub fn stochastic_oscillator(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
         let length = prices.len();
@@ -1472,7 +1517,12 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![25.0, 33.0, 50.0], median_slow_stochastic);
     /// ```
-    #[inline]
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/slow-stochastic-oscillator/>
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slow_stochastic(
         stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -1533,7 +1583,7 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![73.0, 60.0], median_slowest_stochastic);
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slowest_stochastic(
         slow_stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -1583,6 +1633,11 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![-25.71428571428571, -63.888888888888886], williams_percent_r);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/williams-percent-r/>
     #[inline]
     pub fn williams_percent_r(
         highs: &[f64],
@@ -1638,6 +1693,11 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![55.314533622559644, 0.0, 58.60655737704918], money_flow_index);
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/money-flow-index/>
     #[inline]
     pub fn money_flow_index(
         prices: &[f64],
@@ -2012,7 +2072,7 @@ pub mod bulk {
     ///     median_signal_line
     /// );
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the MACD values to get the signal line.")]
     pub fn signal_line(
         macds: &[f64],
         constant_model_type: ConstantModelType,
@@ -2263,6 +2323,11 @@ pub mod bulk {
     ///     percentage_price_oscillator
     /// );
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/percentage-price-oscillator/>
     #[inline]
     pub fn percentage_price_oscillator(
         prices: &[f64],
@@ -2315,6 +2380,11 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![-20.0, 10.0, -20.0], chande_momentum_oscillator)
     /// ```
+    ///
+    /// # Reference
+    ///
+    /// - Explanation and interactive playground:
+    /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/chande-momentum-oscillator/>
     #[inline]
     pub fn chande_momentum_oscillator(prices: &[f64], period: usize) -> crate::Result<Vec<f64>> {
         let length = prices.len();
