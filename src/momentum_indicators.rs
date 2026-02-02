@@ -266,7 +266,7 @@ pub mod single {
     ///
     /// - Explanation and interactive playground:
     /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/slow-stochastic-oscillator/>
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slow_stochastic(
         stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -336,7 +336,7 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(20.0, median_slowest_stochastic);
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slowest_stochastic(
         slow_stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -937,7 +937,7 @@ pub mod single {
     ///     ).unwrap();
     /// assert_eq!(-0.0224170616113781, median_signal_line);
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the MACD values to get the signal line.")]
     pub fn signal_line(
         macds: &[f64],
         constant_model_type: ConstantModelType,
@@ -1522,7 +1522,7 @@ pub mod bulk {
     ///
     /// - Explanation and interactive playground:
     /// <https://centaurlabs.pages.dev/indicators/momentum-indicators/slow-stochastic-oscillator/>
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slow_stochastic(
         stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -1583,7 +1583,7 @@ pub mod bulk {
     ///     ).unwrap();
     /// assert_eq!(vec![73.0, 60.0], median_slowest_stochastic);
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the SO")]
     pub fn slowest_stochastic(
         slow_stochastics: &[f64],
         constant_model_type: ConstantModelType,
@@ -2072,7 +2072,7 @@ pub mod bulk {
     ///     median_signal_line
     /// );
     /// ```
-    #[inline]
+    #[deprecated(since = "1.0.0", note="Users can call the moving average functions directly on the MACD values to get the signal line.")]
     pub fn signal_line(
         macds: &[f64],
         constant_model_type: ConstantModelType,
